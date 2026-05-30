@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=7">
+<title>Atelier × Velvet · Design Manifesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ─── Atelier palette ─── */
+    --atelier-paper:        #FAF7F2;
+    --atelier-paper-warm:   #F2EDE2;
+    --atelier-paper-deep:   #E8E1D1;
+    --atelier-ink:          #1A1614;
+    --atelier-ink-soft:     #5A4F46;
+    --atelier-ink-faint:    #978B7E;
+    --atelier-persimmon:    #D85F3D;
+    --atelier-wine:         #6B2737;
+    --atelier-jade:         #6A8C7B;
+    --atelier-rule:         #D9D2C5;
+
+    /* ─── Velvet palette ─── */
+    --velvet-night:         #0E0B16;
+    --velvet-night-deep:    #060410;
+    --velvet-night-soft:    #1A1622;
+    --velvet-ivory:         #EDE6D6;
+    --velvet-ivory-soft:    #9B9282;
+    --velvet-ivory-faint:   #5C5448;
+    --velvet-oxblood:       #6E1F22;
+    --velvet-oxblood-deep:  #3D0F11;
+    --velvet-gold:          #C9A961;
+    --velvet-gold-deep:     #8A7038;
+    --velvet-rule:          #2A2230;
+
+    /* ─── Typography ─── */
+    --font-display: "Cormorant Garamond", "Cormorant", "Times New Roman", serif;
+    --font-body:    "Lora", Georgia, "Times New Roman", serif;
+    --font-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+    /* ─── Spatial scale ─── */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  24px;
+    --space-6:  32px;
+    --space-7:  48px;
+    --space-8:  64px;
+    --space-9:  96px;
+    --space-10: 128px;
+
+    --column: 720px;
+    --column-wide: 1080px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--atelier-ink);
+    background: var(--atelier-paper);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* ─── Texture overlays ─── */
+  .grain-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ─── Section structure ─── */
+  section, header {
+    padding: var(--space-9) var(--space-5);
+    position: relative;
+  }
+  .container {
+    max-width: var(--column);
+    margin: 0 auto;
+  }
+  .container-wide {
+    max-width: var(--column-wide);
+    margin: 0 auto;
+  }
+
+  /* ─── Typography ─── */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  h1 { font-size: clamp(48px, 9vw, 96px); }
+  h2 { font-size: clamp(36px, 5vw, 56px); }
+  h3 { font-size: clamp(22px, 3vw, 28px); font-weight: 500; }
+  h4 { font-size: 18px; font-weight: 600; font-family: var(--font-body); }
+
+  .display-italic { font-style: italic; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--atelier-persimmon);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--atelier-persimmon);
+  }
+
+  .lead {
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--atelier-ink-soft);
+    font-style: italic;
+    font-family: var(--font-display);
+  }
+
+  p + p { margin-top: var(--space-4); }
+
+  /* ─── Top bar ─── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(250, 247, 242, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--atelier-rule);
+    padding: var(--space-3) var(--space-5);
+  }
+  .topbar-inner {
+    max-width: var(--column-wide);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brandmark {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .brandmark em { font-style: italic; color: var(--atelier-persimmon); }
+  .topbar-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--atelier-ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    padding-top: var(--space-9);
+    padding-bottom: var(--space-9);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 20%; right: -200px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(216, 95, 61, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-meta {
+    display: flex;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--atelier-ink-faint);
+    letter-spacing: 0.1em;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: var(--space-2); }
+  .hero-meta span::before {
+    content: "";
+    width: 4px; height: 4px;
+    background: var(--atelier-persimmon);
+    border-radius: 50%;
+  }
+  .hero-title {
+    margin: var(--space-5) 0 var(--space-6);
+    max-width: 900px;
+  }
+  .hero-title em { font-style: italic; }
+  .hero-rule {
+    width: 80px;
+    height: 1px;
+    background: var(--atelier-ink);
+    margin: var(--space-6) 0;
+  }
+
+  /* ─── Generic section header ─── */
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-7);
+    align-items: baseline;
+  }
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--atelier-ink-faint);
+    letter-spacing: 0.15em;
+    border-top: 1px solid var(--atelier-ink);
+    padding-top: var(--space-3);
+  }
+  .section-title em { font-style: italic; }
+  @media (max-width: 640px) {
+    .section-head { grid-template-columns: 1fr; gap: var(--space-3); }
+    .section-num { border-top: none; padding-top: 0; }
+  }
+
+  /* ─── Duality cards ─── */
+  .duality {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .world-card {
+    padding: var(--space-7) var(--space-6);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .world-card.atelier {
+    background: var(--atelier-paper-warm);
+    color: var(--atelier-ink);
+    border: 1px solid var(--atelier-rule);
+  }
+  .world-card.velvet {
+    background: var(--velvet-night);
+    color: var(--velvet-ivory);
+    border: 1px solid var(--velvet-rule);
+  }
+  .world-card h3 {
+    font-size: 32px;
+    margin-bottom: var(--space-3);
+  }
+  .world-card h3 em { font-style: italic; }
+  .world-card .desc {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+  .world-card.atelier .label {
+    color: var(--atelier-persimmon);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .world-card.velvet .label {
+    color: var(--velvet-gold);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .world-card .uses {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: var(--space-5);
+    line-height: 1.6;
+  }
+  @media (max-width: 640px) {
+    .duality { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Color swatches ─── */
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+  .swatch {
+    border: 1px solid var(--atelier-rule);
+    border-radius: 2px;
+    overflow: hidden;
+    background: white;
+  }
+  .swatch-color {
+    aspect-ratio: 4/3;
+    position: relative;
+  }
+  .swatch-meta {
+    padding: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border-top: 1px solid var(--atelier-rule);
+  }
+  .swatch-name {
+    color: var(--atelier-ink);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .swatch-hex { color: var(--atelier-ink-faint); }
+  .swatch-use {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--atelier-ink-soft);
+    margin-top: var(--space-2);
+    line-height: 1.4;
+  }
+
+  /* Velvet palette block */
+  .palette-velvet-block {
+    background: var(--velvet-night);
+    padding: var(--space-7) var(--space-5);
+    margin: var(--space-6) calc(-1 * var(--space-5)) 0;
+    color: var(--velvet-ivory);
+  }
+  .palette-velvet-block .palette { margin-top: 0; }
+  .palette-velvet-block .swatch {
+    background: var(--velvet-night-soft);
+    border-color: var(--velvet-rule);
+  }
+  .palette-velvet-block .swatch-meta { border-color: var(--velvet-rule); }
+  .palette-velvet-block .swatch-name { color: var(--velvet-ivory); }
+  .palette-velvet-block .swatch-hex { color: var(--velvet-ivory-faint); }
+  .palette-velvet-block .swatch-use { color: var(--velvet-ivory-soft); }
+  .palette-velvet-block .eyebrow {
+    color: var(--velvet-gold);
+  }
+  .palette-velvet-block .eyebrow::before {
+    background: var(--velvet-gold);
+  }
+  .palette-velvet-block h3 { color: var(--velvet-ivory); }
+
+  /* ─── Type specimens ─── */
+  .type-specimen {
+    border-top: 1px solid var(--atelier-rule);
+    padding-top: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .type-specimen:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .type-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--atelier-ink-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .type-display {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 7vw, 84px);
+    line-height: 1;
+    margin-bottom: var(--space-3);
+  }
+  .type-display em { font-style: italic; }
+  .type-body {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--atelier-ink-soft);
+    max-width: 600px;
+  }
+  .type-mono {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--atelier-ink-soft);
+  }
+
+  .type-scale {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    border-top: 1px solid var(--atelier-rule);
+    padding-top: var(--space-5);
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-5);
+    align-items: baseline;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--atelier-paper-deep);
+  }
+  .scale-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--atelier-ink-faint);
+  }
+  .scale-sample {
+    font-family: var(--font-display);
+    color: var(--atelier-ink);
+  }
+
+  /* ─── Buttons ─── */
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  .btn {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 14px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .btn-primary {
+    background: var(--atelier-ink);
+    color: var(--atelier-paper);
+  }
+  .btn-primary:hover {
+    background: var(--atelier-persimmon);
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--atelier-ink);
+    border: 1px solid var(--atelier-ink);
+  }
+  .btn-secondary:hover {
+    background: var(--atelier-ink);
+    color: var(--atelier-paper);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--atelier-ink-soft);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--atelier-ink-soft);
+    border-radius: 0;
+  }
+  .btn-ghost:hover { color: var(--atelier-persimmon); border-color: var(--atelier-persimmon); }
+  .btn-arrow::after {
+    content: "→";
+    font-family: var(--font-display);
+    font-size: 18px;
+    margin-left: var(--space-2);
+    transition: transform 0.25s;
+  }
+  .btn-arrow:hover::after { transform: translateX(4px); }
+
+  /* ─── Input ─── */
+  .input-demo {
+    margin-top: var(--space-5);
+    max-width: 420px;
+  }
+  .input-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--atelier-ink-faint);
+    margin-bottom: var(--space-2);
+    display: block;
+  }
+  .input {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-bottom: 1px solid var(--atelier-ink);
+    background: transparent;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--atelier-ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input::placeholder { color: var(--atelier-ink-faint); font-style: italic; }
+  .input:focus { border-color: var(--atelier-persimmon); }
+
+  /* ─── Story card (Atelier) ─── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+  .story-card {
+    background: var(--atelier-paper-warm);
+    padding: var(--space-6);
+    border: 1px solid var(--atelier-rule);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+    position: relative;
+  }
+  .story-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--atelier-ink);
+    box-shadow: 0 12px 32px -16px rgba(26, 22, 20, 0.2);
+  }
+  .story-card .card-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--atelier-persimmon);
+    margin-bottom: var(--space-3);
+  }
+  .story-card h3 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.15;
+    margin-bottom: var(--space-3);
+    color: var(--atelier-ink);
+  }
+  .story-card h3 em { font-style: italic; }
+  .story-card .excerpt {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--atelier-ink-soft);
+    margin-bottom: var(--space-5);
+  }
+  .story-card .card-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--atelier-ink-faint);
+    display: flex;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--atelier-rule);
+  }
+
+  /* ─── Tags ─── */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 12px;
+    border: 1px solid var(--atelier-rule);
+    color: var(--atelier-ink-soft);
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+  }
+  .tag.active { background: var(--atelier-ink); color: var(--atelier-paper); border-color: var(--atelier-ink); }
+
+  /* ─── Pull quote ─── */
+  .pullquote {
+    margin: var(--space-7) 0;
+    padding: var(--space-6) 0 var(--space-6) var(--space-6);
+    border-left: 2px solid var(--atelier-persimmon);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.4;
+    color: var(--atelier-ink);
+  }
+  .pullquote-attr {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-style: normal;
+    color: var(--atelier-ink-faint);
+    letter-spacing: 0.1em;
+    margin-top: var(--space-4);
+    text-transform: uppercase;
+  }
+
+  /* ─── THE TRANSITION ─── */
+  .transition-section {
+    padding: var(--space-10) var(--space-5);
+    background: var(--atelier-paper-warm);
+    text-align: center;
+    border-top: 1px solid var(--atelier-rule);
+    border-bottom: 1px solid var(--atelier-rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .transition-section::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(110, 31, 34, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .transition-section h2 {
+    font-style: italic;
+    margin: var(--space-4) 0 var(--space-3);
+    position: relative;
+  }
+  .transition-section .lead {
+    max-width: 540px;
+    margin: 0 auto var(--space-7);
+    position: relative;
+  }
+  .enter-btn {
+    background: var(--atelier-ink);
+    color: var(--atelier-paper);
+    border: none;
+    padding: 22px 56px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .enter-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--velvet-oxblood), var(--velvet-night));
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: -1;
+  }
+  .enter-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -12px rgba(14, 11, 22, 0.3); }
+  .enter-btn:hover::before { opacity: 1; }
+  .enter-btn .arrow {
+    transition: transform 0.4s;
+    font-size: 26px;
+    line-height: 1;
+  }
+  .enter-btn:hover .arrow { transform: translateX(6px); }
+
+  /* ─── Curtain animation ─── */
+  .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    display: flex;
+    visibility: hidden;
+  }
+  .curtain-panel {
+    flex: 1;
+    background: linear-gradient(180deg, #4A0E10 0%, #2A0608 50%, #4A0E10 100%);
+    position: relative;
+    transition: transform 0.9s cubic-bezier(0.7, 0, 0.3, 1);
+  }
+  .curtain-panel.left { transform: translateX(-101%); transform-origin: left; }
+  .curtain-panel.right { transform: translateX(101%); transform-origin: right; }
+  /* Curtain texture: vertical pleats */
+  .curtain-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg,
+        rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%,
+        rgba(0,0,0,0) 90%, rgba(0,0,0,0.4) 100%),
+      repeating-linear-gradient(90deg,
+        rgba(0,0,0,0) 0px, rgba(0,0,0,0) 38px,
+        rgba(0,0,0,0.25) 39px, rgba(0,0,0,0) 42px,
+        rgba(255,255,255,0.04) 43px, rgba(0,0,0,0) 46px);
+  }
+  .curtain-panel::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(180deg, #C9A961 0%, #8A7038 80%, transparent 100%);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  }
+  .curtain.closing { visibility: visible; }
+  .curtain.closing .curtain-panel.left { transform: translateX(0); }
+  .curtain.closing .curtain-panel.right { transform: translateX(0); }
+  .curtain.opening { visibility: visible; }
+  .curtain.opening .curtain-panel.left { transform: translateX(-101%); }
+  .curtain.opening .curtain-panel.right { transform: translateX(101%); }
+
+  /* ─── VELVET WORLD SECTIONS ─── */
+  .velvet-zone {
+    background: var(--velvet-night);
+    color: var(--velvet-ivory);
+    position: relative;
+  }
+  .velvet-zone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .velvet-zone .eyebrow {
+    color: var(--velvet-gold);
+  }
+  .velvet-zone .eyebrow::before { background: var(--velvet-gold); }
+  .velvet-zone .lead { color: var(--velvet-ivory-soft); }
+  .velvet-zone h1, .velvet-zone h2, .velvet-zone h3, .velvet-zone h4 { color: var(--velvet-ivory); }
+  .velvet-zone .section-num {
+    color: var(--velvet-ivory-faint);
+    border-top-color: var(--velvet-ivory);
+  }
+  .velvet-zone .type-specimen { border-color: var(--velvet-rule); }
+  .velvet-zone .scale-row { border-color: var(--velvet-rule); }
+  .velvet-zone .scale-meta { color: var(--velvet-ivory-faint); }
+  .velvet-zone .scale-sample { color: var(--velvet-ivory); }
+  .velvet-zone .type-label { color: var(--velvet-ivory-faint); }
+  .velvet-zone .type-body { color: var(--velvet-ivory-soft); }
+
+  /* Velvet Intro */
+  .velvet-intro {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-9);
+    text-align: center;
+    position: relative;
+  }
+  .velvet-intro .ornament {
+    font-family: var(--font-display);
+    color: var(--velvet-gold);
+    font-size: 36px;
+    letter-spacing: 0.5em;
+    margin-bottom: var(--space-5);
+    opacity: 0.7;
+  }
+  .velvet-intro h1 {
+    font-style: italic;
+    margin-bottom: var(--space-5);
+    color: var(--velvet-ivory);
+  }
+  .velvet-intro h1 em { color: var(--velvet-gold); font-style: italic; }
+
+  /* Velvet buttons */
+  .btn-velvet-primary {
+    background: var(--velvet-gold);
+    color: var(--velvet-night);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+  }
+  .btn-velvet-primary:hover { background: var(--velvet-ivory); transform: translateY(-1px); }
+  .btn-velvet-secondary {
+    background: transparent;
+    color: var(--velvet-ivory);
+    border: 1px solid var(--velvet-gold);
+  }
+  .btn-velvet-secondary:hover { background: var(--velvet-gold); color: var(--velvet-night); }
+  .btn-velvet-ghost {
+    background: transparent;
+    color: var(--velvet-ivory-soft);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--velvet-ivory-soft);
+    border-radius: 0;
+  }
+  .btn-velvet-ghost:hover { color: var(--velvet-gold); border-color: var(--velvet-gold); }
+
+  /* Reader chrome demo */
+  .reader-demo {
+    margin-top: var(--space-6);
+    background: var(--velvet-night-deep);
+    border: 1px solid var(--velvet-rule);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .reader-chrome {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--velvet-rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--velvet-ivory-soft);
+    letter-spacing: 0.1em;
+  }
+  .chrome-left { display: flex; align-items: center; gap: var(--space-3); }
+  .chrome-left .dot {
+    width: 6px; height: 6px;
+    background: var(--velvet-gold);
+    border-radius: 50%;
+  }
+  .chrome-right { display: flex; gap: var(--space-4); align-items: center; }
+  .chrome-right svg { width: 16px; height: 16px; stroke: var(--velvet-ivory-soft); fill: none; stroke-width: 1.5; cursor: pointer; }
+  .chrome-right svg:hover { stroke: var(--velvet-gold); }
+
+  .reader-body {
+    padding: var(--space-7) var(--space-6);
+    color: var(--velvet-ivory);
+    font-family: var(--font-display);
+    font-size: 21px;
+    line-height: 1.65;
+  }
+  .reader-body p + p { margin-top: var(--space-5); }
+  .reader-body em { color: var(--velvet-gold); font-style: italic; }
+  .reader-body .first-letter::first-letter {
+    font-size: 4em;
+    line-height: 0.85;
+    float: left;
+    margin: 8px 8px 0 0;
+    font-weight: 500;
+    color: var(--velvet-gold);
+  }
+
+  .reader-progress {
+    padding: var(--space-3) var(--space-5);
+    border-top: 1px solid var(--velvet-rule);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .progress-bar {
+    flex: 1;
+    height: 1px;
+    background: var(--velvet-rule);
+    position: relative;
+  }
+  .progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 38%;
+    background: var(--velvet-gold);
+  }
+  .progress-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--velvet-ivory-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* Choice buttons (interactive) */
+  .choices {
+    margin-top: var(--space-6);
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: linear-gradient(180deg, transparent, rgba(201, 169, 97, 0.05));
+    border-top: 1px solid var(--velvet-rule);
+  }
+  .choice-prompt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--velvet-gold);
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    text-align: center;
+  }
+  .choice {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--velvet-rule);
+    color: var(--velvet-ivory);
+    padding: var(--space-4) var(--space-5);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+    position: relative;
+  }
+  .choice::before {
+    content: "›";
+    position: absolute;
+    left: 14px;
+    opacity: 0;
+    color: var(--velvet-gold);
+    transition: all 0.3s;
+  }
+  .choice:hover {
+    background: var(--velvet-night-soft);
+    border-color: var(--velvet-gold);
+    padding-left: 40px;
+  }
+  .choice:hover::before { opacity: 1; }
+
+  /* Character portrait */
+  .portrait-card {
+    background: var(--velvet-night-deep);
+    border: 1px solid var(--velvet-rule);
+    padding: var(--space-6);
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+    align-items: start;
+    margin-top: var(--space-5);
+    position: relative;
+    overflow: hidden;
+  }
+  .portrait-card::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 30px; height: 30px;
+    border-top: 1px solid var(--velvet-gold);
+    border-left: 1px solid var(--velvet-gold);
+  }
+  .portrait-card::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 30px; height: 30px;
+    border-bottom: 1px solid var(--velvet-gold);
+    border-right: 1px solid var(--velvet-gold);
+  }
+  .portrait {
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--velvet-oxblood-deep), var(--velvet-night));
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--velvet-rule);
+  }
+  .portrait svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .portrait-meta .name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-style: italic;
+    color: var(--velvet-ivory);
+    margin-bottom: 2px;
+  }
+  .portrait-meta .role {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--velvet-gold);
+    margin-bottom: var(--space-4);
+  }
+  .portrait-meta .bio {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--velvet-ivory-soft);
+    font-style: italic;
+  }
+  .portrait-attrs {
+    margin-top: var(--space-4);
+    display: grid;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--velvet-ivory-soft);
+  }
+  .portrait-attrs span { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--velvet-rule); }
+  .portrait-attrs span b { font-weight: 400; color: var(--velvet-ivory-faint); }
+  @media (max-width: 640px) {
+    .portrait-card { grid-template-columns: 1fr; }
+    .portrait { max-width: 200px; }
+  }
+
+  /* Velvet pull quote */
+  .velvet-zone .pullquote {
+    border-color: var(--velvet-gold);
+    color: var(--velvet-ivory);
+  }
+  .velvet-zone .pullquote-attr { color: var(--velvet-ivory-faint); }
+
+  /* Velvet swatches */
+  .velvet-zone .swatch {
+    background: var(--velvet-night-soft);
+    border-color: var(--velvet-rule);
+  }
+  .velvet-zone .swatch-meta { border-color: var(--velvet-rule); }
+  .velvet-zone .swatch-name { color: var(--velvet-ivory); }
+  .velvet-zone .swatch-hex { color: var(--velvet-ivory-faint); }
+  .velvet-zone .swatch-use { color: var(--velvet-ivory-soft); }
+
+  /* Motion notes */
+  .motion-list {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .motion-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--velvet-rule);
+  }
+  .motion-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--velvet-ivory);
+  }
+  .motion-desc {
+    color: var(--velvet-ivory-soft);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .motion-desc code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--velvet-gold);
+    background: var(--velvet-night-deep);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  @media (max-width: 640px) {
+    .motion-row { grid-template-columns: 1fr; gap: var(--space-2); }
+  }
+
+  /* Voice examples */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+  .voice-card {
+    padding: var(--space-5);
+    border: 1px solid var(--velvet-rule);
+    background: var(--velvet-night-soft);
+  }
+  .voice-card h4 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--velvet-gold);
+    margin-bottom: var(--space-3);
+    font-weight: 500;
+  }
+  .voice-good, .voice-bad {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    padding: var(--space-3) 0;
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  .voice-good { color: var(--velvet-ivory); }
+  .voice-bad { color: var(--velvet-ivory-faint); text-decoration: line-through; opacity: 0.6; }
+  .voice-mark {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--velvet-gold);
+    font-style: normal;
+    flex-shrink: 0;
+    width: 20px;
+  }
+  .voice-bad .voice-mark { color: var(--velvet-oxblood); }
+  @media (max-width: 640px) {
+    .voice-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Per-story variants */
+  .variants {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .variant {
+    padding: var(--space-5);
+    border: 1px solid var(--velvet-rule);
+    background: var(--velvet-night-soft);
+    border-radius: 2px;
+  }
+  .variant-swatches {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .variant-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .variant-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--velvet-ivory);
+    margin-bottom: 4px;
+  }
+  .variant-desc {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--velvet-ivory-soft);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+
+  /* Return button area */
+  .return-section {
+    padding: var(--space-9) var(--space-5);
+    text-align: center;
+    border-top: 1px solid var(--velvet-rule);
+  }
+  .return-btn {
+    background: transparent;
+    color: var(--velvet-gold);
+    border: 1px solid var(--velvet-gold);
+    padding: 18px 40px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .return-btn:hover {
+    background: var(--velvet-gold);
+    color: var(--velvet-night);
+  }
+
+  /* Footer */
+  footer {
+    padding: var(--space-7) var(--space-5);
+    text-align: center;
+    background: var(--velvet-night-deep);
+    color: var(--velvet-ivory-faint);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    border-top: 1px solid var(--velvet-rule);
+  }
+  footer .ornament { color: var(--velvet-gold); margin-bottom: var(--space-3); font-family: var(--font-display); font-size: 24px; letter-spacing: 0.4em; opacity: 0.7; }
+
+  /* Mobile tweaks */
+  @media (max-width: 640px) {
+    section, header { padding: var(--space-7) var(--space-4); }
+    .hero { padding-top: var(--space-7); }
+    .hero-meta { flex-direction: column; gap: var(--space-2); }
+    .reader-body { padding: var(--space-5) var(--space-4); font-size: 18px; }
+    .scale-row { grid-template-columns: 80px 1fr; gap: var(--space-3); }
+  }
+</style>
+</head>
+<body class="world-atelier">
+
+<!-- Grain overlay -->
+<div class="grain-layer" aria-hidden="true"></div>
+
+<!-- Curtain (theatre transition) -->
+<div class="curtain" id="curtain" aria-hidden="true">
+  <div class="curtain-panel left"></div>
+  <div class="curtain-panel right"></div>
+</div>
+
+<!-- ────────────────  TOP BAR  ──────────────── -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <div class="brandmark">Atelier <em>×</em> Velvet</div>
+    <div class="topbar-meta">DESIGN MANIFESTO · v.01</div>
+  </div>
+</nav>
+
+<!-- ────────────────  HERO  ──────────────── -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-meta">
+      <span>Tài liệu nội bộ</span>
+      <span>Hai thế giới · Một tác giả</span>
+      <span>Tháng 5, 2026</span>
+    </div>
+    <span class="eyebrow">Bản tuyên ngôn thiết kế</span>
+    <h1 class="hero-title">
+      Mỗi câu chuyện<br>
+      cần <em>một cánh cửa</em>,<br>
+      và một <em>khán phòng</em>.
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="lead">
+      Trang web này được dựng từ hai thế giới song hành. Một tiền sảnh sáng — nơi người đọc gặp tác giả, đi qua thư viện, nhặt lên một cuốn sách. Và một khán phòng tối — nơi câu chuyện thực sự cất tiếng. Tài liệu này là bản hợp đồng giữa hai thế giới ấy.
+    </p>
+  </div>
+</header>
+
+<!-- ────────────────  01 · DUALITY  ──────────────── -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">01 / 08</div>
+      <div>
+        <span class="eyebrow">Khái niệm</span>
+        <h2 class="section-title">Hai thế giới, <em>một nhịp thở</em></h2>
+      </div>
+    </div>
+    <p>Trang web không phải một bề mặt phẳng. Nó là một hành trình hai chặng — và sự chuyển đổi giữa chúng chính là khoảnh khắc quyết định người đọc có ở lại hay không. Chúng ta thiết kế hai thế giới riêng biệt, nhưng có chung một ngôn ngữ.</p>
+
+    <div class="duality">
+      <div class="world-card atelier">
+        <div>
+          <span class="label">Thế giới Atelier</span>
+          <h3>Tiền sảnh <em>ấm</em></h3>
+          <p class="desc">Trắng ngà, mực đen, một vệt cam hồng. Đây là nơi người đọc bước vào lần đầu — gặp tác giả, lướt thư viện, đọc tản văn, để lại bình luận. Không khí của một xưởng nghệ thuật vào buổi sáng.</p>
+        </div>
+        <div class="uses">
+          Trang chủ · About<br>
+          Thư viện · Blog<br>
+          Writer Hub · Liên hệ
+        </div>
+      </div>
+      <div class="world-card velvet">
+        <div>
+          <span class="label">Thế giới Velvet</span>
+          <h3>Khán phòng <em>tối</em></h3>
+          <p class="desc">Đêm khuya, vàng cổ, huyết dụ. Khi người đọc nhấp vào một tác phẩm, đèn dịu xuống. Đây là không gian của câu chuyện thực sự — của nhân vật, của những trang đọc, của tương tác.</p>
+        </div>
+        <div class="uses">
+          Trang đọc truyện<br>
+          Velvet Archive (nhân vật)<br>
+          Story landing & spin-off
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────  02 · COLOR  ──────────────── -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">02 / 08</div>
+      <div>
+        <span class="eyebrow">Bảng màu</span>
+        <h2 class="section-title">Sắc — <em>giấy</em> và <em>nhung</em></h2>
+      </div>
+    </div>
+    <p>Hai bảng màu được thiết kế song song. Atelier mở rộng, sáng; Velvet thu hẹp, sâu. Cả hai cùng dùng một logic phân lớp: nền · nền ấm · mực · mực dịu · điểm nhấn chính · điểm nhấn phụ.</p>
+
+    <span class="eyebrow" style="margin-top: var(--space-6); display:inline-flex;">Atelier · Sáng</span>
+    <div class="palette">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FAF7F2"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Paper</div>
+          <div class="swatch-hex">#FAF7F2</div>
+          <div class="swatch-use">Nền chính, không gian thở</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F2EDE2"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Paper Warm</div>
+          <div class="swatch-hex">#F2EDE2</div>
+          <div class="swatch-use">Card, panel, vùng nhấn nhẹ</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1A1614"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Ink</div>
+          <div class="swatch-hex">#1A1614</div>
+          <div class="swatch-use">Tiêu đề, văn bản chính</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#5A4F46"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Ink Soft</div>
+          <div class="swatch-hex">#5A4F46</div>
+          <div class="swatch-use">Chú thích, metadata</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#D85F3D"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Persimmon</div>
+          <div class="swatch-hex">#D85F3D</div>
+          <div class="swatch-use">Điểm nhấn chính, hover, CTA</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#6B2737"></div>
+        <div class="swatch-meta">
+          <div class="swatch-name">Wine</div>
+          <div class="swatch-hex">#6B2737</div>
+          <div class="swatch-use">Điểm nhấn phụ, gạch chân</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Velvet palette block (dark insert) -->
+  <div class="palette-velvet-block velvet-zone">
+    <div class="container">
+      <span class="eyebrow">Velvet · Tối</span>
+      <h3 style="margin-top: var(--space-2); font-style: italic;">Vào khán phòng</h3>
+      <div class="palette" style="margin-top: var(--space-5);">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#0E0B16"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Night</div>
+            <div class="swatch-hex">#0E0B16</div>
+            <div class="swatch-use">Nền chính</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1A1622"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Night Soft</div>
+            <div class="swatch-hex">#1A1622</div>
+            <div class="swatch-use">Card, panel</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#EDE6D6"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Ivory</div>
+            <div class="swatch-hex">#EDE6D6</div>
+            <div class="swatch-use">Văn bản chính</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#9B9282"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Ivory Soft</div>
+            <div class="swatch-hex">#9B9282</div>
+            <div class="swatch-use">Chú thích, metadata</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C9A961"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Gold</div>
+            <div class="swatch-hex">#C9A961</div>
+            <div class="swatch-use">Điểm nhấn, drop-cap, chú giải</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#6E1F22"></div>
+          <div class="swatch-meta">
+            <div class="swatch-name">Oxblood</div>
+            <div class="swatch-hex">#6E1F22</div>
+            <div class="swatch-use">Điểm nhấn phụ, nguy hiểm, kịch tính</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────  03 · TYPE  ──────────────── -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">03 / 08</div>
+      <div>
+        <span class="eyebrow">Typography</span>
+        <h2 class="section-title">Tiếng nói trên <em>giấy</em></h2>
+      </div>
+    </div>
+    <p>Ba mặt chữ làm việc cùng nhau: <em>Cormorant Garamond</em> cho tiêu đề và trích dẫn (cổ điển, có hồn), <em>Lora</em> cho thân văn (hỗ trợ dấu tiếng Việt xuất sắc, ấm), và <em>JetBrains Mono</em> cho metadata, label, mã số.</p>
+
+    <div class="type-specimen">
+      <div class="type-label">
+        <span>Display · Cormorant Garamond</span>
+        <span>Tiêu đề, trích dẫn, khoảnh khắc</span>
+      </div>
+      <div class="type-display">Trên gác mái <em>của một ngày cũ</em></div>
+      <div class="type-body">Mặt chữ này có nét nghiêng đẹp đặc biệt. Dùng cho headline, blockquote, và những câu cần ngân nga. Tránh dùng cho khối văn dài.</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="type-label">
+        <span>Body · Lora</span>
+        <span>Thân văn, đoạn dài, tiếng Việt</span>
+      </div>
+      <div class="type-body" style="font-size: 19px; color: var(--atelier-ink);">
+        Cô đứng bên ô cửa sổ tầng ba, nhìn xuống phố Phan Đình Phùng vào một buổi chiều tháng Mười. Lá vàng đã rụng kín vỉa hè. Ai đó đang đốt một đống lá khô — khói mỏng bay lên, mang theo mùi của tất cả những mùa thu cô từng đi qua.
+      </div>
+      <div class="type-mono" style="margin-top: var(--space-4); font-size: 12px;">
+        Hỗ trợ: â ê ô ơ ư đ · ạ ả ã á à · ặ ẳ ẵ ắ ằ · ệ ể ễ ế ề
+      </div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="type-label">
+        <span>Mono · JetBrains Mono</span>
+        <span>Metadata, label, mã số, micro-copy</span>
+      </div>
+      <div class="type-mono" style="font-size: 18px; color: var(--atelier-ink);">
+        CH. 03 · 4,820 TỪ · ƯỚC LƯỢNG 22 PHÚT ĐỌC<br>
+        TAGS: ĐÔNG · HÀ NỘI · NGƯỜI MẤT TÍCH
+      </div>
+    </div>
+
+    <h4 style="margin-top: var(--space-7);">Type scale</h4>
+    <div class="type-scale">
+      <div class="scale-row">
+        <div class="scale-meta">DISPLAY · 84px</div>
+        <div class="scale-sample" style="font-size: 64px; line-height: 1;">Tiêu đề lớn</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-meta">H1 · 56px</div>
+        <div class="scale-sample" style="font-size: 44px; line-height: 1.1;">Chương mở đầu</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-meta">H2 · 36px</div>
+        <div class="scale-sample" style="font-size: 32px;">Phần một</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-meta">H3 · 24px</div>
+        <div class="scale-sample" style="font-size: 22px; font-weight: 500;">Tiểu mục</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-meta">BODY · 17px</div>
+        <div class="scale-sample" style="font-family: var(--font-body); font-size: 17px;">Thân văn cho đoạn dài, dễ đọc lâu.</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-meta">CAPTION · 11px</div>
+        <div class="scale-sample" style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;">CHÚ THÍCH · METADATA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────  04 · ATELIER COMPONENTS  ──────────────── -->
+<section style="background: linear-gradient(180deg, transparent, var(--atelier-paper-warm) 100%);">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">04 / 08</div>
+      <div>
+        <span class="eyebrow">Atelier · Components</span>
+        <h2 class="section-title">Bộ phụ kiện <em>sáng</em></h2>
+      </div>
+    </div>
+    <p>Các thành phần dùng trong phần public sáng. Tinh thần: tinh giản, có ranh giới rõ, ưu tiên typography hơn màu sắc.</p>
+
+    <h4 style="margin-top: var(--space-7);">Nút bấm</h4>
+    <div class="btn-row">
+      <button class="btn btn-primary">Đọc tác phẩm mới nhất</button>
+      <button class="btn btn-secondary">Toàn bộ thư viện</button>
+      <button class="btn btn-ghost btn-arrow">Về tác giả</button>
+    </div>
+
+    <h4 style="margin-top: var(--space-7);">Trường nhập</h4>
+    <div class="input-demo">
+      <label class="input-label">Tìm trong thư viện</label>
+      <input class="input" type="text" placeholder="Tên truyện, nhân vật, hoặc một câu...">
+    </div>
+
+    <h4 style="margin-top: var(--space-7);">Bộ lọc</h4>
+    <div class="tag-row">
+      <span class="tag active">Tất cả</span>
+      <span class="tag">Tiểu thuyết</span>
+      <span class="tag">Tản văn</span>
+      <span class="tag">Truyện ngắn</span>
+      <span class="tag">Interactive</span>
+      <span class="tag">Đang viết</span>
+    </div>
+
+    <h4 style="margin-top: var(--space-7);">Thẻ tác phẩm</h4>
+    <div class="card-grid">
+      <article class="story-card">
+        <span class="card-tag">Tiểu thuyết · 12 chương</span>
+        <h3>Trên gác mái <em>của một ngày cũ</em></h3>
+        <p class="excerpt">Một ngôi nhà cũ ở Hà Nội. Một chiếc rương khoá kín đã ba mươi năm. Và một người con gái trở về sau khi mẹ mất, để dọn dẹp những thứ không ai dám động đến.</p>
+        <div class="card-meta">
+          <span>Đang đăng</span>
+          <span>Ch.07/12</span>
+        </div>
+      </article>
+      <article class="story-card">
+        <span class="card-tag">Interactive · 4 nhánh</span>
+        <h3>Đêm <em>không có thật</em></h3>
+        <p class="excerpt">Bạn nhận một tin nhắn lúc 3 giờ sáng từ một số máy đã chết tám năm trước. Câu chuyện này có bốn cách kết thúc — và bạn sẽ chọn một.</p>
+        <div class="card-meta">
+          <span>Hoàn tất</span>
+          <span>~45ph đọc</span>
+        </div>
+      </article>
+      <article class="story-card">
+        <span class="card-tag">Tản văn · 8 bài</span>
+        <h3>Những thành phố <em>tôi đã yêu</em></h3>
+        <p class="excerpt">Tám lá thư gửi cho tám thành phố. Không có cốt truyện. Chỉ là một người đi qua, dừng lại, ghi chép, và đi tiếp.</p>
+        <div class="card-meta">
+          <span>Đang đăng</span>
+          <span>Bài 5/8</span>
+        </div>
+      </article>
+    </div>
+
+    <h4 style="margin-top: var(--space-7);">Trích dẫn</h4>
+    <blockquote class="pullquote">
+      "Có những căn phòng không bao giờ thuộc về ai cả. Chúng chỉ cho mượn — từ người này sang người khác, từ thế hệ này sang thế hệ khác."
+      <div class="pullquote-attr">— Trích "Trên gác mái", Ch. 03</div>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ════════════════  THE TRANSITION  ════════════════ -->
+<section class="transition-section">
+  <span class="eyebrow" style="position: relative;">Khoảnh khắc</span>
+  <h2>Khi <em>đèn dịu xuống</em></h2>
+  <p class="lead">Đây là cánh cửa giữa hai thế giới. Hãy thử bấm vào và xem điều gì xảy ra.</p>
+  <button class="enter-btn" id="enterBtn">
+    Bước vào truyện
+    <span class="arrow">→</span>
+  </button>
+</section>
+
+<!-- ════════════════ VELVET ZONE STARTS ════════════════ -->
+<div class="velvet-zone" id="velvetStart">
+
+  <!-- ────────────────  VELVET INTRO  ──────────────── -->
+  <section class="velvet-intro">
+    <div class="container">
+      <div class="ornament">· · ·</div>
+      <span class="eyebrow">Velvet Archive</span>
+      <h1 style="margin-top: var(--space-4);">Bạn đã <em>bước vào</em></h1>
+      <p class="lead">Cùng một website. Cùng một tác giả. Nhưng không khí đã khác. Từ đây trở xuống là khán phòng — nơi câu chuyện được cất lên, nhân vật xuất hiện, và người đọc thực sự ngồi xuống.</p>
+    </div>
+  </section>
+
+  <!-- ────────────────  05 · VELVET COMPONENTS  ──────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-num">05 / 08</div>
+        <div>
+          <span class="eyebrow">Velvet · Components</span>
+          <h2 class="section-title">Bộ phụ kiện <em>tối</em></h2>
+        </div>
+      </div>
+
+      <h4 style="margin-top: var(--space-5);">Nút bấm</h4>
+      <div class="btn-row">
+        <button class="btn btn-velvet-primary">Bắt đầu chương 1</button>
+        <button class="btn btn-velvet-secondary">Tiếp tục đọc</button>
+        <button class="btn btn-velvet-ghost btn-arrow">Xem nhân vật</button>
+      </div>
+
+      <h4 style="margin-top: var(--space-7);">Khung đọc (Reader)</h4>
+      <div class="reader-demo">
+        <div class="reader-chrome">
+          <div class="chrome-left">
+            <span class="dot"></span>
+            <span>CHƯƠNG 03 · TRÊN GÁC MÁI</span>
+          </div>
+          <div class="chrome-right">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6m11-11h-6M7 12H1"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </div>
+        </div>
+        <div class="reader-body">
+          <p class="first-letter">Chiếc rương đã ngồi ở góc gác xếp suốt ba mươi năm — không ai động đến, không ai nhắc đến, như thể nó được sinh ra để chờ một ngày như hôm nay. <em>Ngày Hà về.</em></p>
+          <p>Cô ngồi xuống sàn gỗ, đầu gối kê lên hai tay, nhìn nó. Bụi đã đóng dày như một lớp da thứ hai. Trên nắp, có ai đó từng dán một mảnh giấy — chữ viết đã phai gần hết, chỉ còn đọc được hai chữ: <em>"đừng mở"</em>.</p>
+        </div>
+        <div class="reader-progress">
+          <span class="progress-meta">38%</span>
+          <div class="progress-bar"></div>
+          <span class="progress-meta">14 / 22 PHÚT</span>
+        </div>
+      </div>
+
+      <h4 style="margin-top: var(--space-7);">Lựa chọn tương tác (Interactive choices)</h4>
+      <div class="reader-demo">
+        <div class="choices">
+          <div class="choice-prompt">— Hà phải quyết định —</div>
+          <button class="choice">Mở chiếc rương ra, dù đã được dặn đừng.</button>
+          <button class="choice">Để nguyên đó, đóng cửa gác xếp lại, đi xuống.</button>
+          <button class="choice">Gọi điện cho cô Tâm — người duy nhất còn biết về nó.</button>
+        </div>
+      </div>
+
+      <h4 style="margin-top: var(--space-7);">Thẻ nhân vật (Velvet Archive)</h4>
+      <div class="portrait-card">
+        <div class="portrait">
+          <svg viewBox="0 0 120 160" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="pgrad" cx="50%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#C9A961" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#0E0B16" stop-opacity="1"/>
+              </radialGradient>
+            </defs>
+            <rect width="120" height="160" fill="url(#pgrad)"/>
+            <!-- Stylised portrait silhouette -->
+            <ellipse cx="60" cy="55" rx="22" ry="26" fill="#1A1622" stroke="#C9A961" stroke-width="0.5" opacity="0.8"/>
+            <path d="M30 160 Q30 100 60 95 Q90 100 90 160 Z" fill="#1A1622" stroke="#C9A961" stroke-width="0.5" opacity="0.8"/>
+            <line x1="20" y1="140" x2="100" y2="140" stroke="#C9A961" stroke-width="0.3" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="portrait-meta">
+          <div class="name">Lê Vân Hà</div>
+          <div class="role">NHÂN VẬT CHÍNH · TRÊN GÁC MÁI</div>
+          <p class="bio">"Cô ấy không phải kiểu người thích trở về. Nhưng có những căn nhà — khi mẹ bạn mất — không ai khác đủ tư cách để dọn dẹp ngoài bạn."</p>
+          <div class="portrait-attrs">
+            <span><b>Tuổi</b> 34</span>
+            <span><b>Quê</b> Hà Nội</span>
+            <span><b>Nghề</b> Biên tập viên tự do</span>
+            <span><b>Xuất hiện</b> Ch. 01 → 12</span>
+          </div>
+        </div>
+      </div>
+
+      <blockquote class="pullquote">
+        "Tôi không sợ những gì trong rương. Tôi sợ chính tay tôi sẽ mở nó."
+        <div class="pullquote-attr">— Hà, Ch. 03</div>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ────────────────  06 · MOTION  ──────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-num">06 / 08</div>
+        <div>
+          <span class="eyebrow">Chuyển động</span>
+          <h2 class="section-title">Nhịp & <em>hơi thở</em></h2>
+        </div>
+      </div>
+      <p style="color: var(--velvet-ivory-soft);">Chuyển động không phải để gây chú ý. Nó để dẫn dắt cảm xúc. Toàn bộ site dùng một bộ easing duy nhất: <code style="font-family: var(--font-mono); color: var(--velvet-gold); font-size: 13px;">cubic-bezier(0.2, 0.7, 0.3, 1)</code> — chậm vào, dứt khoát thoát ra, như một hơi thở dài.</p>
+
+      <div class="motion-list">
+        <div class="motion-row">
+          <div class="motion-name">Curtain transition</div>
+          <div class="motion-desc">Khi vào/ra truyện, hai cánh nhung đóng từ hai bên, dừng <code>200ms</code>, mở ra. Tổng <code>2s</code>. Khoảnh khắc kịch tính nhất của site.</div>
+        </div>
+        <div class="motion-row">
+          <div class="motion-name">Hover · Card</div>
+          <div class="motion-desc">Card nâng lên <code>3px</code>, viền chuyển sang mực đậm, bóng đổ mềm trong <code>300ms</code>. Cảm giác như sách được hơi nâng lên khỏi kệ.</div>
+        </div>
+        <div class="motion-row">
+          <div class="motion-name">Hover · Choice</div>
+          <div class="motion-desc">Padding-left tăng dần, dấu <code>›</code> vàng lộ ra. Cảm giác như con đường đang mở ra trước khi bạn chọn.</div>
+        </div>
+        <div class="motion-row">
+          <div class="motion-name">Scroll reveal</div>
+          <div class="motion-desc">Đoạn văn xuất hiện theo nhịp <code>opacity 0→1, translateY 12px→0</code>, stagger <code>80ms</code>. Như mở từng trang sách.</div>
+        </div>
+        <div class="motion-row">
+          <div class="motion-name">Reader auto-dim</div>
+          <div class="motion-desc">Sau <code>4s</code> không thao tác trên trang đọc, top-chrome mờ đi <code>opacity 0.3</code>. Quay lại đầy đủ khi di chuột.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────  07 · VOICE  ──────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-num">07 / 08</div>
+        <div>
+          <span class="eyebrow">Tiếng nói</span>
+          <h2 class="section-title">Microcopy <em>có hồn</em></h2>
+        </div>
+      </div>
+      <p style="color: var(--velvet-ivory-soft);">Mọi câu UI — từ thông báo lỗi đến trạng thái trống — phải nghe như do tác giả viết, không phải do hệ thống tự động sinh ra. Đây là điều khiến site khác biệt với 95% web hiện hành.</p>
+
+      <div class="voice-grid">
+        <div class="voice-card">
+          <h4>Trạng thái trống</h4>
+          <div class="voice-good"><span class="voice-mark">YES</span> Chưa có gì ở đây. Một trang trắng đang chờ câu chuyện đầu tiên.</div>
+          <div class="voice-bad"><span class="voice-mark">NO</span> No data available.</div>
+        </div>
+        <div class="voice-card">
+          <h4>Loading</h4>
+          <div class="voice-good"><span class="voice-mark">YES</span> Đang lật trang...</div>
+          <div class="voice-bad"><span class="voice-mark">NO</span> Loading, please wait.</div>
+        </div>
+        <div class="voice-card">
+          <h4>404</h4>
+          <div class="voice-good"><span class="voice-mark">YES</span> Trang này hình như đã bị xé khỏi sách.</div>
+          <div class="voice-bad"><span class="voice-mark">NO</span> Error 404: Page not found.</div>
+        </div>
+        <div class="voice-card">
+          <h4>Đăng bài thành công</h4>
+          <div class="voice-good"><span class="voice-mark">YES</span> Đã xuất bản. Một chương mới vừa được mở ra.</div>
+          <div class="voice-bad"><span class="voice-mark">NO</span> Successfully published.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────  08 · SCALE / VARIANTS  ──────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-num">08 / 08</div>
+        <div>
+          <span class="eyebrow">Mở rộng</span>
+          <h2 class="section-title">Một <em>tủ áo</em> cho nhiều truyện</h2>
+        </div>
+      </div>
+      <p style="color: var(--velvet-ivory-soft);">Mỗi tác phẩm có thể chọn một <em>variant</em> riêng — đổi accent color và mood, nhưng vẫn nằm trong hệ Velvet. Tinh thần như bìa sách: cùng nhà xuất bản, mỗi cuốn một bộ mặt. Trong Writer Hub, bạn sẽ chọn variant này khi tạo tác phẩm mới.</p>
+
+      <div class="variants">
+        <div class="variant">
+          <div class="variant-swatches">
+            <div class="variant-dot" style="background:#0E0B16"></div>
+            <div class="variant-dot" style="background:#C9A961"></div>
+            <div class="variant-dot" style="background:#6E1F22"></div>
+          </div>
+          <div class="variant-name">Velvet (mặc định)</div>
+          <div class="variant-desc">Vàng cổ × huyết dụ. Gothic, lãng mạn, bí ẩn.</div>
+        </div>
+        <div class="variant">
+          <div class="variant-swatches">
+            <div class="variant-dot" style="background:#0A1218"></div>
+            <div class="variant-dot" style="background:#7AAEC4"></div>
+            <div class="variant-dot" style="background:#2D4A5C"></div>
+          </div>
+          <div class="variant-name">Thuỷ ngân</div>
+          <div class="variant-desc">Xanh đêm × bạc lạnh. Trinh thám, suy tư.</div>
+        </div>
+        <div class="variant">
+          <div class="variant-swatches">
+            <div class="variant-dot" style="background:#15110D"></div>
+            <div class="variant-dot" style="background:#D38C4E"></div>
+            <div class="variant-dot" style="background:#5C3A1F"></div>
+          </div>
+          <div class="variant-name">Hổ phách</div>
+          <div class="variant-desc">Nâu × cam đất. Hoài niệm, đời thường.</div>
+        </div>
+        <div class="variant">
+          <div class="variant-swatches">
+            <div class="variant-dot" style="background:#0D1410"></div>
+            <div class="variant-dot" style="background:#8DAE7A"></div>
+            <div class="variant-dot" style="background:#3D5642"></div>
+          </div>
+          <div class="variant-name">Rêu xanh</div>
+          <div class="variant-desc">Xanh rừng × ngọc lục. Kỳ ảo, thiên nhiên.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────  RETURN  ──────────────── -->
+  <section class="return-section">
+    <p class="lead" style="margin-bottom: var(--space-5);">Bạn đã xem hết khán phòng.</p>
+    <button class="return-btn" id="returnBtn">← Trở về Atelier</button>
+  </section>
+
+  <footer>
+    <div class="ornament">· ⁂ ·</div>
+    <div>DESIGN MANIFESTO · v.01 · 2026</div>
+    <div style="margin-top: var(--space-2); opacity: 0.5;">Tài liệu nội bộ · Sẽ tiến hoá theo từng tác phẩm</div>
+  </footer>
+
+</div>
+
+<script>
+  const enterBtn = document.getElementById('enterBtn');
+  const returnBtn = document.getElementById('returnBtn');
+  const curtain = document.getElementById('curtain');
+  const velvetStart = document.getElementById('velvetStart');
+
+  function playCurtain(targetEl) {
+    // 1. Curtains close from both sides (900ms)
+    curtain.classList.remove('opening');
+    curtain.classList.add('closing');
+
+    // 2. While covered, scroll to target (smooth instant under cover)
+    setTimeout(() => {
+      const top = targetEl.getBoundingClientRect().top + window.pageYOffset - 20;
+      window.scrollTo({ top, behavior: 'instant' in window.scrollTo ? 'instant' : 'auto' });
+    }, 950);
+
+    // 3. Brief pause showing closed curtain (200ms)
+    setTimeout(() => {
+      curtain.classList.remove('closing');
+      curtain.classList.add('opening');
+    }, 1150);
+
+    // 4. After curtains open, reset
+    setTimeout(() => {
+      curtain.classList.remove('opening');
+    }, 2100);
+  }
+
+  enterBtn.addEventListener('click', () => {
+    playCurtain(velvetStart);
+  });
+
+  returnBtn.addEventListener('click', () => {
+    playCurtain(document.body);
+  });
+
+  // Subtle parallax on hero accent
+  const hero = document.querySelector('.hero');
+  if (hero && window.matchMedia('(hover: hover)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 12;
+      const y = (e.clientY / window.innerHeight - 0.5) * 12;
+      hero.style.setProperty('--mx', `${x}px`);
+      hero.style.setProperty('--my', `${y}px`);
+    });
+  }
+</script>
+<script src="wm-i18n.js?v=6"></script>
+</body>
+</html>

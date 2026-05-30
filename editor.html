@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Editor — The Afternoon Clock · Kody Lâm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:        #F7F4EE;
+    --paper-warm:   #EDE7DA;
+    --paper-deep:   #DFD7C6;
+    --paper-edge:   #C9C0AC;
+    --ink:          #14110E;
+    --ink-soft:     #5A4F46;
+    --ink-faint:    #978B7E;
+    --ink-ghost:    #C4BAA8;
+    --persimmon:    #C25535;
+    --persimmon-soft: #E8B8A4;
+    --rain-blue:    #4A6B7E;
+    --jade:         #6A8C7B;
+    --wine:         #5C2230;
+    --gold:         #B89047;
+    --rule:         #D9D2C5;
+    --rule-soft:    #E5DFD0;
+
+    --status-draft:     #978B7E;
+    --status-published: #6A8C7B;
+    --status-scheduled: #4A6B7E;
+
+    --font-display: "Cormorant Garamond", "Times New Roman", serif;
+    --font-body:    "Lora", Georgia, serif;
+    --font-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+    --topbar-h:  52px;
+    --sidebar-w: 320px;
+    --footer-h:  36px;
+
+    --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+  ::selection { background: var(--persimmon-soft); color: var(--ink); }
+
+  /* ═══════════════════ TOP BAR ═══════════════════ */
+  .editor-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--topbar-h);
+    background: rgba(247, 244, 238, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .back-btn {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    transition: all 0.2s;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: var(--paper-warm); border-color: var(--rule); color: var(--ink); }
+  .back-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  .bar-piece {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  .bar-status-dot {
+    width: 6px; height: 6px;
+    background: var(--status-draft);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .title-input {
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    outline: none;
+    width: 100%;
+    padding: 4px 0;
+    border-bottom: 1px dashed transparent;
+    transition: border 0.2s;
+  }
+  .title-input:hover { border-bottom-color: var(--ink-ghost); }
+  .title-input:focus { border-bottom-color: var(--persimmon); }
+  .title-input::placeholder { color: var(--ink-faint); }
+
+  .autosave {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .autosave .saving-dot {
+    width: 6px; height: 6px; background: var(--jade);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+  .autosave.saving .saving-dot { background: var(--persimmon); animation: pulse 1s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .bar-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 7px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s var(--ease);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .bar-btn:hover { background: var(--paper-warm); border-color: var(--ink-faint); color: var(--ink); }
+  .bar-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .bar-btn-primary {
+    background: var(--ink); color: var(--paper);
+    border-color: var(--ink);
+  }
+  .bar-btn-primary:hover { background: var(--persimmon); border-color: var(--persimmon); color: var(--paper); }
+
+  /* Mobile bar collapses */
+  @media (max-width: 720px) {
+    .editor-bar { padding: 0 10px; gap: 8px; }
+    .bar-btn span { display: none; }
+    .bar-btn { padding: 7px 10px; }
+    .autosave { display: none; }
+    .title-input { font-size: 16px; }
+  }
+
+  /* ═══════════════════ LAYOUT ═══════════════════ */
+  .editor-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    height: 100vh;
+    padding-top: var(--topbar-h);
+    padding-bottom: var(--footer-h);
+  }
+
+  /* ═══════════════════ SIDEBAR (settings) ═══════════════════ */
+  .settings-pane {
+    background: var(--paper-warm);
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+    height: calc(100vh - var(--topbar-h) - var(--footer-h));
+  }
+  .settings-section {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 22px;
+  }
+  .settings-section:last-child { border-bottom: none; }
+  .sect-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sect-label::before {
+    content: ""; width: 16px; height: 1px;
+    background: var(--ink-faint);
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+  .field:last-child { margin-bottom: 0; }
+  .field-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .field-label .helper {
+    color: var(--ink-faint);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="date"],
+  .field input[type="datetime-local"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--ink); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--ink-faint); font-style: italic; }
+  .field textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+  .field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235A4F46' stroke-width='1.5'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  /* Segmented control */
+  .segments {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .segments.four { grid-template-columns: repeat(4, 1fr); }
+  .segments.three { grid-template-columns: repeat(3, 1fr); }
+  .segment {
+    background: transparent;
+    border: none;
+    padding: 8px 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--rule);
+  }
+  .segment:last-child { border-right: none; }
+  .segment:hover { background: var(--paper-warm); color: var(--ink); }
+  .segment.active { background: var(--ink); color: var(--paper); }
+
+  /* Chip selector */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .chip-toggle {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 5px 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.2s;
+  }
+  .chip-toggle:hover { border-color: var(--ink-faint); color: var(--ink); }
+  .chip-toggle.active {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .chip-toggle.add {
+    border-style: dashed;
+    color: var(--ink-faint);
+  }
+  .chip-toggle.add:hover { color: var(--persimmon); border-color: var(--persimmon); }
+
+  /* Cover upload */
+  .cover-upload {
+    aspect-ratio: 16/9;
+    background: var(--paper);
+    border: 1px dashed var(--paper-edge);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    padding: 12px;
+  }
+  .cover-upload:hover {
+    border-color: var(--persimmon);
+    color: var(--persimmon);
+    background: rgba(194, 85, 53, 0.04);
+  }
+  .cover-upload svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .cover-upload small {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    font-style: normal;
+  }
+
+  /* Read time auto */
+  .auto-meta {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .auto-meta .label {
+    color: var(--ink-faint);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .auto-meta .value em { font-style: italic; font-family: var(--font-display); color: var(--persimmon); font-size: 16px; }
+
+  /* Author byline */
+  .byline-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 2px solid var(--persimmon);
+    padding: 12px 14px;
+    border-radius: 2px;
+  }
+  .byline-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .byline-name.placeholder {
+    color: var(--ink-faint);
+  }
+  .byline-edit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--persimmon);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 4px;
+  }
+  .byline-edit:hover { color: var(--wine); }
+
+  /* Beta readers list */
+  .beta-list {
+    list-style: none;
+    margin-bottom: 10px;
+  }
+  .beta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-size: 12px;
+  }
+  .beta-item:last-child { border-bottom: none; }
+  .beta-avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--rain-blue);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .beta-name { flex: 1; color: var(--ink); }
+  .beta-status {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .beta-status.viewed { color: var(--jade); }
+
+  .add-row {
+    display: flex; gap: 4px;
+  }
+  .add-row input { flex: 1; font-size: 12px; padding: 6px 8px; }
+  .add-row button {
+    background: var(--ink); color: var(--paper);
+    border: none;
+    padding: 0 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .add-row button:hover { background: var(--persimmon); }
+
+  /* Interactive choices */
+  .choices-section { display: none; }
+  .choices-section.show { display: block; }
+  .scene-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 12px 14px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .scene-head {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--persimmon);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between;
+  }
+  .scene-choice {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 6px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    font-family: var(--font-display);
+    font-style: italic;
+    display: flex; align-items: center;
+  }
+  .scene-choice .arrow {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* ═══════════════════ MAIN ═══════════════════ */
+  .editor-main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  /* Toolbar */
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .tool-btn {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .tool-btn:hover {
+    background: var(--paper-warm);
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .tool-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .tool-btn b { font-weight: 700; font-family: var(--font-body); }
+  .tool-btn i { font-style: italic; font-family: var(--font-display); }
+  .tool-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--rule);
+    margin: 0 6px;
+    flex-shrink: 0;
+  }
+  .tool-spacer { flex: 1; }
+  .view-toggle {
+    display: flex; gap: 0;
+    background: var(--paper-warm);
+    border-radius: 2px;
+    padding: 2px;
+  }
+  .view-toggle button {
+    background: transparent;
+    border: none;
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .view-toggle button.active { background: var(--paper); color: var(--ink); box-shadow: 0 1px 4px -1px rgba(0,0,0,0.08); }
+
+  /* Workspace */
+  .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+  .pane {
+    overflow-y: auto;
+    height: 100%;
+    background: var(--paper);
+  }
+  .pane.md-pane {
+    border-right: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .pane.preview-pane {
+    background: var(--paper);
+  }
+
+  /* Markdown textarea */
+  #markdownInput {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.75;
+    padding: 32px 40px;
+    resize: none;
+    outline: none;
+    letter-spacing: 0.005em;
+  }
+
+  /* Preview content */
+  .preview-content {
+    padding: 32px 40px;
+    max-width: 720px;
+    margin: 0 auto;
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+  .preview-content h1 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1.05;
+    font-weight: 400;
+    margin-bottom: 20px;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .preview-content h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .preview-content h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .preview-content p {
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  .preview-content em { font-style: italic; }
+  .preview-content strong { color: var(--persimmon); font-weight: 500; }
+  .preview-content blockquote {
+    border-left: 2px solid var(--persimmon);
+    padding: 8px 0 8px 20px;
+    margin: 28px 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+  .preview-content hr {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 32px 0;
+  }
+  .preview-content code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--paper-warm);
+    color: var(--persimmon);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .preview-content ul, .preview-content ol {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+  .preview-content li {
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 4px;
+  }
+  .preview-content a {
+    color: var(--persimmon);
+    text-decoration: none;
+    border-bottom: 1px solid var(--persimmon);
+  }
+  .preview-content img {
+    max-width: 100%;
+    margin: 16px 0;
+    border-radius: 2px;
+  }
+  .preview-content .first-letter::first-letter {
+    font-family: var(--font-display);
+    font-size: 4.4em;
+    line-height: 0.9;
+    float: left;
+    margin: 6px 8px 0 0;
+    font-weight: 500;
+    color: var(--persimmon);
+    font-style: italic;
+  }
+  .preview-content .placeholder {
+    color: var(--ink-faint);
+    font-style: italic;
+    text-align: center;
+    padding: 80px 0;
+    font-family: var(--font-display);
+    font-size: 19px;
+  }
+
+  /* ═══════════════════ FOOTER ═══════════════════ */
+  .editor-footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: var(--footer-h);
+    background: var(--paper-warm);
+    border-top: 1px solid var(--rule);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+    gap: 16px;
+  }
+  .editor-footer span { display: flex; align-items: center; gap: 6px; }
+  .editor-footer .label { color: var(--ink-faint); }
+  .editor-footer .value { color: var(--ink); font-weight: 500; }
+  .editor-footer .value em { font-style: italic; color: var(--persimmon); font-family: var(--font-display); font-size: 13px; }
+  .editor-footer .sep { width: 1px; height: 12px; background: var(--rule); margin: 0 4px; }
+  .footer-spacer { flex: 1; }
+  .footer-media-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 4px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .footer-media-btn:hover { background: var(--paper); border-color: var(--ink-faint); color: var(--ink); }
+  .footer-media-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  /* ═══════════════════ MEDIA PALETTE ═══════════════════ */
+  .media-palette {
+    position: fixed;
+    top: var(--topbar-h);
+    right: 0;
+    width: 360px;
+    height: calc(100vh - var(--topbar-h) - var(--footer-h));
+    background: var(--paper-warm);
+    border-left: 1px solid var(--rule);
+    z-index: 45;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s var(--ease);
+    box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+  }
+  .media-palette.open { transform: translateX(0); }
+  .media-palette-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .media-palette-head h4 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .close-palette {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 4px;
+  }
+  .close-palette:hover { color: var(--persimmon); }
+  .palette-upload {
+    margin: 16px 20px;
+    padding: 24px 16px;
+    border: 1px dashed var(--paper-edge);
+    background: var(--paper);
+    border-radius: 2px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .palette-upload:hover { border-color: var(--persimmon); background: rgba(194, 85, 53, 0.04); }
+  .palette-upload p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .palette-upload small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .palette-grid {
+    padding: 0 20px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .palette-item {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .palette-item:hover { border-color: var(--ink); transform: translateY(-2px); }
+  .palette-thumb {
+    aspect-ratio: 4/3;
+    background: var(--paper-deep);
+  }
+  .palette-thumb svg { width: 100%; height: 100%; display: block; }
+  .palette-meta {
+    padding: 6px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ═══════════════════ RESPONSIVE ═══════════════════ */
+  /* Tablet: collapsible sidebar */
+  @media (max-width: 1100px) {
+    :root { --sidebar-w: 280px; }
+    #markdownInput, .preview-content { padding: 24px 28px; }
+  }
+
+  @media (max-width: 900px) {
+    .editor-layout {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    .settings-pane {
+      max-height: 0;
+      transition: max-height 0.3s var(--ease);
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+      overflow: hidden;
+      height: auto;
+    }
+    .settings-pane.open { max-height: 70vh; overflow-y: auto; }
+    .settings-toggle-mobile { display: flex !important; }
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .workspace { grid-template-columns: 1fr; }
+    .pane.md-pane { display: block; }
+    .pane.preview-pane { display: none; }
+    .workspace.preview-mode .pane.md-pane { display: none; }
+    .workspace.preview-mode .pane.preview-pane { display: block; border-right: none; }
+    #markdownInput, .preview-content { padding: 20px 18px; font-size: 15px; }
+    .preview-content p, .preview-content li { font-size: 17px; }
+    .preview-content h1 { font-size: 32px; }
+    .media-palette { width: 100%; }
+    .editor-footer { padding: 0 12px; gap: 10px; font-size: 9px; overflow-x: auto; }
+    .footer-media-btn span { display: none; }
+  }
+
+  /* Toggle button (only on tablet/mobile) */
+  .settings-toggle-mobile {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .settings-toggle-mobile svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  /* Help row at very bottom of sidebar (markdown cheatsheet hint) */
+  .md-help {
+    padding: 16px 22px;
+    background: var(--paper-deep);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+  }
+  .md-help b { color: var(--ink); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ TOP BAR ═══════════════════ -->
+<header class="editor-bar">
+  <a href="hub.html" class="back-btn" title="Back to Hub">
+    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  </a>
+
+  <button class="settings-toggle-mobile" id="settingsToggle">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Settings
+  </button>
+
+  <div class="bar-piece">
+    <span class="bar-status-dot" title="Draft"></span>
+    <input class="title-input" type="text" value="The Afternoon Clock" placeholder="Untitled piece…">
+  </div>
+
+  <span class="autosave" id="autosave">
+    <span class="saving-dot"></span>
+    <span id="autosaveText">SAVED 11:42</span>
+  </span>
+
+  <div class="bar-actions">
+    <button class="bar-btn">
+      <svg viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6"/></svg>
+      <span>Preview as reader</span>
+    </button>
+    <button class="bar-btn">
+      <span>Schedule</span>
+    </button>
+    <button class="bar-btn bar-btn-primary">
+      <span>Publish</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════ LAYOUT ═══════════════════ -->
+<div class="editor-layout">
+
+  <!-- ─── SIDEBAR (settings) ─── -->
+  <aside class="settings-pane" id="settingsPane">
+
+    <!-- Cover -->
+    <div class="settings-section">
+      <div class="sect-label">Cover</div>
+      <div class="cover-upload">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Add a cover image
+        <small>OR DROP · JPG · PNG · 5MB</small>
+      </div>
+    </div>
+
+    <!-- Form & Identity -->
+    <div class="settings-section">
+      <div class="sect-label">Form &amp; identity</div>
+
+      <div class="field">
+        <div class="field-label"><span>Excerpt</span><span class="helper">SHOWN ON CARDS</span></div>
+        <textarea placeholder="A line or two that captures the piece's weather…">A piece about a particular hour of the day, when objects begin to remember.</textarea>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Form</span></div>
+        <div class="segments four">
+          <button class="segment active" data-form="fiction">Fiction</button>
+          <button class="segment" data-form="tan-van">Tản văn</button>
+          <button class="segment" data-form="short">Short</button>
+          <button class="segment" data-form="interactive">Interact.</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Language</span></div>
+        <div class="segments">
+          <button class="segment active">English</button>
+          <button class="segment">Tiếng Việt</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Motif</span><span class="helper">PICK OR ADD</span></div>
+        <div class="chips">
+          <button class="chip-toggle active">Time</button>
+          <button class="chip-toggle">Rain</button>
+          <button class="chip-toggle">Water</button>
+          <button class="chip-toggle">Window</button>
+          <button class="chip-toggle">Silence</button>
+          <button class="chip-toggle">Night</button>
+          <button class="chip-toggle">City</button>
+          <button class="chip-toggle add">+ New</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Estimated</span><span class="helper">AUTO</span></div>
+        <div class="auto-meta">
+          <span class="label">READ TIME</span>
+          <span class="value"><em id="estRead">6</em> min · <span id="wordCountSide">1,840</span> words</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Publishing -->
+    <div class="settings-section">
+      <div class="sect-label">Publishing</div>
+
+      <div class="field">
+        <div class="field-label"><span>Status</span></div>
+        <div class="segments four">
+          <button class="segment active" data-status="draft">Draft</button>
+          <button class="segment" data-status="beta">Beta</button>
+          <button class="segment" data-status="scheduled">Sched.</button>
+          <button class="segment" data-status="published">Pub.</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Schedule for</span><span class="helper">OPTIONAL</span></div>
+        <input type="datetime-local" value="2026-05-29T07:00">
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Theme variant</span></div>
+        <select>
+          <option>Velvet (default)</option>
+          <option>Thuỷ ngân (steel blue)</option>
+          <option>Hổ phách (amber)</option>
+          <option>Rêu xanh (forest)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Beta readers -->
+    <div class="settings-section">
+      <div class="sect-label">Beta readers</div>
+      <ul class="beta-list">
+        <li class="beta-item">
+          <div class="beta-avatar">H</div>
+          <span class="beta-name">Hà.B</span>
+          <span class="beta-status viewed">VIEWED · 1 NOTE</span>
+        </li>
+        <li class="beta-item">
+          <div class="beta-avatar">T</div>
+          <span class="beta-name">Trang.N</span>
+          <span class="beta-status">PENDING</span>
+        </li>
+      </ul>
+      <div class="add-row">
+        <input type="email" placeholder="reader@email">
+        <button>Invite</button>
+      </div>
+    </div>
+
+    <!-- Interactive choices (hidden unless Form=Interactive) -->
+    <div class="settings-section choices-section" id="choicesSection">
+      <div class="sect-label">Interactive choices</div>
+      <div class="scene-card">
+        <div class="scene-head">
+          <span>SCENE 01 · OPENING</span>
+          <span style="color: var(--ink-faint);">2 CHOICES</span>
+        </div>
+        <div class="scene-choice">
+          Stay outside one more minute <span class="arrow">→ S02</span>
+        </div>
+        <div class="scene-choice">
+          Start walking home <span class="arrow">→ S03</span>
+        </div>
+      </div>
+      <button class="chip-toggle add" style="width: 100%; padding: 8px; margin-top: 4px;">+ Add scene</button>
+    </div>
+
+    <!-- Author byline -->
+    <div class="settings-section">
+      <div class="sect-label">Author byline</div>
+      <div class="byline-card">
+        <div class="byline-name placeholder" data-identity="name">— Your name —</div>
+        <a href="hub.html" class="byline-edit">EDIT IN SETTINGS →</a>
+      </div>
+    </div>
+
+    <!-- Markdown help -->
+    <div class="md-help">
+      <b># H1 ## H2 ### H3</b><br>
+      <b>**bold**</b> · <b>*italic*</b> · <b>> quote</b><br>
+      <b>---</b> divider · <b>![alt](url)</b> image<br>
+      <b>[link](url)</b> · <b>- list</b>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN (editor + preview) ─── -->
+  <main class="editor-main">
+
+    <div class="editor-toolbar">
+      <button class="tool-btn" title="Heading 1" data-md="h1">H1</button>
+      <button class="tool-btn" title="Heading 2" data-md="h2">H2</button>
+      <button class="tool-btn" title="Heading 3" data-md="h3">H3</button>
+      <div class="tool-sep"></div>
+      <button class="tool-btn" title="Bold" data-md="bold"><b>B</b></button>
+      <button class="tool-btn" title="Italic" data-md="italic"><i>I</i></button>
+      <button class="tool-btn" title="Quote" data-md="quote">"</button>
+      <div class="tool-sep"></div>
+      <button class="tool-btn" title="Bullet list" data-md="list">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+      <button class="tool-btn" title="Divider" data-md="hr">—</button>
+      <div class="tool-sep"></div>
+      <button class="tool-btn" title="Insert image" id="insertImage">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
+      <button class="tool-btn" title="Link" data-md="link">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      </button>
+
+      <div class="tool-spacer"></div>
+
+      <div class="view-toggle" id="viewToggle">
+        <button class="active" data-view="split">Split</button>
+        <button data-view="write">Write</button>
+        <button data-view="preview">Preview</button>
+      </div>
+    </div>
+
+    <div class="workspace" id="workspace">
+      <div class="pane md-pane">
+        <textarea id="markdownInput" spellcheck="false">There is a particular hour, between three and four, when even the most ordinary objects begin to look like they are *remembering something*.
+
+The kettle, half-cooled. The lamp not yet turned on. The chair near the window, oriented at a slight angle no one set deliberately but no one has bothered to correct in years.
+
+> Afternoons, more than any other time, are the hours in which a room learns who you actually are.
+
+I have been writing in the same apartment for seven years now. The walls have absorbed an embarrassing number of drafts, half-sentences, abandoned beginnings.
+
+In the morning, the room is mine. In the evening, it borrows me from the dark. But the afternoon — the afternoon is **something else**.
+
+The afternoon is when the room remembers the people I have been.
+
+---
+
+*To be continued.*</textarea>
+      </div>
+      <div class="pane preview-pane">
+        <div class="preview-content first-letter" id="previewContent"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="editor-footer">
+  <span><span class="label">Words</span> <span class="value" id="wordCount">0</span></span>
+  <span class="sep"></span>
+  <span><span class="label">Chars</span> <span class="value" id="charCount">0</span></span>
+  <span class="sep"></span>
+  <span><span class="label">Read</span> <span class="value"><em id="readMin">0</em> min</span></span>
+  <span class="sep"></span>
+  <span><span class="label">Selection</span> <span class="value" id="selCount">0</span></span>
+  <div class="footer-spacer"></div>
+  <button class="footer-media-btn" id="openMedia">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <span>Media palette</span>
+  </button>
+</footer>
+
+<!-- ═══════════════════ MEDIA PALETTE ═══════════════════ -->
+<aside class="media-palette" id="mediaPalette">
+  <div class="media-palette-head">
+    <h4>Media palette</h4>
+    <button class="close-palette" id="closePalette">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="palette-upload">
+    <p>Drop or click to upload</p>
+    <small>JPG · PNG · WEBP · 5MB</small>
+  </div>
+  <div class="palette-grid">
+    <div class="palette-item" data-md="![rain on the window](rain-window-01.jpg)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="ge1" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#4A6B7E"/><stop offset="100%" stop-color="#1A2A35"/></linearGradient></defs><rect width="200" height="150" fill="url(#ge1)"/><g stroke="#9DB7C5" stroke-width="0.6" opacity="0.6"><line x1="20" y1="0" x2="0" y2="40"/><line x1="60" y1="10" x2="40" y2="60"/><line x1="100" y1="0" x2="80" y2="50"/><line x1="140" y1="20" x2="120" y2="70"/><line x1="180" y1="0" x2="160" y2="50"/></g></svg></div>
+      <div class="palette-meta">rain-window-01.jpg</div>
+    </div>
+    <div class="palette-item" data-md="![window grid](window-grid.png)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><rect width="200" height="150" fill="#F5EBD8"/><rect x="40" y="30" width="120" height="90" fill="none" stroke="#5A4F46" stroke-width="0.8"/><line x1="100" y1="30" x2="100" y2="120" stroke="#5A4F46" stroke-width="0.5"/><line x1="40" y1="75" x2="160" y2="75" stroke="#5A4F46" stroke-width="0.5"/></svg></div>
+      <div class="palette-meta">window-grid.png</div>
+    </div>
+    <div class="palette-item" data-md="![moon at night](moon-night.jpg)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><rect width="200" height="150" fill="#0E0B16"/><circle cx="100" cy="75" r="35" fill="#C9A961" opacity="0.3"/><circle cx="100" cy="75" r="20" fill="#C9A961" opacity="0.6"/></svg></div>
+      <div class="palette-meta">moon-night.jpg</div>
+    </div>
+    <div class="palette-item" data-md="![city lights](city-lights.jpg)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><rect width="200" height="150" fill="#2A1A20"/><g><circle cx="50" cy="60" r="4" fill="#E8B66E"/><circle cx="80" cy="40" r="3" fill="#E8B66E"/><circle cx="120" cy="70" r="5" fill="#E8B66E"/><circle cx="160" cy="50" r="3" fill="#E8B66E"/><circle cx="100" cy="100" r="4" fill="#E8B66E"/></g></svg></div>
+      <div class="palette-meta">city-lights.jpg</div>
+    </div>
+    <div class="palette-item" data-md="![reservoir](reservoir.jpg)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><rect width="200" height="150" fill="#EDE7DA"/><path d="M0 100 Q50 80 100 100 T200 100 L200 150 L0 150 Z" fill="#6A8C7B" opacity="0.4"/></svg></div>
+      <div class="palette-meta">reservoir.jpg</div>
+    </div>
+    <div class="palette-item" data-md="![paper rule](paper-rule.jpg)">
+      <div class="palette-thumb"><svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice"><rect width="200" height="150" fill="#1A1622"/><g stroke="#C9A961" opacity="0.4" stroke-width="0.5"><line x1="0" y1="50" x2="200" y2="50"/><line x1="0" y1="75" x2="200" y2="75"/><line x1="0" y1="100" x2="200" y2="100"/></g></svg></div>
+      <div class="palette-meta">paper-rule.jpg</div>
+    </div>
+  </div>
+</aside>
+
+<script src="wm-config.js?v=6"></script>
+<script src="wm.js?v=6"></script>
+<script src="wm-supabase.js?v=6"></script>
+<script src="wm-i18n.js?v=6"></script>
+<script>
+  // ═══════════════════ ACCESS GUARD ═══════════════════
+  (function () {
+    const cfg = window.WM_CONFIG || {};
+    const sbConfigured = cfg.supabaseUrl && cfg.supabaseAnonKey &&
+      !String(cfg.supabaseUrl).includes('YOUR_') && !String(cfg.supabaseAnonKey).includes('YOUR_');
+    const pass = (cfg.adminPassphrase || '').trim();
+
+    if (!sbConfigured && pass) {
+      let ok = false;
+      try { ok = sessionStorage.getItem('wm.gate') === pass; } catch (e) {}
+      if (!ok) { showGate(pass); return; }
+    }
+
+    function guard(detail) {
+      if (!detail.online) return; // demo mode
+      if (!WM.user) {
+        location.href = 'login.html?redirect=editor.html' + location.search.replace('?', '&');
+      } else if (!WM.isAdmin) {
+        document.body.innerHTML =
+          '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Cormorant Garamond,serif;font-style:italic;font-size:24px;color:#5A4F46;text-align:center;padding:40px;background:#F7F4EE;">' +
+          'Only the writer may edit here.<br><br>' +
+          '<a href="index.html" style="font-size:16px;color:#C25535;">← Return to the atelier</a></div>';
+      }
+    }
+    if (typeof WM !== 'undefined' && WM.online !== undefined) guard({ online: WM.online });
+    else window.addEventListener('wm:ready', e => guard(e.detail), { once: true });
+
+    function showGate(expected) {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0E0B16;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Georgia,serif;';
+      ov.innerHTML =
+        '<div style="max-width:360px;width:100%;text-align:center;">' +
+        '<div style="font-family:monospace;font-size:10px;letter-spacing:0.25em;color:#8A7038;text-transform:uppercase;margin-bottom:18px;">— Private studio —</div>' +
+        '<h1 style="font-size:32px;font-weight:400;color:#EDE6D6;margin:0 0 10px;font-style:italic;">Kody Lâm</h1>' +
+        '<p style="color:#9B9282;font-style:italic;font-size:15px;margin:0 0 24px;">This room is closed. Enter your passphrase.</p>' +
+        '<input id="gatePass" type="password" placeholder="passphrase" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;">' +
+        '<button id="gateBtn" style="width:100%;margin-top:12px;background:#C9A961;color:#0E0B16;border:none;border-radius:2px;padding:13px;font-family:Georgia,serif;font-style:italic;font-size:17px;cursor:pointer;">Enter →</button>' +
+        '<div id="gateErr" style="color:#C77A6A;font-style:italic;font-size:14px;margin-top:14px;min-height:18px;"></div>' +
+        '<a href="index.html" style="display:inline-block;margin-top:8px;color:#6A6256;font-family:monospace;font-size:11px;letter-spacing:0.1em;text-decoration:none;">← back to the site</a>' +
+        '</div>';
+      (document.body || document.documentElement).appendChild(ov);
+      const inp = ov.querySelector('#gatePass'), btn = ov.querySelector('#gateBtn'), err = ov.querySelector('#gateErr');
+      function tryPass() {
+        if (inp.value === expected) {
+          try { sessionStorage.setItem('wm.gate', expected); } catch (e) {}
+          location.reload();
+        } else {
+          err.textContent = 'Not quite. Try again.';
+          inp.value = ''; inp.focus();
+        }
+      }
+      btn.addEventListener('click', tryPass);
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') tryPass(); });
+      setTimeout(() => inp.focus(), 50);
+    }
+  })();
+</script>
+<script>
+  // ═══════════════════ MARKDOWN RENDERER ═══════════════════
+  function renderMarkdown(src) {
+    if (!src || !src.trim()) {
+      return '<div class="placeholder">Start writing on the left — preview appears here.</div>';
+    }
+
+    let lines = src.split('\n');
+    let html = [];
+    let inList = false;
+
+    function inline(s) {
+      // Escape HTML
+      s = s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      // Images
+      s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
+      // Links
+      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      // Bold
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Italic (must come after bold)
+      s = s.replace(/(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+      // Inline code
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      return s;
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+
+      // Close list if needed
+      if (inList && !line.match(/^-\s/) && line.trim() !== '') {
+        html.push('</ul>'); inList = false;
+      }
+
+      // Blank line
+      if (line.trim() === '') {
+        if (inList) { html.push('</ul>'); inList = false; }
+        continue;
+      }
+
+      // Headings
+      if (line.match(/^###\s+(.+)$/)) {
+        html.push('<h3>' + inline(line.replace(/^###\s+/, '')) + '</h3>');
+        continue;
+      }
+      if (line.match(/^##\s+(.+)$/)) {
+        html.push('<h2>' + inline(line.replace(/^##\s+/, '')) + '</h2>');
+        continue;
+      }
+      if (line.match(/^#\s+(.+)$/)) {
+        html.push('<h1>' + inline(line.replace(/^#\s+/, '')) + '</h1>');
+        continue;
+      }
+
+      // HR
+      if (line.match(/^---+$/)) {
+        html.push('<hr>');
+        continue;
+      }
+
+      // Blockquote
+      if (line.match(/^>\s?(.+)$/)) {
+        let quoteLines = [];
+        while (i < lines.length && lines[i].match(/^>\s?/)) {
+          quoteLines.push(inline(lines[i].replace(/^>\s?/, '')));
+          i++;
+        }
+        i--;
+        html.push('<blockquote>' + quoteLines.join('<br>') + '</blockquote>');
+        continue;
+      }
+
+      // List item
+      if (line.match(/^-\s+(.+)$/)) {
+        if (!inList) { html.push('<ul>'); inList = true; }
+        html.push('<li>' + inline(line.replace(/^-\s+/, '')) + '</li>');
+        continue;
+      }
+
+      // Paragraph (collect contiguous lines)
+      let paraLines = [inline(line)];
+      while (i + 1 < lines.length && lines[i+1].trim() !== ''
+             && !lines[i+1].match(/^(#|>|---|-\s)/)) {
+        paraLines.push(inline(lines[i+1]));
+        i++;
+      }
+      html.push('<p>' + paraLines.join(' ') + '</p>');
+    }
+    if (inList) html.push('</ul>');
+    return html.join('\n');
+  }
+
+  // ═══════════════════ ELEMENTS ═══════════════════
+  const md = document.getElementById('markdownInput');
+  const preview = document.getElementById('previewContent');
+  const wordCount = document.getElementById('wordCount');
+  const wordCountSide = document.getElementById('wordCountSide');
+  const charCount = document.getElementById('charCount');
+  const readMin = document.getElementById('readMin');
+  const estRead = document.getElementById('estRead');
+  const selCount = document.getElementById('selCount');
+  const autosave = document.getElementById('autosave');
+  const autosaveText = document.getElementById('autosaveText');
+
+  // ═══════════════════ RENDER + COUNT ═══════════════════
+  function update() {
+    const src = md.value;
+    preview.innerHTML = renderMarkdown(src);
+    const words = src.trim() ? src.trim().split(/\s+/).length : 0;
+    const chars = src.length;
+    const minutes = Math.max(1, Math.round(words / 220));
+    wordCount.textContent = words.toLocaleString();
+    wordCountSide.textContent = words.toLocaleString();
+    charCount.textContent = chars.toLocaleString();
+    readMin.textContent = minutes;
+    estRead.textContent = minutes;
+  }
+
+  // ═══════════════════ AUTO-SAVE INDICATOR + LOCALSTORAGE ═══════════════════
+  // Draft identity: read URL ?id= or generate a new one
+  let DRAFT_ID = WM.getParam('id') || 'draft-' + Date.now();
+  const titleInput = document.querySelector('.title-input');
+
+  // ─── Load existing draft if any (overrides default content) ───
+  (function loadExistingDraft() {
+    const existing = WM.drafts.get(DRAFT_ID);
+    if (existing) {
+      if (existing.title) titleInput.value = existing.title;
+      if (existing.body) md.value = existing.body;
+      if (existing.updatedAt) {
+        const d = new Date(existing.updatedAt);
+        autosaveText.textContent = `LOADED · LAST SAVED ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      }
+      return;
+    }
+    // Not in drafts: maybe it's a published piece being edited
+    const published = WM.getStory(DRAFT_ID);
+    if (published) {
+      titleInput.value = published.title;
+      md.value = published.body;
+      autosaveText.textContent = 'EDITING PUBLISHED · ' + published.id.toUpperCase();
+    }
+    // else: new untitled draft, keep the default sample content
+  })();
+
+  let saveTimer;
+  function flagSaving() {
+    autosave.classList.add('saving');
+    autosaveText.textContent = 'SAVING…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      // Actually persist
+      WM.drafts.save(DRAFT_ID, {
+        title: titleInput.value,
+        body: md.value,
+        wordCount: parseInt(wordCount.textContent.replace(/,/g, '')) || 0
+      });
+      autosave.classList.remove('saving');
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      autosaveText.textContent = `SAVED ${h}:${m} · LOCAL`;
+    }, 800);
+  }
+
+  md.addEventListener('input', () => {
+    update();
+    flagSaving();
+  });
+  titleInput.addEventListener('input', () => {
+    flagSaving();
+    document.title = (titleInput.value || 'Untitled') + ' · Editor';
+  });
+  md.addEventListener('select', () => {
+    const sel = md.value.substring(md.selectionStart, md.selectionEnd);
+    selCount.textContent = sel ? sel.trim().split(/\s+/).length + ' w' : '0';
+  });
+  md.addEventListener('keyup', () => {
+    const sel = md.value.substring(md.selectionStart, md.selectionEnd);
+    selCount.textContent = sel ? sel.trim().split(/\s+/).length + ' w' : '0';
+  });
+
+  // Initial render + save on first load
+  update();
+  // If no existing data, save current default as a starting draft
+  if (!WM.drafts.get(DRAFT_ID)) {
+    WM.drafts.save(DRAFT_ID, { title: titleInput.value, body: md.value });
+  }
+
+  // ───── PUBLISH / SCHEDULE BUTTONS (visual confirm + save) ─────
+  document.querySelectorAll('.bar-btn-primary').forEach(btn => {
+    btn.addEventListener('click', () => {
+      WM.drafts.save(DRAFT_ID, {
+        title: titleInput.value,
+        body: md.value,
+        status: 'published',
+        publishedAt: Date.now()
+      });
+      const t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:14px 22px;font-family:var(--font-display);font-style:italic;font-size:16px;border-radius:2px;z-index:999;box-shadow:0 12px 28px -12px rgba(0,0,0,0.4);';
+      t.textContent = '"' + titleInput.value + '" — published (locally)';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2600);
+    });
+  });
+
+  // ═══════════════════ TOOLBAR ═══════════════════
+  function insertAtCursor(text, opts = {}) {
+    const start = md.selectionStart;
+    const end = md.selectionEnd;
+    const before = md.value.substring(0, start);
+    const sel = md.value.substring(start, end);
+    const after = md.value.substring(end);
+    let toInsert;
+    let newCursor;
+
+    if (opts.wrap) {
+      toInsert = opts.wrap + sel + opts.wrap;
+      newCursor = end + (opts.wrap.length * 2);
+    } else if (opts.prefix) {
+      // Apply to beginning of current line
+      const lineStart = before.lastIndexOf('\n') + 1;
+      const linePrefix = md.value.substring(lineStart, start);
+      md.value = before.substring(0, lineStart) + opts.prefix + linePrefix + sel + after;
+      md.setSelectionRange(start + opts.prefix.length, end + opts.prefix.length);
+      md.focus();
+      update();
+      flagSaving();
+      return;
+    } else {
+      toInsert = text;
+      newCursor = start + text.length;
+    }
+
+    md.value = before + (opts.wrap ? opts.wrap + sel + opts.wrap : text) + after;
+    md.setSelectionRange(newCursor, newCursor);
+    md.focus();
+    update();
+    flagSaving();
+  }
+
+  document.querySelectorAll('[data-md]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const type = btn.dataset.md;
+      switch (type) {
+        case 'h1':     insertAtCursor('', { prefix: '# ' }); break;
+        case 'h2':     insertAtCursor('', { prefix: '## ' }); break;
+        case 'h3':     insertAtCursor('', { prefix: '### ' }); break;
+        case 'bold':   insertAtCursor('', { wrap: '**' }); break;
+        case 'italic': insertAtCursor('', { wrap: '*' }); break;
+        case 'quote':  insertAtCursor('', { prefix: '> ' }); break;
+        case 'list':   insertAtCursor('', { prefix: '- ' }); break;
+        case 'hr':     insertAtCursor('\n\n---\n\n'); break;
+        case 'link':   insertAtCursor('[text](url)'); break;
+        default:
+          if (type.startsWith('!')) insertAtCursor(type + '\n');
+      }
+    });
+  });
+
+  // Palette items insert markdown
+  document.querySelectorAll('.palette-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const text = item.dataset.md || '';
+      insertAtCursor('\n' + text + '\n');
+      // Close palette on mobile
+      if (window.innerWidth < 720) {
+        document.getElementById('mediaPalette').classList.remove('open');
+      }
+    });
+  });
+
+  // ═══════════════════ VIEW TOGGLE ═══════════════════
+  const workspace = document.getElementById('workspace');
+  document.querySelectorAll('#viewToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#viewToggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      workspace.classList.remove('preview-mode');
+      if (view === 'split') {
+        workspace.style.gridTemplateColumns = '1fr 1fr';
+        document.querySelector('.md-pane').style.display = '';
+        document.querySelector('.preview-pane').style.display = '';
+      } else if (view === 'write') {
+        workspace.style.gridTemplateColumns = '1fr';
+        document.querySelector('.md-pane').style.display = '';
+        document.querySelector('.preview-pane').style.display = 'none';
+      } else if (view === 'preview') {
+        workspace.style.gridTemplateColumns = '1fr';
+        document.querySelector('.md-pane').style.display = 'none';
+        document.querySelector('.preview-pane').style.display = '';
+        workspace.classList.add('preview-mode');
+      }
+    });
+  });
+
+  // ═══════════════════ MEDIA PALETTE TOGGLE ═══════════════════
+  const palette = document.getElementById('mediaPalette');
+  document.getElementById('openMedia').addEventListener('click', () => {
+    palette.classList.toggle('open');
+  });
+  document.getElementById('insertImage').addEventListener('click', () => {
+    palette.classList.add('open');
+  });
+  document.getElementById('closePalette').addEventListener('click', () => {
+    palette.classList.remove('open');
+  });
+
+  // ═══════════════════ FORM (Interactive reveal) ═══════════════════
+  const choicesSection = document.getElementById('choicesSection');
+  document.querySelectorAll('.segments').forEach(group => {
+    group.querySelectorAll('.segment').forEach(seg => {
+      seg.addEventListener('click', () => {
+        group.querySelectorAll('.segment').forEach(s => s.classList.remove('active'));
+        seg.classList.add('active');
+        // If "form" group: show/hide choices section
+        if (seg.dataset.form) {
+          choicesSection.classList.toggle('show', seg.dataset.form === 'interactive');
+        }
+        // If "status" group: update top status dot color
+        if (seg.dataset.status) {
+          const dot = document.querySelector('.bar-status-dot');
+          const colorMap = {
+            'draft':     'var(--status-draft)',
+            'beta':      'var(--persimmon)',
+            'scheduled': 'var(--status-scheduled)',
+            'published': 'var(--status-published)'
+          };
+          dot.style.background = colorMap[seg.dataset.status];
+          dot.title = seg.textContent;
+        }
+      });
+    });
+  });
+
+  // ═══════════════════ MOTIF CHIPS ═══════════════════
+  document.querySelectorAll('.chip-toggle:not(.add)').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+    });
+  });
+
+  // ═══════════════════ MOBILE SETTINGS TOGGLE ═══════════════════
+  const settingsPane = document.getElementById('settingsPane');
+  document.getElementById('settingsToggle').addEventListener('click', () => {
+    settingsPane.classList.toggle('open');
+  });
+
+  // ═══════════════════ KEYBOARD SHORTCUTS ═══════════════════
+  md.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
+      if (e.key === 'b') { e.preventDefault(); insertAtCursor('', { wrap: '**' }); }
+      if (e.key === 'i') { e.preventDefault(); insertAtCursor('', { wrap: '*' }); }
+      if (e.key === 's') { e.preventDefault(); flagSaving(); }
+    }
+    // Tab indent
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      insertAtCursor('  ');
+    }
+  });
+
+  // ═══════════════════ READ IDENTITY ═══════════════════
+  (function () {
+    const KEY = 'wm.identity';
+    let id = { penName: '', callName: '', initial: '', tagline: '', email: '', bio: '' };
+    try { id = { ...id, ...(JSON.parse(localStorage.getItem(KEY)) || {}) }; } catch {}
+
+    const hasName = !!(id.penName || '').trim();
+    document.querySelectorAll('[data-identity="name"]').forEach(el => {
+      el.textContent = hasName ? id.penName : '— Your name —';
+      el.classList.toggle('placeholder', !hasName);
+    });
+  })();
+</script>
+</body>
+</html>

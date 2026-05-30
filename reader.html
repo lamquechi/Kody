@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=7">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kody Lâm">
+<meta property="og:title" content="Kody Lâm">
+<meta property="og:description" content="A quiet reading room for bilingual short fiction and tản văn.">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kody Lâm">
+<meta name="twitter:description" content="A quiet reading room for bilingual short fiction and tản văn.">
+<meta name="twitter:image" content="og-image.png">
+<!-- For social previews to work, replace og-image.png above with your full URL after deploy, e.g. https://you.github.io/water-memory/og-image.png -->
+<title>The City After Rain — Kody Lâm</title>
+<meta name="description" content="A woman delays going home and lets the city hold her for a few more minutes after the rain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Velvet — reader-optimized */
+    --night:        #0E0B16;
+    --night-soft:   #16121E;
+    --night-deep:   #060410;
+    --ivory:        #EDE6D6;
+    --ivory-warm:   #E8DFC8;
+    --ivory-soft:   #9B9282;
+    --ivory-faint:  #5C5448;
+    --gold:         #C9A961;
+    --gold-deep:    #8A7038;
+    --oxblood:      #6E1F22;
+    --rain-blue:    #7AAEC4;
+    --rule:         #2A2230;
+    --rule-soft:    #1F1A26;
+
+    /* Sepia theme alt */
+    --sepia-bg:     #2A2418;
+    --sepia-text:   #E8D8B5;
+
+    --font-display: "Cormorant Garamond", "Times New Roman", serif;
+    --font-body:    "Lora", Georgia, "Times New Roman", serif;
+    --font-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+    --reader-width:   680px;
+    --reader-font:    21px;
+    --reader-leading: 1.75;
+
+    --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--ivory);
+    background: var(--night);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    min-height: 100vh;
+    transition: background 0.5s var(--ease), color 0.5s var(--ease);
+  }
+  body.theme-sepia { background: var(--sepia-bg); color: var(--sepia-text); }
+  body.theme-sepia .reader-body { color: var(--sepia-text); }
+  body.theme-sepia .drop-cap::first-letter { color: var(--gold); }
+  body.theme-sepia .grain { opacity: 0.3; }
+
+  /* ─── Theme variants (per-story Reader skin) ─── */
+  body.variant-mercury { --night: #0A1218; --night-soft: #14202A; --night-deep: #050B0F; --gold: #7AAEC4; --gold-deep: #4A6B7E; --oxblood: #2D4A5C; }
+  body.variant-amber   { --night: #15110D; --night-soft: #1F1812; --night-deep: #0A0805; --gold: #D38C4E; --gold-deep: #8A5C30; --oxblood: #5C3A1F; }
+  body.variant-moss    { --night: #0D1410; --night-soft: #131E17; --night-deep: #060B08; --gold: #8DAE7A; --gold-deep: #5A7A4D; --oxblood: #3D5642; }
+
+  /* ─── Interactive scenes ─── */
+  .scene-choices {
+    max-width: var(--reader-width);
+    margin: clamp(40px, 6vw, 64px) auto;
+    padding: 0 28px;
+  }
+  .scene-prompt {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+  }
+  .scene-prompt::before, .scene-prompt::after {
+    content: ""; width: 30px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+  .scene-choice-list {
+    display: grid;
+    gap: 12px;
+  }
+  .scene-choice-btn {
+    width: 100%;
+    text-align: left;
+    background: var(--night-soft);
+    border: 1px solid var(--rule);
+    color: var(--ivory);
+    padding: 20px 28px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(18px, 2.4vw, 22px);
+    line-height: 1.4;
+    cursor: pointer;
+    transition: all 0.35s var(--ease);
+    position: relative;
+    border-radius: 2px;
+  }
+  .scene-choice-btn::before {
+    content: "›";
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    color: var(--gold);
+    font-size: 22px;
+    transition: all 0.35s var(--ease);
+  }
+  .scene-choice-btn:hover {
+    background: var(--night-deep);
+    border-color: var(--gold);
+    padding-left: 48px;
+  }
+  .scene-choice-btn:hover::before { opacity: 1; left: 22px; }
+
+  .scene-ending {
+    text-align: center;
+    margin: 40px 0 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .scene-restart {
+    margin-top: 24px;
+    display: inline-block;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ivory-soft);
+    border-bottom: 1px solid var(--ivory-faint);
+    padding-bottom: 4px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .scene-restart:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* Mark saved confirmation */
+  .mark-saved {
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    text-align: center;
+    padding: 24px 16px;
+    background: rgba(201, 169, 97, 0.08);
+    border: 1px solid var(--gold-deep);
+    border-radius: 2px;
+    margin-top: 12px;
+  }
+
+  ::selection { background: var(--gold); color: var(--night); }
+
+  /* Grain + vignette */
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 2;
+    opacity: 0.4; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse at 50% 30%, transparent 0%, transparent 55%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* ───────────── PER-STORY MOOD LAYER ───────────── */
+  /* A whisper of atmosphere keyed to each piece's motif. Always subtle —
+     it should be felt more than seen, never competing with the words. */
+  .mood-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0; transition: opacity 1.6s ease;
+  }
+  .mood-layer.lit { opacity: 1; }
+
+  /* RAIN — faint slow streaks drifting down */
+  body.mood-rain .mood-layer {
+    background-image:
+      repeating-linear-gradient(100deg, transparent 0 38px, rgba(122,174,196,0.05) 38px 39px),
+      repeating-linear-gradient(100deg, transparent 0 91px, rgba(201,169,97,0.035) 91px 92px);
+    background-size: 100% 200%;
+    animation: moodRain 5.5s linear infinite;
+  }
+  @keyframes moodRain { from { background-position: 0 0, 0 0; } to { background-position: -60px 200%, -90px 200%; } }
+
+  /* NIGHT — deeper dark + a scatter of distant lights */
+  body.mood-night .mood-layer {
+    background:
+      radial-gradient(circle at 18% 22%, rgba(201,169,97,0.06), transparent 3px),
+      radial-gradient(circle at 72% 14%, rgba(237,230,214,0.05), transparent 2px),
+      radial-gradient(circle at 41% 78%, rgba(201,169,97,0.05), transparent 2px),
+      radial-gradient(circle at 88% 64%, rgba(237,230,214,0.04), transparent 2px),
+      radial-gradient(ellipse at 50% 120%, rgba(0,0,0,0.5), transparent 60%);
+    animation: moodTwinkle 7s ease-in-out infinite alternate;
+  }
+  @keyframes moodTwinkle { from { opacity: 0.85; } to { opacity: 1; } }
+
+  /* WATER — a slow horizontal shimmer, like light on a reservoir */
+  body.mood-water .mood-layer {
+    background: linear-gradient(115deg, transparent 30%, rgba(122,174,196,0.07) 50%, transparent 70%);
+    background-size: 300% 100%;
+    animation: moodWater 12s ease-in-out infinite;
+  }
+  @keyframes moodWater { 0%,100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
+
+  /* WINDOW — a soft diagonal shaft of light */
+  body.mood-window .mood-layer {
+    background: linear-gradient(155deg, rgba(211,140,78,0.07) 0%, transparent 38%);
+  }
+
+  /* CITY — distant warm glow rising from below */
+  body.mood-city .mood-layer {
+    background: radial-gradient(ellipse at 50% 130%, rgba(211,140,78,0.09), transparent 55%);
+  }
+
+  /* SILENCE — almost nothing; a faint breath of light at center */
+  body.mood-silence .mood-layer {
+    background: radial-gradient(ellipse at 50% 45%, rgba(237,230,214,0.035), transparent 60%);
+  }
+
+  /* DRAFT — faint ruled paper lines */
+  body.mood-draft .mood-layer {
+    background-image: repeating-linear-gradient(transparent 0 31px, rgba(237,230,214,0.04) 31px 32px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mood-layer { animation: none !important; }
+  }
+
+  /* ───────────── PROGRESS BAR ───────────── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    z-index: 70;
+    background: var(--rule-soft);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ───────────── TOP CHROME ───────────── */
+  .chrome {
+    position: fixed;
+    top: 2px; left: 0; right: 0;
+    z-index: 65;
+    background: rgba(14, 11, 22, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+  body.theme-sepia .chrome { background: rgba(42, 36, 24, 0.92); }
+  .chrome.dim { opacity: 1; }
+  .chrome.dim:hover { opacity: 1; }
+  .chrome-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .chrome-back {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    color: var(--ivory-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .chrome-back:hover { color: var(--gold); }
+  .chrome-back .arrow {
+    font-family: var(--font-display);
+    font-size: 16px;
+    transition: transform 0.2s var(--ease);
+  }
+  .chrome-back:hover .arrow { transform: translateX(-3px); }
+
+  .chrome-title {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+  }
+  .chrome-title .ornament { color: var(--gold); }
+
+  .chrome-actions {
+    display: flex; gap: 8px;
+  }
+  .chrome-btn {
+    width: 36px; height: 36px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ivory-soft);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    transition: all 0.2s var(--ease);
+  }
+  .chrome-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold-deep);
+  }
+  .chrome-btn.active {
+    background: var(--gold);
+    color: var(--night);
+    border-color: var(--gold);
+  }
+  .chrome-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  @media (max-width: 700px) {
+    .chrome-title { display: none; }
+    .chrome-inner { grid-template-columns: 1fr auto; padding: 10px 16px; gap: 8px; }
+    .chrome-back span:last-child { display: none; }
+  }
+
+  /* ───────────── SETTINGS PANEL ───────────── */
+  .settings-panel {
+    position: fixed;
+    top: 70px; right: 28px;
+    z-index: 80;
+    background: var(--night-deep);
+    border: 1px solid var(--rule);
+    padding: 24px;
+    width: 280px;
+    border-radius: 2px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .settings-panel.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  body.theme-sepia .settings-panel { background: #1A1610; border-color: var(--gold-deep); }
+
+  .settings-panel h4 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .settings-group { margin-bottom: 20px; }
+  .settings-group:last-child { margin-bottom: 0; }
+  .settings-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .settings-options {
+    display: flex;
+    gap: 4px;
+  }
+  .settings-options button {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ivory-soft);
+    font-family: var(--font-display);
+    font-size: 16px;
+    padding: 10px 8px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    border-radius: 2px;
+  }
+  .settings-options button:hover {
+    color: var(--ivory);
+    border-color: var(--ivory-faint);
+  }
+  .settings-options button.active {
+    background: var(--gold);
+    color: var(--night);
+    border-color: var(--gold);
+  }
+  .settings-options.size-opts button:nth-child(1) { font-size: 14px; }
+  .settings-options.size-opts button:nth-child(2) { font-size: 17px; }
+  .settings-options.size-opts button:nth-child(3) { font-size: 20px; }
+  .settings-options.size-opts button:nth-child(4) { font-size: 23px; }
+
+  @media (max-width: 700px) {
+    .settings-panel {
+      top: auto; bottom: 0; right: 0; left: 0;
+      width: 100%;
+      border: none;
+      border-top: 1px solid var(--rule);
+      transform: translateY(100%);
+      border-radius: 2px 2px 0 0;
+      padding: 24px 20px 32px;
+    }
+    .settings-panel.open { transform: translateY(0); }
+  }
+
+  /* ───────────── STORY HEAD ───────────── */
+  .story {
+    padding-top: 140px;
+    padding-bottom: 80px;
+    position: relative;
+  }
+  .story-head {
+    max-width: var(--reader-width);
+    margin: 0 auto;
+    padding: 0 28px clamp(40px, 6vw, 64px);
+    text-align: center;
+  }
+  .story-folio {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .story-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 400;
+    line-height: 1.02;
+    color: var(--ivory);
+    margin-bottom: 24px;
+    letter-spacing: -0.015em;
+  }
+  body.theme-sepia .story-title { color: var(--sepia-text); }
+  .story-title em { font-style: italic; }
+  .story-desc {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(18px, 2.4vw, 22px);
+    line-height: 1.5;
+    color: var(--ivory-soft);
+    max-width: 520px;
+    margin: 0 auto 36px;
+  }
+  body.theme-sepia .story-desc { color: rgba(232, 216, 181, 0.7); }
+  .story-meta {
+    display: flex; justify-content: center; gap: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .story-meta span { display: flex; align-items: center; gap: 10px; }
+  .story-meta span:not(:first-child)::before {
+    content: "·"; color: var(--gold); margin-right: 10px;
+  }
+  .story-meta .lang { color: var(--gold); }
+
+  .story-ornament {
+    text-align: center;
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.6em;
+    margin: clamp(32px, 5vw, 48px) auto;
+    opacity: 0.7;
+  }
+
+  /* ───────────── READER BODY ───────────── */
+  .reader-body {
+    max-width: var(--reader-width);
+    margin: 0 auto;
+    padding: 0 28px;
+    font-family: var(--font-body);
+    font-size: var(--reader-font);
+    line-height: var(--reader-leading);
+    color: var(--ivory-warm);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+  }
+  .reader-body p {
+    margin-bottom: 1.4em;
+    hyphens: auto;
+  }
+  .reader-body p:last-child { margin-bottom: 0; }
+  .reader-body em { font-style: italic; }
+  .reader-body strong { color: var(--gold); font-weight: 500; }
+
+  /* Drop cap */
+  .drop-cap::first-letter {
+    font-family: var(--font-display);
+    font-size: 5.2em;
+    line-height: 0.85;
+    float: left;
+    margin: 8px 12px -4px 0;
+    font-weight: 500;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* Mid-piece pull quote (optional) */
+  .pull {
+    margin: clamp(40px, 6vw, 64px) -20px;
+    padding: 28px 32px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.4;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  @media (max-width: 700px) {
+    .reader-body { padding: 0 22px; }
+    .pull { margin-left: 0; margin-right: 0; padding: 24px 20px; }
+  }
+  @media (max-width: 480px) {
+    .drop-cap::first-letter { font-size: 4.4em; margin: 6px 10px -2px 0; }
+  }
+
+  /* ───────────── END OF STORY ───────────── */
+  .story-end {
+    max-width: var(--reader-width);
+    margin: clamp(64px, 10vw, 100px) auto 0;
+    padding: 0 28px;
+    text-align: center;
+  }
+  .end-ornament {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--gold);
+    letter-spacing: 0.6em;
+    opacity: 0.7;
+    margin-bottom: 24px;
+  }
+  .end-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .end-message {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.35;
+    color: var(--ivory);
+    max-width: 460px;
+    margin: 0 auto 40px;
+  }
+
+  .end-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+  }
+  .end-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ivory-soft);
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.25s var(--ease);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .end-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold-deep);
+  }
+  .end-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  /* ───────────── LEAVE A MARK (comments placeholder) ───────────── */
+  .leave-mark {
+    max-width: var(--reader-width);
+    margin: 80px auto 0;
+    padding: 36px 28px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--night-soft);
+  }
+  body.theme-sepia .leave-mark { background: #1F1A12; }
+  .leave-mark h4 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ivory);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .leave-mark p {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .mark-form {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--rule);
+    background: var(--night-deep);
+  }
+  .mark-form textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--ivory);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    padding: 16px 18px;
+    resize: none;
+    min-height: 60px;
+    outline: none;
+    line-height: 1.5;
+  }
+  .mark-form textarea::placeholder { color: var(--ivory-faint); }
+  .mark-form button {
+    background: var(--gold);
+    border: none;
+    color: var(--night);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .mark-form button:hover { background: var(--ivory); }
+  .mark-helper {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.12em;
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .mark-form { flex-direction: column; }
+    .mark-form button { padding: 14px; }
+  }
+
+  /* ───────────── CONTINUE READING ───────────── */
+  .continue {
+    padding: clamp(64px, 10vw, 100px) 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .continue-head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .continue-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .continue-head h3 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ivory);
+  }
+  .continue-head h3 em { font-style: italic; color: var(--gold); }
+
+  .continue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .cont-card {
+    padding: 32px 28px;
+    background: var(--night-soft);
+    border: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ivory);
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+    position: relative;
+  }
+  .cont-card:hover {
+    background: var(--night-deep);
+    transform: translateY(-3px);
+    border-color: var(--gold-deep);
+  }
+  .cont-card::after {
+    content: "→";
+    position: absolute;
+    top: 28px; right: 28px;
+    font-family: var(--font-display);
+    color: var(--ivory-faint);
+    font-size: 22px;
+    transition: all 0.3s var(--ease);
+  }
+  .cont-card:hover::after { color: var(--gold); transform: translateX(4px); }
+  .cont-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .cont-card.vi .cont-tag { color: var(--rain-blue); }
+  .cont-card h4 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--ivory);
+    margin-bottom: 12px;
+  }
+  .cont-card p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ivory-soft);
+    margin-top: auto;
+  }
+
+  /* ───────────── FOOTER ───────────── */
+  footer {
+    padding: 40px 28px;
+    background: var(--night-deep);
+    border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.12em;
+  }
+  .footer-brand { font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--ivory-soft); letter-spacing: 0.02em; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--ivory-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ───────────── REVEAL ON SCROLL ───────────── */
+  /* Content is ALWAYS visible (opacity:1). Reveal is a gentle one-time
+     entrance only, never a gate that can hide content if JS misfires. */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="mood-layer" id="moodLayer" aria-hidden="true"></div>
+
+<!-- Progress bar -->
+<div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+<!-- Top Chrome -->
+<header class="chrome" id="chrome">
+  <div class="chrome-inner">
+    <a href="library.html" class="chrome-back">
+      <span class="arrow">←</span>
+      <span>The Library</span>
+    </a>
+    <div class="chrome-title">
+      <span id="chromeForm">FICTION</span>
+      <span class="ornament">·</span>
+      <span id="chromeFolio">I.</span>
+      <span class="ornament">·</span>
+      <span id="readTime">0 / 5 min</span>
+    </div>
+    <div class="chrome-actions">
+      <button class="chrome-btn" id="bookmarkBtn" title="Bookmark">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </button>
+      <button class="chrome-btn" id="settingsBtn" title="Reading settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Settings panel -->
+<aside class="settings-panel" id="settingsPanel">
+  <h4>Reading preferences</h4>
+  <div class="settings-group">
+    <label class="settings-label">Type size</label>
+    <div class="settings-options size-opts" id="sizeOpts">
+      <button data-size="16">A</button>
+      <button data-size="18">A</button>
+      <button class="active" data-size="20">A</button>
+      <button data-size="22">A</button>
+    </div>
+  </div>
+  <div class="settings-group">
+    <label class="settings-label">Theme</label>
+    <div class="settings-options" id="themeOpts">
+      <button class="active" data-theme="night" style="font-style: italic;">Night</button>
+      <button data-theme="sepia" style="font-style: italic;">Sepia</button>
+    </div>
+  </div>
+  <div class="settings-group">
+    <label class="settings-label">Width</label>
+    <div class="settings-options" id="widthOpts">
+      <button data-width="600" style="font-size: 14px;">Narrow</button>
+      <button class="active" data-width="680" style="font-size: 14px;">Default</button>
+      <button data-width="780" style="font-size: 14px;">Wide</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ───────────── STORY ───────────── -->
+<article class="story">
+
+  <header class="story-head reveal">
+    <div class="story-folio">— Folio I —</div>
+    <h1 class="story-title">The <em>City</em><br>After Rain</h1>
+    <p class="story-desc">A woman delays going home and lets the city hold her for a few more minutes after the rain.</p>
+    <div class="story-meta">
+      <span>Fiction</span>
+      <span>5 min read</span>
+      <span>Motif · Rain</span>
+      <span class="lang">EN</span>
+    </div>
+  </header>
+
+  <div class="story-ornament">· · ·</div>
+
+  <div class="reader-body" id="readerBody">
+    <p class="drop-cap">After the rain, the city no longer looked like a city. It looked like something <em>remembering itself</em>.</p>
+
+    <p>The windows along the avenue held light the way wet stones hold warmth: briefly, carefully, as if they already knew it would leave.</p>
+
+    <p>She stood beneath a convenience-store awning and watched motorbikes pass in glittering fragments. Everything felt slightly delayed: the traffic, the evening, the answer she had not sent.</p>
+
+    <div class="pull">"There are nights when going home feels less like return and more like surrender."</div>
+
+    <p>There are nights when going home feels less like return and more like surrender. She was not afraid of the room itself. She was afraid of what silence would say once the door closed.</p>
+
+    <p>So she stayed outside long enough to feel the air change. Long enough to let the rain take the sharp edges off the day. Long enough to believe that unfinished courage might still count as courage.</p>
+
+    <p>Then she started walking, not because she was ready, but because readiness is often a story people tell after movement, never before.</p>
+  </div>
+
+  <!-- End of story -->
+  <div class="story-end reveal">
+    <div class="end-ornament">· ⁂ ·</div>
+    <div class="end-meta">— END OF FOLIO I —</div>
+    <p class="end-message">If this stayed with you, it can stay a little longer.</p>
+    <div class="end-actions">
+      <button class="end-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        Save to shelf
+      </button>
+      <button class="end-btn">
+        <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Share quietly
+      </button>
+      <button class="end-btn">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Mark as read
+      </button>
+    </div>
+  </div>
+
+  <!-- Leave a mark -->
+  <section class="leave-mark reveal">
+    <h4>Leave a small mark.</h4>
+    <p>— A line, a feeling, a piece of weather you carried out of this —</p>
+    <form class="mark-form" id="markForm" onsubmit="return false;">
+      <textarea placeholder="Write a short note for the writer (or for yourself later)…"></textarea>
+      <button type="submit">Leave it →</button>
+    </form>
+    <div class="mark-helper">Notes are kept gently — anonymous unless you choose otherwise.</div>
+  </section>
+
+</article>
+
+<!-- ───────────── CONTINUE READING ───────────── -->
+<section class="continue">
+  <div class="continue-head reveal">
+    <span class="continue-eyebrow">If this stayed</span>
+    <h3>Continue <em>quietly</em> with these.</h3>
+  </div>
+  <div class="continue-grid">
+    <a href="#" class="cont-card reveal">
+      <span class="cont-tag">SHORT · WATER</span>
+      <h4>Letters to the Reservoir</h4>
+      <p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p>
+    </a>
+    <a href="#" class="cont-card reveal">
+      <span class="cont-tag">FICTION · NIGHT</span>
+      <h4>Saigon After Eleven</h4>
+      <p>"After eleven, the city did not sleep. It only lowered its voice."</p>
+    </a>
+    <a href="#" class="cont-card vi reveal">
+      <span class="cont-tag">TẢN VĂN · IM LẶNG</span>
+      <h4 lang="vi">Một Nửa Của Im Lặng</h4>
+      <p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p>
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><span style="color: var(--gold)">·</span> Kody Lâm</div>
+    <div id="footerCenter">FOLIO I · THE CITY AFTER RAIN · 2026</div>
+    <div class="footer-links">
+      <a href="library.html">Library</a>
+      <a href="index.html">Atelier</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ───── PROGRESS BAR ─────
+  const progressFill = document.getElementById('progressFill');
+  const readTimeEl = document.getElementById('readTime');
+
+  function updateProgress() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+    progressFill.style.width = pct + '%';
+
+    // Estimate min remaining (story-specific total)
+    const total = window.__totalReadMin || 5;
+    const done = Math.round((pct / 100) * total);
+    readTimeEl.textContent = `${done} / ${total} min`;
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ───── AUTO-DIM CHROME ─────
+  const chrome = document.getElementById('chrome');
+  let dimTimeout;
+  let lastY = 0;
+
+  function resetDim() {
+    chrome.classList.remove('dim');
+    clearTimeout(dimTimeout);
+    dimTimeout = setTimeout(() => { chrome.classList.add('dim'); }, 3500);
+  }
+  document.addEventListener('mousemove', resetDim);
+  document.addEventListener('touchstart', resetDim);
+  window.addEventListener('scroll', () => {
+    const y = window.pageYOffset;
+    if (Math.abs(y - lastY) > 4) resetDim();
+    lastY = y;
+  }, { passive: true });
+  resetDim();
+
+  // ───── SETTINGS ─────
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsPanel.classList.toggle('open');
+    settingsBtn.classList.toggle('active');
+  });
+  document.addEventListener('click', (e) => {
+    if (!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
+      settingsPanel.classList.remove('open');
+      settingsBtn.classList.remove('active');
+    }
+  });
+
+  // Font size
+  document.querySelectorAll('#sizeOpts button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#sizeOpts button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.documentElement.style.setProperty('--reader-font', btn.dataset.size + 'px');
+    });
+  });
+
+  // Theme
+  document.querySelectorAll('#themeOpts button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#themeOpts button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn.dataset.theme === 'sepia') document.body.classList.add('theme-sepia');
+      else document.body.classList.remove('theme-sepia');
+    });
+  });
+
+  // Width
+  document.querySelectorAll('#widthOpts button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#widthOpts button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.documentElement.style.setProperty('--reader-width', btn.dataset.width + 'px');
+    });
+  });
+
+  // Bookmark — integrates with WM.shelf below (after story is known)
+  const bookmarkBtn = document.getElementById('bookmarkBtn');
+
+  // ───── SCROLL REVEAL ─────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+<script src="wm-config.js?v=6"></script>
+<script src="wm.js?v=6"></script>
+<script src="wm-supabase.js?v=6"></script>
+<script src="wm-i18n.js?v=6"></script>
+<script>
+  // ═══════════════════ ROUTE + POPULATE FROM URL ?id= ═══════════════════
+  (function () {
+    const id = WM.getParam('id') || 'the-city-after-rain';
+    const story = WM.getStory(id) || WM.stories[0];
+    const motif = WM.motifs[story.motif] || { name: story.motif, color: '#C9A961' };
+
+    // Document title
+    document.title = story.title + ' — Kody Lâm';
+
+    // Chrome bar
+    document.getElementById('chromeForm').textContent = story.form === 'tan-van' ? 'TẢN VĂN' : story.form.toUpperCase();
+    document.getElementById('chromeFolio').textContent = story.folio + '.';
+
+    // Story head
+    document.querySelector('.story-folio').textContent = '— Folio ' + story.folio + ' —';
+    document.querySelector('.story-title').innerHTML = story.titleHTML || story.title;
+    if (story.lang === 'vi') document.querySelector('.story-title').setAttribute('lang', 'vi');
+    document.querySelector('.story-desc').textContent = story.description;
+    if (story.lang === 'vi') document.querySelector('.story-desc').setAttribute('lang', 'vi');
+
+    const meta = document.querySelector('.story-meta');
+    meta.innerHTML =
+      '<span>' + (story.form === 'tan-van' ? 'Tản văn' : story.form.charAt(0).toUpperCase() + story.form.slice(1)) + '</span>' +
+      '<span>' + story.readTime + ' min read</span>' +
+      '<span>Motif · ' + motif.name + '</span>' +
+      '<span class="lang">' + story.lang.toUpperCase() + '</span>';
+
+    // ─── Apply per-story theme variant ───
+    if (story.themeVariant && story.themeVariant !== 'velvet') {
+      document.body.classList.add('variant-' + story.themeVariant);
+    }
+
+    // ─── Per-story mood layer (keyed to motif) ───
+    if (story.motif) {
+      document.body.classList.add('mood-' + story.motif);
+      const ml = document.getElementById('moodLayer');
+      if (ml) setTimeout(() => ml.classList.add('lit'), 120);
+    }
+
+    // ─── Body: interactive vs prose ───
+    const body = document.getElementById('readerBody');
+    if (story.lang === 'vi') body.setAttribute('lang', 'vi');
+
+    function renderScene(sceneKey) {
+      const scene = story.scenes[sceneKey];
+      if (!scene) return;
+      // Render scene body
+      body.innerHTML = WM.renderMarkdown(scene.body);
+      const firstP = body.querySelector('p');
+      if (firstP) firstP.classList.add('drop-cap');
+      body.querySelectorAll('blockquote').forEach(bq => {
+        const div = document.createElement('div');
+        div.className = 'pull';
+        div.innerHTML = '"' + bq.innerHTML + '"';
+        bq.replaceWith(div);
+      });
+      // Insert choices or ending
+      const choicesHost = document.getElementById('sceneChoices');
+      choicesHost.innerHTML = '';
+      if (scene.choices && scene.choices.length) {
+        choicesHost.innerHTML =
+          '<div class="scene-prompt">Choose</div>' +
+          '<div class="scene-choice-list">' +
+          scene.choices.map((c, i) =>
+            '<button class="scene-choice-btn" data-next="' + c.next + '">' +
+            WM.escapeHtml(c.label) + '</button>'
+          ).join('') +
+          '</div>';
+        choicesHost.querySelectorAll('.scene-choice-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            renderScene(btn.dataset.next);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        });
+      } else if (scene.ending) {
+        choicesHost.innerHTML =
+          '<div class="scene-ending">' + WM.escapeHtml(scene.ending) + '</div>' +
+          '<div style="text-align: center;"><a class="scene-restart" id="sceneRestart">↺ Begin again</a></div>';
+        document.getElementById('sceneRestart')?.addEventListener('click', () => {
+          renderScene('start');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    }
+
+    if (story.form === 'interactive' && story.scenes) {
+      // Make sure choices host exists right after the body
+      let choicesHost = document.getElementById('sceneChoices');
+      if (!choicesHost) {
+        choicesHost = document.createElement('div');
+        choicesHost.id = 'sceneChoices';
+        choicesHost.className = 'scene-choices';
+        body.parentNode.insertBefore(choicesHost, body.nextSibling);
+      }
+      renderScene('start');
+    } else {
+      // Prose: render full body
+      body.innerHTML = WM.renderMarkdown(story.body);
+      const firstP = body.querySelector('p');
+      if (firstP) firstP.classList.add('drop-cap');
+      body.querySelectorAll('blockquote').forEach(bq => {
+        const div = document.createElement('div');
+        div.className = 'pull';
+        div.innerHTML = '"' + bq.innerHTML + '"';
+        bq.replaceWith(div);
+      });
+    }
+
+    // End-of-story meta
+    const endMeta = document.querySelector('.end-meta');
+    if (endMeta) endMeta.textContent = '— END OF FOLIO ' + story.folio + ' —';
+
+    // Footer
+    document.getElementById('footerCenter').textContent =
+      'FOLIO ' + story.folio + ' · ' + story.title.toUpperCase() + ' · 2026';
+
+    // Continue reading — populate with related stories
+    const related = WM.getRelatedStories(story.id, 3);
+    const grid = document.querySelector('.continue-grid');
+    grid.innerHTML = related.map(r => {
+      const rmotif = WM.motifs[r.motif] || {};
+      const isVi = r.lang === 'vi';
+      const langAttr = isVi ? ' lang="vi"' : '';
+      const tagText = (r.form === 'tan-van' ? 'TẢN VĂN' : r.form.toUpperCase()) + ' · ' + (rmotif.name || r.motif).toUpperCase();
+      return '<a href="reader.html?id=' + r.id + '" class="cont-card reveal' + (isVi ? ' vi' : '') + '">' +
+        '<span class="cont-tag">' + tagText + '</span>' +
+        '<h4' + langAttr + '>' + r.title + '</h4>' +
+        '<p' + langAttr + '>"' + r.excerpt + '"</p>' +
+        '</a>';
+    }).join('');
+
+    // Re-observe new related cards for reveal animation
+    document.querySelectorAll('.continue-grid .reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+
+    // Update progress bar denominator (total min)
+    const totalMin = story.readTime;
+    const readTimeEl = document.getElementById('readTime');
+    if (readTimeEl) readTimeEl.textContent = '0 / ' + totalMin + ' min';
+
+    // Override updateProgress to use this story's read time
+    window.__totalReadMin = totalMin;
+
+    // Count this read (only when backend is connected)
+    function doCount() { if (WM.online && WM.countRead) WM.countRead(story.id); }
+    if (WM.online !== undefined) doCount();
+    else window.addEventListener('wm:ready', doCount, { once: true });
+
+    // ═══════════════════ READER PREFS (persist across stories) ═══════════════════
+    const prefs = WM.reader.get();
+    // Apply font size
+    if (prefs.fontSize) {
+      document.documentElement.style.setProperty('--reader-font', prefs.fontSize + 'px');
+      document.querySelectorAll('[data-size]').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.size) === prefs.fontSize);
+      });
+    }
+    // Apply theme
+    if (prefs.theme && prefs.theme !== 'night') {
+      document.body.classList.add('theme-' + prefs.theme);
+      document.querySelectorAll('[data-theme]').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === prefs.theme);
+      });
+    }
+    // Apply width
+    if (prefs.width) {
+      document.documentElement.style.setProperty('--reader-width', prefs.width + 'px');
+      document.querySelectorAll('[data-width]').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.width) === prefs.width);
+      });
+    }
+    // Save when changed (existing handlers already update UI/CSS; we just persist)
+    document.querySelectorAll('[data-size]').forEach(b => {
+      b.addEventListener('click', () => WM.reader.set({ fontSize: parseInt(b.dataset.size) }));
+    });
+    document.querySelectorAll('[data-theme]').forEach(b => {
+      b.addEventListener('click', () => WM.reader.set({ theme: b.dataset.theme }));
+    });
+    document.querySelectorAll('[data-width]').forEach(b => {
+      b.addEventListener('click', () => WM.reader.set({ width: parseInt(b.dataset.width) }));
+    });
+
+    // ═══════════════════ LEAVE A MARK (save to localStorage) ═══════════════════
+    const markForm = document.getElementById('markForm');
+    if (markForm) {
+      markForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const textarea = markForm.querySelector('textarea');
+        const text = (textarea?.value || '').trim();
+        if (!text) return;
+        WM.marks.add({ storyId: story.id, storyTitle: story.title, text });
+        textarea.value = '';
+        const saved = document.createElement('div');
+        saved.className = 'mark-saved';
+        saved.textContent = '"Your mark is kept. The room remembers."';
+        markForm.replaceWith(saved);
+      });
+    }
+
+    // ═══════════════════ BOOKMARK / SHELF ═══════════════════
+    const bmBtn = document.getElementById('bookmarkBtn');
+    if (bmBtn) {
+      const syncBtn = () => {
+        const saved = WM.shelf.has(story.id);
+        bmBtn.classList.toggle('active', saved);
+        bmBtn.setAttribute('title', saved ? 'Saved to shelf · click to remove' : 'Save to shelf');
+      };
+      syncBtn();
+      bmBtn.addEventListener('click', () => {
+        WM.shelf.toggle(story.id);  // toggle first
+        syncBtn();                  // then update UI from new state
+      });
+    }
+  })();
+</script>
+</body>
+</html>

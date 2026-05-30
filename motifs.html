@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=7">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kody Lâm">
+<meta property="og:title" content="Motif Archive — Kody Lâm">
+<meta property="og:description" content="A museum of recurring weathers: rain, water, window, silence, night.">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Motif Archive — Kody Lâm">
+<meta name="twitter:description" content="A museum of recurring weathers: rain, water, window, silence, night.">
+<meta name="twitter:image" content="og-image.png">
+<!-- For social previews to work, replace og-image.png above with your full URL after deploy, e.g. https://you.github.io/water-memory/og-image.png -->
+<title>Motif Archive — Kody Lâm</title>
+<meta name="description" content="A small museum of moods and motifs — rain, water, window, silence, night.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night:        #0E0B16;
+    --night-soft:   #1A1622;
+    --night-deep:   #060410;
+    --ivory:        #EDE6D6;
+    --ivory-soft:   #9B9282;
+    --ivory-faint:  #5C5448;
+    --gold:         #C9A961;
+    --gold-deep:    #8A7038;
+    --oxblood:      #6E1F22;
+    --rain-blue:    #7AAEC4;
+    --rule:         #2A2230;
+    --rule-soft:    #1F1A26;
+
+    --font-display: "Cormorant Garamond", "Times New Roman", serif;
+    --font-body:    "Lora", Georgia, serif;
+    --font-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+    --column:       720px;
+    --column-wide:  1240px;
+
+    --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--ivory);
+    background: var(--night);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  ::selection { background: var(--gold); color: var(--night); }
+
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    opacity: 0.5; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 99;
+    background: radial-gradient(ellipse at 50% 40%, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* ───────────── TOP NAV ───────────── */
+  .topnav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(14, 11, 22, 0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topnav-inner {
+    max-width: var(--column-wide);
+    margin: 0 auto;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .back-link {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    color: var(--ivory-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: color 0.25s var(--ease);
+  }
+  .back-link:hover { color: var(--gold); }
+  .back-link .arrow {
+    font-family: var(--font-display); font-size: 18px;
+    transition: transform 0.25s var(--ease);
+  }
+  .back-link:hover .arrow { transform: translateX(-4px); }
+  .back-link .brand-mark {
+    width: 28px; height: 28px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 15px;
+  }
+  .nav-center {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ivory);
+  }
+  .nav-center .ornament { color: var(--gold); margin: 0 8px; opacity: 0.7; }
+
+  .nav-other {
+    display: flex; gap: 20px;
+  }
+  .nav-other a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ivory-soft);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-other a:hover { color: var(--gold); }
+
+  @media (max-width: 720px) {
+    .nav-center, .nav-other { display: none; }
+    .topnav-inner { padding: 14px 16px; }
+  }
+
+  /* ───────────── HERO ───────────── */
+  .hero {
+    padding: clamp(64px, 12vw, 120px) 28px clamp(48px, 8vw, 80px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 30%; left: 50%;
+    transform: translateX(-50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, rgba(201, 169, 97, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 720px; margin: 0 auto; position: relative; }
+  .ornament {
+    font-family: var(--font-display);
+    color: var(--gold);
+    font-size: 28px;
+    letter-spacing: 0.5em;
+    opacity: 0.7;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 9vw, 88px);
+    line-height: 1;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ivory);
+    margin-bottom: 28px;
+    letter-spacing: -0.015em;
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(18px, 2.4vw, 22px);
+    line-height: 1.55;
+    color: var(--ivory-soft);
+    max-width: 580px;
+    margin: 0 auto 40px;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+  .hero-stats span { display: flex; align-items: center; gap: 10px; }
+  .hero-stats b {
+    font-weight: 500;
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    letter-spacing: 0;
+  }
+
+  /* ───────────── MAIN ───────────── */
+  main {
+    padding: clamp(48px, 8vw, 80px) 28px clamp(72px, 12vw, 120px);
+    max-width: var(--column-wide);
+    margin: 0 auto;
+  }
+  @media (max-width: 600px) {
+    main { padding: 56px 20px; }
+  }
+
+  /* ───────────── MOTIF MAP (top) ───────────── */
+  .map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 6px;
+    margin-bottom: 80px;
+  }
+  .map-dot {
+    aspect-ratio: 1;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px;
+    background: var(--night-soft);
+    text-decoration: none;
+    color: var(--ivory);
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, var(--motif-color, var(--gold)) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .map-dot:hover {
+    transform: translateY(-3px);
+    border-color: var(--motif-color, var(--gold));
+  }
+  .map-dot:hover::before { opacity: 0.12; }
+  .map-orb {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--motif-color, var(--gold));
+    opacity: 0.55;
+    transition: opacity 0.3s, transform 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+  .map-dot:hover .map-orb { opacity: 1; transform: scale(1.15); }
+  .map-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ivory);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .map-count {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.15em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ───────────── MOTIF SECTIONS ───────────── */
+  .motif-section {
+    padding: clamp(56px, 9vw, 96px) 0;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    scroll-margin-top: 80px;
+  }
+  .motif-section:first-of-type { border-top: none; }
+  .motif-head {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    margin-bottom: 48px;
+    align-items: end;
+  }
+  .motif-orb-large {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--motif-color);
+    opacity: 0.7;
+    position: relative;
+  }
+  .motif-orb-large::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid var(--motif-color);
+    opacity: 0.4;
+  }
+  .motif-headtext h2 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--ivory);
+    letter-spacing: -0.015em;
+    margin-bottom: 12px;
+  }
+  .motif-headtext h2 em { font-style: italic; color: var(--motif-color); }
+  .motif-headtext .lat {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .motif-headmeta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.15em;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  .motif-headmeta b {
+    color: var(--motif-color);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0;
+    display: block;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 720px) {
+    .motif-head { grid-template-columns: 56px 1fr; gap: 20px; }
+    .motif-headmeta { grid-column: 1 / -1; text-align: left; padding-top: 6px; }
+    .motif-orb-large { width: 48px; height: 48px; }
+  }
+
+  .motif-pullquote {
+    margin: 0 0 40px 96px;
+    padding: 12px 0 12px 24px;
+    border-left: 1px solid var(--motif-color);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(20px, 2.6vw, 26px);
+    line-height: 1.45;
+    color: var(--ivory-soft);
+  }
+  @media (max-width: 720px) {
+    .motif-pullquote { margin-left: 0; padding-left: 18px; }
+  }
+
+  .pieces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-left: 96px;
+  }
+  @media (max-width: 720px) {
+    .pieces-grid { margin-left: 0; }
+  }
+  .piece-card {
+    background: var(--night-soft);
+    border: 1px solid var(--rule);
+    padding: 22px 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--ivory);
+    transition: all 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 200px;
+    position: relative;
+  }
+  .piece-card:hover {
+    background: var(--night-deep);
+    border-color: var(--motif-color);
+    transform: translateY(-2px);
+  }
+  .piece-card::after {
+    content: "→";
+    position: absolute;
+    top: 22px; right: 22px;
+    font-family: var(--font-display);
+    color: var(--ivory-faint);
+    font-size: 18px;
+    transition: all 0.3s var(--ease);
+  }
+  .piece-card:hover::after { color: var(--motif-color); transform: translateX(3px); }
+  .piece-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--motif-color);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .piece-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.15;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-right: 24px;
+  }
+  .piece-title em { font-style: italic; }
+  .piece-excerpt {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ivory-soft);
+    margin-top: auto;
+  }
+  .piece-meta {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    display: flex; gap: 10px;
+  }
+
+  /* ───────────── CLOSING ───────────── */
+  .closing {
+    padding: clamp(72px, 12vw, 120px) 28px;
+    text-align: center;
+    border-top: 1px solid var(--rule);
+  }
+  .closing .ornament { font-size: 24px; margin-bottom: 20px; }
+  .closing h3 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(24px, 3.6vw, 34px);
+    color: var(--ivory);
+    margin-bottom: 16px;
+    line-height: 1.2;
+    max-width: 580px;
+    margin-left: auto; margin-right: auto;
+  }
+  .closing h3 em { color: var(--gold); }
+  .closing p {
+    color: var(--ivory-soft);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 17px;
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .closing a.btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 14px 28px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s var(--ease);
+    text-decoration: none;
+    display: inline-block;
+  }
+  .closing a.btn:hover { background: var(--gold); color: var(--night); }
+
+  /* ───────────── FOOTER ───────────── */
+  footer {
+    padding: 40px 28px;
+    background: var(--night-deep);
+    border-top: 1px solid var(--rule);
+  }
+  .footer-inner {
+    max-width: var(--column-wide);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ivory-faint);
+    letter-spacing: 0.12em;
+  }
+  .footer-brand { font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--ivory-soft); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--ivory-faint); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* Reveal */
+  .reveal {
+    opacity: 1; transform: none;
+    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ───────────── NAV ───────────── -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="back-link">
+      <span class="arrow">←</span>
+      <span aria-hidden="true" style="display:inline-block;width:16px;height:1px;background:currentColor;opacity:0.55;margin-right:13px;vertical-align:middle;"></span>
+      <span>Atelier</span>
+    </a>
+    <div class="nav-center">Motif Archive <span class="ornament">·</span> Kody Lâm</div>
+    <div class="nav-other">
+      <a href="library.html">Library</a>
+      <a href="about.html">About</a>
+      <span class="lang-toggle" style="display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:12px; margin-left:6px;">
+        <button data-lang="en" class="active" style="background:none;border:none;color:var(--ivory,#EDE6D6);cursor:pointer;padding:2px 4px;">EN</button>
+        <span style="opacity:0.4;">·</span>
+        <button data-lang="vi" style="background:none;border:none;color:var(--ivory-faint,#8A8478);cursor:pointer;padding:2px 4px;">VI</button>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<!-- ───────────── HERO ───────────── -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="ornament">· ⁂ ·</div>
+    <h1>The <span class="accent">Motif</span><br>Archive</h1>
+    <p class="hero-quote">"Not a museum of objects, but of weathers — the recurring temperatures a writer keeps returning to, sometimes for years, without quite knowing why."</p>
+    <div class="hero-stats">
+      <span><b>7</b> motifs</span>
+      <span><b>12</b> pieces</span>
+      <span>Updated <b>weekly</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ───────────── MAIN ───────────── -->
+<main>
+
+  <!-- The map of motifs (clickable jump links) -->
+  <div class="map reveal">
+    <a href="#rain"     class="map-dot" style="--motif-color: #7AAEC4;"><div class="map-orb"></div><div class="map-name">Rain</div><div class="map-count">3 PIECES</div></a>
+    <a href="#water"    class="map-dot" style="--motif-color: #6A8C7B;"><div class="map-orb"></div><div class="map-name">Water</div><div class="map-count">2 PIECES</div></a>
+    <a href="#window"   class="map-dot" style="--motif-color: #C25535;"><div class="map-orb"></div><div class="map-name">Window</div><div class="map-count">2 PIECES</div></a>
+    <a href="#silence"  class="map-dot" style="--motif-color: #C9A961;"><div class="map-orb"></div><div class="map-name">Silence</div><div class="map-count">1 PIECE</div></a>
+    <a href="#night"    class="map-dot" style="--motif-color: #4A3D5E;"><div class="map-orb"></div><div class="map-name">Night</div><div class="map-count">2 PIECES</div></a>
+    <a href="#city"     class="map-dot" style="--motif-color: #9B9282;"><div class="map-orb"></div><div class="map-name">City</div><div class="map-count">3 PIECES</div></a>
+    <a href="#draft"    class="map-dot" style="--motif-color: #B89047;"><div class="map-orb"></div><div class="map-name">Draft</div><div class="map-count">1 PIECE</div></a>
+  </div>
+
+  <!-- ─── RAIN ─── -->
+  <section class="motif-section reveal" id="rain" style="--motif-color: #7AAEC4;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Rain</em></h2>
+        <div class="lat">— FALLING WATER · WEATHER AS PERMISSION —</div>
+      </div>
+      <div class="motif-headmeta">
+        <b>3</b>
+        pieces
+      </div>
+    </div>
+    <div class="motif-pullquote">"After the rain, the city no longer looked like a city. It looked like something remembering itself."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">FICTION · 5 MIN</span>
+        <div class="piece-title">The City After Rain</div>
+        <p class="piece-excerpt">A woman delays going home and lets the city hold her for a few more minutes.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>412 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN</span>
+        <div class="piece-title">In a Room of Small Lights</div>
+        <p class="piece-excerpt">"A room lit by small lamps asks for a different honesty than daylight does."</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>221 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">FICTION · 5 MIN</span>
+        <div class="piece-title">Saigon After Eleven</div>
+        <p class="piece-excerpt">"After eleven, the city did not sleep. It only lowered its voice."</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>NEW</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── WATER ─── -->
+  <section class="motif-section reveal" id="water" style="--motif-color: #6A8C7B;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Water</em></h2>
+        <div class="lat">— HELD · STORED · THE PATIENCE OF MEMORY —</div>
+      </div>
+      <div class="motif-headmeta"><b>2</b>pieces</div>
+    </div>
+    <div class="motif-pullquote">"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">SHORT · 3 MIN</span>
+        <div class="piece-title">Letters to the Reservoir</div>
+        <p class="piece-excerpt">A brief piece about stored water, stored feeling, and the strange patience of memory.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>298 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN · DRAFT</span>
+        <div class="piece-title" lang="vi">Bến Cũ Có Bóng Người</div>
+        <p class="piece-excerpt" lang="vi">"Bến đó không còn bóng người. Nhưng nước vẫn nhớ..."</p>
+        <div class="piece-meta"><span>VI</span><span>·</span><span>BETA</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── WINDOW ─── -->
+  <section class="motif-section reveal" id="window" style="--motif-color: #C25535;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Window</em></h2>
+        <div class="lat">— THE FRAME · WHAT WE SEE BUT DO NOT TOUCH —</div>
+      </div>
+      <div class="motif-headmeta"><b>2</b>pieces</div>
+    </div>
+    <div class="motif-pullquote">"A room lit by small lamps asks for a different honesty than daylight does."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN</span>
+        <div class="piece-title">In a Room of Small Lights</div>
+        <p class="piece-excerpt">On low lamps, evening apartments, and the intimacy of surviving softly.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>221 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN</span>
+        <div class="piece-title">Mirror City Notes</div>
+        <p class="piece-excerpt">"In a city full of glass, self-consciousness becomes a climate."</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>130 reads</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── SILENCE ─── -->
+  <section class="motif-section reveal" id="silence" style="--motif-color: #C9A961;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Silence</em> · <span lang="vi">Im lặng</span></h2>
+        <div class="lat">— A ROOM SO FULL IT CANNOT SPEAK —</div>
+      </div>
+      <div class="motif-headmeta"><b>1</b>piece</div>
+    </div>
+    <div class="motif-pullquote" lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN</span>
+        <div class="piece-title" lang="vi">Một Nửa Của Im Lặng</div>
+        <p class="piece-excerpt" lang="vi">Một tản văn ngắn bằng tiếng Việt về im lặng, dịu dàng, và phần cảm xúc chưa kịp gọi tên.</p>
+        <div class="piece-meta"><span>VI</span><span>·</span><span>186 reads</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── NIGHT ─── -->
+  <section class="motif-section reveal" id="night" style="--motif-color: #8A82B5;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Night</em></h2>
+        <div class="lat">— THE HOUR THE CITY LOWERS ITS VOICE —</div>
+      </div>
+      <div class="motif-headmeta"><b>2</b>pieces</div>
+    </div>
+    <div class="motif-pullquote">"After eleven, the city did not sleep. It only lowered its voice."</div>
+    <div class="pieces-grid">
+      <a href="reader.html?id=saigon-after-eleven" class="piece-card">
+        <span class="piece-tag">FICTION · 5 MIN</span>
+        <div class="piece-title">Saigon After Eleven</div>
+        <p class="piece-excerpt">A quiet nighttime piece about movement, hesitation, and a city that refuses to sleep on time.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>NEW</span></div>
+      </a>
+      <a href="reader.html?id=a-door-at-three-am" class="piece-card" style="border-color: rgba(122, 174, 196, 0.4);">
+        <span class="piece-tag">INTERACTIVE · 6 MIN</span>
+        <div class="piece-title">A Door at Three AM</div>
+        <p class="piece-excerpt">A short interactive piece. Three choices, three small endings — none of them final.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span style="color: #7AAEC4;">⁂ INTERACTIVE</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── CITY ─── -->
+  <section class="motif-section reveal" id="city" style="--motif-color: #9B9282;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>City</em></h2>
+        <div class="lat">— THE WEATHER OF BEING SEEN —</div>
+      </div>
+      <div class="motif-headmeta"><b>3</b>pieces</div>
+    </div>
+    <div class="motif-pullquote">"In a city full of glass, self-consciousness becomes a climate."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">FICTION · 5 MIN</span>
+        <div class="piece-title">The City After Rain</div>
+        <p class="piece-excerpt">A woman delays going home and lets the city hold her for a few more minutes.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>412 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">TẢN VĂN · 4 MIN</span>
+        <div class="piece-title">Mirror City Notes</div>
+        <p class="piece-excerpt">A reflection on modern city life, comparison, and the quiet violence of being watched by surfaces.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>130 reads</span></div>
+      </a>
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">FICTION · 5 MIN</span>
+        <div class="piece-title">Saigon After Eleven</div>
+        <p class="piece-excerpt">"After eleven, the city did not sleep. It only lowered its voice."</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>NEW</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── DRAFT ─── -->
+  <section class="motif-section reveal" id="draft" style="--motif-color: #B89047;">
+    <div class="motif-head">
+      <div class="motif-orb-large"></div>
+      <div class="motif-headtext">
+        <h2><em>Draft</em></h2>
+        <div class="lat">— THE UNFINISHED · A LOYALTY OF RETURN —</div>
+      </div>
+      <div class="motif-headmeta"><b>1</b>piece</div>
+    </div>
+    <div class="motif-pullquote">"Not every unfinished thing is a failure. Some are rooms we were not ready to enter."</div>
+    <div class="pieces-grid">
+      <a href="reader.html" class="piece-card">
+        <span class="piece-tag">SHORT · 3 MIN</span>
+        <div class="piece-title">The Language of Unfinished Things</div>
+        <p class="piece-excerpt">A fragment on abandoned drafts, half-kept promises, and why unfinished work still matters.</p>
+        <div class="piece-meta"><span>EN</span><span>·</span><span>176 reads</span></div>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ───────────── CLOSING ───────────── -->
+<section class="closing">
+  <div class="ornament">· ⁂ ·</div>
+  <h3>The archive grows by <em>weather</em>,<br>not by schedule.</h3>
+  <p>A new motif appears only when a piece truly needs one. New pieces find their motif on the way out, never before.</p>
+  <a href="library.html" class="btn">← Back to the Library</a>
+</section>
+
+<!-- ───────────── FOOTER ───────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><span style="color: var(--gold);">·</span> Kody Lâm</div>
+    <div>MOTIF ARCHIVE · 7 MOTIFS · 2026</div>
+    <div class="footer-links">
+      <a href="index.html">Atelier</a>
+      <a href="library.html">Library</a>
+      <a href="about.html">About</a>
+    </div>
+  </div>
+</footer>
+
+<script src="wm-config.js?v=6"></script>
+<script src="wm.js?v=6"></script>
+<script src="wm-supabase.js?v=6"></script>
+<script src="wm-i18n.js?v=6"></script>
+<script>
+  // ═══════════════════ WIRE STORY NAVIGATION ═══════════════════
+  // Each piece-card: match by title to WM.stories and rewrite href
+  document.querySelectorAll('.piece-card').forEach(card => {
+    const titleEl = card.querySelector('.piece-title');
+    if (!titleEl) return;
+    const title = titleEl.textContent.trim();
+    const story = WM.stories.find(s => s.title === title);
+    if (story) {
+      card.href = 'reader.html?id=' + story.id;
+    }
+  });
+
+  // ═══════════════════ SCROLL REVEAL ═══════════════════
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
