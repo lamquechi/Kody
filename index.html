@@ -544,10 +544,18 @@
   }
 
   .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
     gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding: 4px 2px 20px;
+    scroll-padding-left: 2px;
+    -webkit-overflow-scrolling: touch;
   }
+  .card-grid::-webkit-scrollbar { height: 7px; }
+  .card-grid::-webkit-scrollbar-track { background: transparent; }
+  .card-grid::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+  .card-grid:hover::-webkit-scrollbar-thumb { background: var(--ink-faint); }
   .story-card {
     background: var(--paper-warm);
     padding: clamp(28px, 3.5vw, 36px);
@@ -558,6 +566,8 @@
     display: flex;
     flex-direction: column;
     min-height: 280px;
+    flex: 0 0 clamp(258px, 30vw, 322px);
+    scroll-snap-align: start;
   }
   .story-card:hover {
     transform: translateY(-3px);
@@ -1224,11 +1234,7 @@
           <span class="lang">VI</span>
         </div>
       </article>
-    </div>
-    <div style="text-align:center; margin-top:36px;">
-      <a href="library.html" class="see-all" style="font-size:17px;">Browse the full library <span class="arrow">→</span></a>
-    </div>
-    <div class="card-grid" style="display:none;">
+
       <article class="story-card reveal" data-curtain="true">
         <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">FICTION · NIGHT</span>
