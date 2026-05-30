@@ -564,6 +564,26 @@
     border-color: var(--ink);
     box-shadow: 0 16px 36px -20px rgba(20, 17, 14, 0.25);
   }
+  /* Flexible cover slot — add an image later via:
+     <div class="card-cover has-cover" style="background-image:url('covers/your.jpg')"></div> */
+  .card-cover {
+    aspect-ratio: 16 / 10;
+    margin: calc(-1 * clamp(28px, 3.5vw, 36px));
+    margin-bottom: 22px;
+    background: linear-gradient(135deg, #efe9df 0%, #e3dccf 100%);
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .card-cover::after {
+    content: '＋ THÊM ẢNH';
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em;
+    color: rgba(20, 17, 14, 0.22);
+  }
+  .card-cover.has-cover::after { display: none; }
+  .story-card.vi-piece .card-cover { background: linear-gradient(135deg, #e7e9ec 0%, #d9dde2 100%); }
   .card-tag {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -1173,6 +1193,7 @@
 
     <div class="card-grid">
       <article class="story-card reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">SHORT · WATER</span>
         <h3>Letters to the Reservoir</h3>
         <p class="excerpt">Some memories do not vanish. They settle, like water held behind concrete, waiting for weather.</p>
@@ -1183,6 +1204,7 @@
       </article>
 
       <article class="story-card reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">TẢN VĂN · WINDOW</span>
         <h3>In a Room of Small Lights</h3>
         <p class="excerpt">A room lit by small lamps asks for a different honesty than daylight does.</p>
@@ -1193,6 +1215,7 @@
       </article>
 
       <article class="story-card vi-piece reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">TẢN VĂN · IM LẶNG</span>
         <h3 lang="vi">Một Nửa Của Im Lặng</h3>
         <p class="excerpt" lang="vi">Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn.</p>
@@ -1207,6 +1230,7 @@
     </div>
     <div class="card-grid" style="display:none;">
       <article class="story-card reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">FICTION · NIGHT</span>
         <h3>Saigon After Eleven</h3>
         <p class="excerpt">After eleven, the city did not sleep. It only lowered its voice.</p>
@@ -1217,6 +1241,7 @@
       </article>
 
       <article class="story-card reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">TẢN VĂN · CITY</span>
         <h3>Mirror City Notes</h3>
         <p class="excerpt">In a city full of glass, self-consciousness becomes a climate.</p>
@@ -1227,6 +1252,7 @@
       </article>
 
       <article class="story-card reveal" data-curtain="true">
+        <div class="card-cover" aria-hidden="true"></div>
         <span class="card-tag">SHORT · DRAFT</span>
         <h3>The Language of Unfinished Things</h3>
         <p class="excerpt">Not every unfinished thing is a failure. Some are rooms we were not ready to enter.</p>
