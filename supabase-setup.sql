@@ -73,8 +73,8 @@ create table if not exists subscribers (
 -- 6. SITE_CONFIG (single-row brand customization)
 create table if not exists site_config (
   id                  int primary key default 1 check (id = 1),
-  site_name           text default 'Water & Memory',
-  site_mark           text default 'W',
+  site_name           text default 'Kody Lâm',
+  site_mark           text default 'K',
   site_tagline        text default 'A small archive of rain, rooms, and unsent words.',
   site_footer_line    text default 'A quiet literary portfolio for a bilingual writer.',
   updated_at          timestamptz default now()
