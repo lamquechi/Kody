@@ -929,14 +929,14 @@
   </span>
 
   <div class="bar-actions">
-    <button class="bar-btn">
+    <button class="bar-btn" id="previewBtn">
       <svg viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6"/></svg>
       <span>Preview as reader</span>
     </button>
-    <button class="bar-btn">
+    <button class="bar-btn" id="scheduleBtn">
       <span>Schedule</span>
     </button>
-    <button class="bar-btn bar-btn-primary">
+    <button class="bar-btn bar-btn-primary" id="publishBtn">
       <span>Publish</span>
     </button>
   </div>
@@ -1557,21 +1557,34 @@ The afternoon is when the room remembers the people I have been.
     flagSaving();
   });
 
-  // ───── PUBLISH / SCHEDULE BUTTONS (visual confirm + save) ─────
-  document.querySelectorAll('.bar-btn-primary').forEach(btn => {
-    btn.addEventListener('click', () => {
-      WM.drafts.save(DRAFT_ID, Object.assign({
-        title: titleInput.value,
-        body: md.value,
-        status: 'published',
-        publishedAt: Date.now()
-      }, metaExtras()));
-      const t = document.createElement('div');
-      t.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:14px 22px;font-family:var(--font-display);font-style:italic;font-size:16px;border-radius:2px;z-index:999;box-shadow:0 12px 28px -12px rgba(0,0,0,0.4);';
-      t.textContent = '"' + titleInput.value + '" — published (locally)';
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2600);
-    });
+  // ───── PUBLISH / SCHEDULE / PREVIEW ─────
+  function showToast(msg, kind) {
+    const bg = kind === 'sched' ? '#3F5B6B' : (kind === 'warn' ? '#7A3B2E' : 'var(--ink)');
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1);background:' + bg + ';color:#F7F4EE;padding:18px 30px;font-family:var(--font-display),Georgia,serif;font-style:italic;font-size:20px;line-height:1.4;border-radius:4px;z-index:9999;box-shadow:0 22px 50px -16px rgba(0,0,0,0.55);max-width:84vw;text-align:center;';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; setTimeout(() => t.remove(), 420); }, 3200);
+  }
+  const onServer = () => !!(window.WM && WM.online && WM.user);
+  const publishBtn = document.getElementById('publishBtn');
+  if (publishBtn) publishBtn.addEventListener('click', () => {
+    WM.drafts.save(DRAFT_ID, Object.assign({ title: titleInput.value, body: md.value, status: 'published', publishedAt: Date.now() }, metaExtras()));
+    showToast('"' + (titleInput.value || 'Untitled') + '" — đã xuất bản' + (onServer() ? ' · đã lưu lên server ✓' : ' · đã lưu cục bộ'));
+  });
+  const scheduleBtn = document.getElementById('scheduleBtn');
+  if (scheduleBtn) scheduleBtn.addEventListener('click', () => {
+    const when = scheduleAt && scheduleAt.value ? scheduleAt.value : '';
+    if (!when) { showToast('Hãy chọn ngày giờ ở mục "Schedule for" (cột trái) trước.', 'warn'); return; }
+    WM.drafts.save(DRAFT_ID, Object.assign({ title: titleInput.value, body: md.value, status: 'scheduled' }, metaExtras()));
+    let label = when; try { label = new Date(when).toLocaleString('vi-VN'); } catch (e) {}
+    showToast('Đã lên lịch: "' + (titleInput.value || 'Untitled') + '"\n' + label, 'sched');
+  });
+  const previewBtn = document.getElementById('previewBtn');
+  if (previewBtn) previewBtn.addEventListener('click', () => {
+    WM.drafts.save(DRAFT_ID, Object.assign({ title: titleInput.value, body: md.value }, metaExtras()));
+    window.open('reader.html?id=' + encodeURIComponent(DRAFT_ID) + '&preview=1', '_blank');
   });
 
   // ═══════════════════ TOOLBAR ═══════════════════

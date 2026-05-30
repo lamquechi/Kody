@@ -1094,15 +1094,32 @@
   // ═══════════════════ ROUTE + POPULATE FROM URL ?id= ═══════════════════
   (function () {
     const id = WM.getParam('id') || 'the-city-after-rain';
-    const story = WM.getStory(id) || WM.stories[0];
+    function draftAsStory(did) {
+      try {
+        const d = WM.drafts && WM.drafts.get ? WM.drafts.get(did) : null;
+        if (!d || !(d.body || d.title)) return null;
+        const wc = (d.body || '').trim().split(/\s+/).filter(Boolean).length;
+        return {
+          id: did, title: d.title || 'Untitled', body: d.body || '',
+          form: d.form || 'tan-van', lang: d.lang || 'en',
+          motif: d.motif || 'night', themeVariant: d.themeVariant || 'velvet',
+          folio: '—', minutes: Math.max(1, Math.round(wc / 200)),
+          excerpt: (d.body || '').replace(/[#>*_`]/g, '').trim().slice(0, 140),
+          seoDescription: d.seoDescription, seoKeywords: d.seoKeywords
+        };
+      } catch (e) { return null; }
+    }
+    const story = WM.getStory(id) || draftAsStory(id) || WM.stories[0];
     const motif = WM.motifs[story.motif] || { name: story.motif, color: '#C9A961' };
 
     // Document title
     document.title = story.title + ' — Kody Lâm';
 
     // Chrome bar
-    document.getElementById('chromeForm').textContent = story.form === 'tan-van' ? 'TẢN VĂN' : story.form.toUpperCase();
-    document.getElementById('chromeFolio').textContent = story.folio + '.';
+    const _cf = document.getElementById('chromeForm');
+    if (_cf) _cf.textContent = story.form === 'tan-van' ? 'TẢN VĂN' : (story.form || 'piece').toUpperCase();
+    const _cfo = document.getElementById('chromeFolio');
+    if (_cfo) _cfo.textContent = (story.folio || '') + '.';
 
     // Story head
     document.querySelector('.story-folio').textContent = '— Folio ' + story.folio + ' —';
@@ -1183,6 +1200,7 @@
       }
       function start() {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
         master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
         if (motif === 'rain' || motif === 'water' || motif === 'city') {
           const src = noiseSrc(ctx), lp = ctx.createBiquadFilter();
@@ -1297,8 +1315,9 @@
     if (endMeta) endMeta.textContent = '— END OF FOLIO ' + story.folio + ' —';
 
     // Footer
-    document.getElementById('footerCenter').textContent =
-      'FOLIO ' + story.folio + ' · ' + story.title.toUpperCase() + ' · 2026';
+    const _fc = document.getElementById('footerCenter');
+    if (_fc) _fc.textContent =
+      'FOLIO ' + (story.folio || '') + ' · ' + (story.title || '').toUpperCase() + ' · 2026';
 
     // Continue reading — populate with related stories
     const related = WM.getRelatedStories(story.id, 3);

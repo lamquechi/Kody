@@ -296,6 +296,55 @@
     };
   }
 
+  // ─── PUBLIC: pull PUBLISHED pieces so they can appear on the site ───
+  function mapServerPiece(r) {
+    const wc = (r.body || '').trim().split(/\s+/).filter(Boolean).length;
+    const plain = (r.body || '').replace(/[#>*_`>\-]/g, ' ').replace(/\s+/g, ' ').trim();
+    return {
+      id: r.id,
+      title: r.title || 'Untitled',
+      body: r.body || '',
+      form: r.form || 'tan-van',
+      lang: r.lang || 'en',
+      motif: r.motif || null,
+      themeVariant: r.theme_variant || 'velvet',
+      folio: '—',
+      minutes: Math.max(1, Math.round(wc / 200)),
+      excerpt: plain.slice(0, 150),
+      publishedAt: r.published_at ? new Date(r.published_at).getTime() : 0,
+      fromServer: true
+    };
+  }
+  function mergePieces(list) {
+    (list || []).forEach(s => {
+      const i = WM.stories.findIndex(x => x.id === s.id);
+      if (i >= 0) WM.stories[i] = Object.assign({}, WM.stories[i], s);
+      else WM.stories.push(s);
+    });
+  }
+  WM.fetchPublished = async function () {
+    try {
+      const { data: rows, error } = await supabase
+        .from('pieces').select('id, title, body, form, lang, motif, theme_variant, published_at')
+        .eq('status', 'published').order('published_at', { ascending: false });
+      if (error) { console.warn('[wm] fetchPublished:', error.message); return []; }
+      const mapped = (rows || []).map(mapServerPiece);
+      mergePieces(mapped);
+      return mapped;
+    } catch (e) { console.warn('[wm] fetchPublished:', e.message); return []; }
+  };
+  WM.fetchPiece = async function (id) {
+    try {
+      const { data: rows } = await supabase
+        .from('pieces').select('id, title, body, form, lang, motif, theme_variant, published_at')
+        .eq('status', 'published').eq('id', id).limit(1);
+      if (rows && rows[0]) { const s = mapServerPiece(rows[0]); mergePieces([s]); return s; }
+    } catch (e) { console.warn('[wm] fetchPiece:', e.message); }
+    return null;
+  };
+  // Pull published pieces now so WM.stories is complete before pages react to wm:ready
+  try { await WM.fetchPublished(); } catch (e) {}
+
   console.info('[wm] Supabase ready · user:', WM.user?.email || 'anonymous', '· admin:', WM.isAdmin);
   window.dispatchEvent(new CustomEvent('wm:ready', { detail: { online: true, user: WM.user } }));
 })();
