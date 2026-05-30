@@ -11,8 +11,8 @@
    ═══════════════════════════════════════════════════════════ */
 
 window.WM_CONFIG = {
-  supabaseUrl:     'YOUR_SUPABASE_URL_HERE',       // e.g. https://abcdefgh.supabase.co
-  supabaseAnonKey: 'YOUR_SUPABASE_ANON_KEY_HERE',  // long string starting with "eyJ..."
+  supabaseUrl:     'https://mfxmiufilgiipiyjkulu.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meG1pdWZpbGdpaXBpeWprdWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTI1NjksImV4cCI6MjA5NTcyODU2OX0.x-XlvQsGhqZNdIqnpEZNGohOxRm6VcPm3A6kTRV4RMM',
 
   // ── Admin lock (optional) ──────────────────────────────────
   // The Writer Hub + Editor are private. To keep them yours:

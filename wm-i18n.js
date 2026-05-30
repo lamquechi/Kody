@@ -98,8 +98,8 @@
       'Một căn phòng văn chương —<br>thân mật, giàu hình ảnh, dễ lạc bước.',
     'a few placesto follow the work.': 'Vài nơi<br>để dõi theo tác phẩm.',
     'a few places to follow the work.': 'Vài nơi để dõi theo tác phẩm.',
-    'short fiction and tản văn in english and vietnamese — built like a moody reading room, not a noisy blog.':
-      'Truyện ngắn và tản văn bằng tiếng Anh và tiếng Việt — dựng như một phòng đọc trầm mặc, không phải một blog ồn ào.',
+    'short fiction and tản văn (lyrical essays) in english and vietnamese — built like a moody reading room, not a noisy blog.':
+      'Truyện ngắn và tản văn (lyrical essays) bằng tiếng Anh và tiếng Việt — dựng như một phòng đọc trầm mặc, không phải một blog ồn ào.',
 
     // ── Library ──
     'two doorways': 'Hai lối vào',

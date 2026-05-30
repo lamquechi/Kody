@@ -202,8 +202,8 @@
   body { transition: background 0.4s var(--ease), color 0.4s var(--ease); }
 
   @media (max-width: 720px) {
-    .nav-links { display: none; }
-    .topnav-inner { padding: 14px 20px; }
+    .topnav-inner { padding: 12px 20px; flex-wrap: wrap; row-gap: 6px; }
+    .nav-links { display: flex; order: 5; width: 100%; justify-content: center; gap: 24px; font-size: 13px; padding-top: 8px; border-top: 1px solid var(--rule); }
   }
 
   /* ───────────── HERO ───────────── */
@@ -1110,7 +1110,7 @@
     <h1>A small archive of <em class="rain-accent">rain</em>, rooms,<br>
     and <em>unsent</em> words.</h1>
 
-    <p class="hero-lead">Short fiction and tản văn in English and Vietnamese — built like a moody reading room, not a noisy blog.</p>
+    <p class="hero-lead">Short fiction and tản văn (lyrical essays) in English and Vietnamese — built like a moody reading room, not a noisy blog.</p>
     <p class="hero-companion" lang="vi">Một kho lưu trữ nhỏ về mưa, những căn phòng, và những lời chưa kịp gửi đi.</p>
 
     <div class="hero-ctas">
