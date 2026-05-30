@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=10">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kody Lâm">
 <meta property="og:title" content="Kody Lâm — A Literary Atelier">
@@ -28,7 +28,7 @@
 <meta name="description" content="Short fiction and tản văn in English and Vietnamese — a moody reading room, not a noisy blog.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Gloock&family=Crimson+Pro:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Atelier — tuned softer for Kody Lâm */
@@ -268,7 +268,7 @@
   }
   .hero-companion {
     font-family: var(--font-display);
-    font-style: italic;
+    font-style: normal;
     font-size: 19px;
     color: var(--ink-faint);
     max-width: 580px;
@@ -823,26 +823,27 @@
 
   /* Newsletter inline */
   .newsletter-inline {
-    margin-top: 56px;
-    padding: 36px 32px;
-    background: var(--ink);
-    color: var(--paper);
+    margin-top: 40px;
+    padding: 28px 30px;
+    background: #14110E;
+    color: #F7F4EE;
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    gap: 40px;
+    gap: 32px;
     align-items: center;
   }
   .newsletter-inline h3 {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 400;
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    color: #F7F4EE;
   }
   .newsletter-inline p {
     color: rgba(247, 244, 238, 0.7);
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.5;
   }
   .newsletter-form {
@@ -1044,9 +1045,9 @@
 <!-- ───────────── NAV ───────────── -->
 <nav class="topnav">
   <div class="topnav-inner">
-    <a href="#" class="brand">
+    <a href="index.html" class="brand">
       
-      <img src="favicon.svg?v=8" alt="KLC — Kody Lâm" style="width:33px;height:33px;vertical-align:middle;margin-right:13px;flex:0 0 auto;"><span class="brand-name" data-site="name" style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:25px;letter-spacing:0.02em;">Kody Lâm</span>
+      <span style="display:inline-flex;flex-direction:column;line-height:1.04;"><span aria-hidden="false" style="font-family:'Gloock',Georgia,serif;font-weight:400;font-size:25px;letter-spacing:0.05em;color:inherit;">K·L·C</span><span class="brand-name" data-site="name" style="font-family:'Crimson Pro',Georgia,serif;font-style:italic;font-weight:500;font-size:13px;letter-spacing:0.04em;opacity:0.65;margin-top:1px;">Kody Lâm</span></span>
     </a>
     <div class="nav-links">
       <a href="#library">Library</a>
@@ -1232,13 +1233,6 @@
       </div>
     </div>
 
-    <div class="filter-row reveal">
-      <button class="filter-tag active">All</button>
-      <button class="filter-tag">Fiction</button>
-      <button class="filter-tag">Tản văn</button>
-      <button class="filter-tag">Short</button>
-    </div>
-
     <div class="card-grid">
       <article class="story-card reveal" data-curtain="true">
         <span class="card-tag">SHORT · WATER</span>
@@ -1269,7 +1263,11 @@
           <span class="lang">VI</span>
         </div>
       </article>
-
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+      <a href="library.html" class="see-all" style="font-size:17px;">Browse the full library <span class="arrow">→</span></a>
+    </div>
+    <div class="card-grid" style="display:none;">
       <article class="story-card reveal" data-curtain="true">
         <span class="card-tag">FICTION · NIGHT</span>
         <h3>Saigon After Eleven</h3>
@@ -1301,7 +1299,7 @@
       </article>
     </div>
 
-    <a href="#" class="see-all reveal" id="seeAll">
+    <a href="library.html" class="see-all reveal" id="seeAll">
       Enter the full archive — 7 pieces, and counting
       <span class="arrow">→</span>
     </a>
@@ -1337,7 +1335,7 @@
       <div class="reveal">
         <blockquote class="about-quote">"This space is designed as a literary room: intimate, visual, and easy to wander through."</blockquote>
         <p class="about-lead">A bilingual writer working in short fiction, tản văn, and lyrical fragments. The space here is built with intention — slow type, quiet weather, no visual noise.</p>
-        <a href="#" class="see-all" style="font-size: 17px;">
+        <a href="about.html" class="see-all" style="font-size: 17px;">
           Read the full About
           <span class="arrow">→</span>
         </a>

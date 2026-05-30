@@ -1024,17 +1024,59 @@
 
       <div class="field">
         <div class="field-label"><span>Schedule for</span><span class="helper">OPTIONAL</span></div>
-        <input type="datetime-local" value="2026-05-29T07:00">
+        <input type="datetime-local" id="scheduleAt" value="2026-05-29T07:00">
       </div>
 
       <div class="field">
         <div class="field-label"><span>Theme variant</span></div>
-        <select>
-          <option>Velvet (default)</option>
-          <option>Thuỷ ngân (steel blue)</option>
-          <option>Hổ phách (amber)</option>
-          <option>Rêu xanh (forest)</option>
+        <select id="themeSelect">
+          <option value="velvet">Velvet (default)</option>
+          <option value="mercury">Thuỷ ngân (steel blue)</option>
+          <option value="amber">Hổ phách (amber)</option>
+          <option value="moss">Rêu xanh (forest)</option>
         </select>
+      </div>
+    </div>
+
+    <!-- SEO & sharing -->
+    <div class="settings-section">
+      <div class="sect-label">SEO &amp; chia sẻ</div>
+      <div class="field">
+        <div class="field-label"><span>Meta description</span><span class="helper" id="seoDescCount">0 / 160</span></div>
+        <textarea id="seoDesc" rows="3" placeholder="Mô tả ngắn hiện trên Google &amp; khi chia sẻ link (≈155 ký tự)…" style="width:100%;background:var(--paper-warm,#F1ECE2);border:1px solid var(--rule);border-radius:3px;padding:10px 12px;font-family:var(--font-body,Lora,serif);font-size:14px;color:var(--ink);outline:none;resize:vertical;line-height:1.5;"></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Keywords</span><span class="helper">cách nhau bởi dấu phẩy</span></div>
+        <input type="text" id="seoKeywords" placeholder="mưa, tản văn, Sài Gòn, ký ức">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>URL slug</span></div>
+        <input type="text" id="seoSlug" placeholder="letters-to-the-reservoir">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Social image</span><span class="helper">URL ảnh OG (tuỳ chọn)</span></div>
+        <input type="text" id="seoImage" placeholder="https://… (mặc định dùng ảnh site)">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Focus keyword</span><span class="helper">từ khoá chính</span></div>
+        <input type="text" id="seoFocus" placeholder="vd: mưa Sài Gòn">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Canonical URL</span><span class="helper">tuỳ chọn</span></div>
+        <input type="text" id="seoCanonical" placeholder="https://lamquechi.github.io/prjKL/reader.html?id=…">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Tác giả</span></div>
+        <input type="text" id="seoAuthor" placeholder="Kody Lâm" value="Kody Lâm">
+      </div>
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-family:var(--font-body,Lora,serif);font-size:13px;color:var(--ink);">
+          <input type="checkbox" id="seoIndex" checked style="width:16px;height:16px;accent-color:var(--persimmon);cursor:pointer;">
+          Cho phép Google &amp; công cụ tìm kiếm lập chỉ mục bài này
+        </label>
+      </div>
+      <div style="font-family:var(--font-mono,monospace);font-size:10px;color:var(--ink-faint);letter-spacing:0.04em;line-height:1.5;margin-top:4px;">
+        Tự lưu cùng bài. Khi xuất bản, các thẻ này sẽ gắn vào trang đọc để Google + mạng xã hội hiểu đúng bài viết.
       </div>
     </div>
 
@@ -1220,12 +1262,13 @@ The afternoon is when the room remembers the people I have been.
     const cfg = window.WM_CONFIG || {};
     const sbConfigured = cfg.supabaseUrl && cfg.supabaseAnonKey &&
       !String(cfg.supabaseUrl).includes('YOUR_') && !String(cfg.supabaseAnonKey).includes('YOUR_');
-    const pass = (cfg.adminPassphrase || '').trim();
+    const u = (cfg.adminUser || '').trim();
+    const p = (cfg.adminPassword || '').trim();
 
-    if (!sbConfigured && pass) {
+    if (!sbConfigured && u && p) {
       let ok = false;
-      try { ok = sessionStorage.getItem('wm.gate') === pass; } catch (e) {}
-      if (!ok) { showGate(pass); return; }
+      try { ok = sessionStorage.getItem('wm.gateUser') === u && sessionStorage.getItem('wm.gatePass') === p; } catch (e) {}
+      if (!ok) { showGate(u, p); return; }
     }
 
     function guard(detail) {
@@ -1242,33 +1285,35 @@ The afternoon is when the room remembers the people I have been.
     if (typeof WM !== 'undefined' && WM.online !== undefined) guard({ online: WM.online });
     else window.addEventListener('wm:ready', e => guard(e.detail), { once: true });
 
-    function showGate(expected) {
+    function showGate(expU, expP) {
       const ov = document.createElement('div');
       ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0E0B16;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Georgia,serif;';
       ov.innerHTML =
         '<div style="max-width:360px;width:100%;text-align:center;">' +
         '<div style="font-family:monospace;font-size:10px;letter-spacing:0.25em;color:#8A7038;text-transform:uppercase;margin-bottom:18px;">— Private studio —</div>' +
         '<h1 style="font-size:32px;font-weight:400;color:#EDE6D6;margin:0 0 10px;font-style:italic;">Kody Lâm</h1>' +
-        '<p style="color:#9B9282;font-style:italic;font-size:15px;margin:0 0 24px;">This room is closed. Enter your passphrase.</p>' +
-        '<input id="gatePass" type="password" placeholder="passphrase" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;">' +
+        '<p style="color:#9B9282;font-style:italic;font-size:15px;margin:0 0 24px;">This room is closed. Sign in to enter.</p>' +
+        '<input id="gateUser" type="text" placeholder="username" autocomplete="username" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;margin-bottom:10px;">' +
+        '<input id="gatePass" type="password" placeholder="password" autocomplete="current-password" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;">' +
         '<button id="gateBtn" style="width:100%;margin-top:12px;background:#C9A961;color:#0E0B16;border:none;border-radius:2px;padding:13px;font-family:Georgia,serif;font-style:italic;font-size:17px;cursor:pointer;">Enter →</button>' +
         '<div id="gateErr" style="color:#C77A6A;font-style:italic;font-size:14px;margin-top:14px;min-height:18px;"></div>' +
         '<a href="index.html" style="display:inline-block;margin-top:8px;color:#6A6256;font-family:monospace;font-size:11px;letter-spacing:0.1em;text-decoration:none;">← back to the site</a>' +
         '</div>';
       (document.body || document.documentElement).appendChild(ov);
-      const inp = ov.querySelector('#gatePass'), btn = ov.querySelector('#gateBtn'), err = ov.querySelector('#gateErr');
+      const usr = ov.querySelector('#gateUser'), inp = ov.querySelector('#gatePass'), btn = ov.querySelector('#gateBtn'), err = ov.querySelector('#gateErr');
       function tryPass() {
-        if (inp.value === expected) {
-          try { sessionStorage.setItem('wm.gate', expected); } catch (e) {}
+        if (usr.value === expU && inp.value === expP) {
+          try { sessionStorage.setItem('wm.gateUser', expU); sessionStorage.setItem('wm.gatePass', expP); } catch (e) {}
           location.reload();
         } else {
-          err.textContent = 'Not quite. Try again.';
+          err.textContent = 'Wrong username or password.';
           inp.value = ''; inp.focus();
         }
       }
       btn.addEventListener('click', tryPass);
+      usr.addEventListener('keydown', e => { if (e.key === 'Enter') inp.focus(); });
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') tryPass(); });
-      setTimeout(() => inp.focus(), 50);
+      setTimeout(() => usr.focus(), 50);
     }
   })();
 </script>
@@ -1396,12 +1441,53 @@ The afternoon is when the room remembers the people I have been.
   let DRAFT_ID = WM.getParam('id') || 'draft-' + Date.now();
   const titleInput = document.querySelector('.title-input');
 
+  // ─── SEO + meta field refs ───
+  const themeSelect = document.getElementById('themeSelect');
+  const scheduleAt  = document.getElementById('scheduleAt');
+  const seoDesc     = document.getElementById('seoDesc');
+  const seoKeywords = document.getElementById('seoKeywords');
+  const seoSlug     = document.getElementById('seoSlug');
+  const seoImage    = document.getElementById('seoImage');
+  const seoFocus    = document.getElementById('seoFocus');
+  const seoCanonical= document.getElementById('seoCanonical');
+  const seoAuthor   = document.getElementById('seoAuthor');
+  const seoIndex    = document.getElementById('seoIndex');
+  const seoDescCount = document.getElementById('seoDescCount');
+  function slugify(s){ return (s||'').toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+  function metaExtras() {
+    return {
+      themeVariant: themeSelect ? themeSelect.value : 'velvet',
+      scheduleAt:   scheduleAt ? scheduleAt.value : '',
+      seoDescription: seoDesc ? seoDesc.value.trim() : '',
+      seoKeywords:  seoKeywords ? seoKeywords.value.trim() : '',
+      seoSlug:      (seoSlug && seoSlug.value.trim()) ? slugify(seoSlug.value) : slugify(titleInput.value),
+      seoImage:     seoImage ? seoImage.value.trim() : '',
+      seoFocus:     seoFocus ? seoFocus.value.trim() : '',
+      seoCanonical: seoCanonical ? seoCanonical.value.trim() : '',
+      seoAuthor:    seoAuthor ? (seoAuthor.value.trim() || 'Kody Lâm') : 'Kody Lâm',
+      seoIndex:     seoIndex ? !!seoIndex.checked : true
+    };
+  }
+
   // ─── Load existing draft if any (overrides default content) ───
   (function loadExistingDraft() {
     const existing = WM.drafts.get(DRAFT_ID);
     if (existing) {
       if (existing.title) titleInput.value = existing.title;
       if (existing.body) md.value = existing.body;
+      if (themeSelect && existing.themeVariant) themeSelect.value = existing.themeVariant;
+      if (scheduleAt && existing.scheduleAt) scheduleAt.value = existing.scheduleAt;
+      if (seoDesc && existing.seoDescription) seoDesc.value = existing.seoDescription;
+      if (seoKeywords && existing.seoKeywords) seoKeywords.value = existing.seoKeywords;
+      if (seoSlug && existing.seoSlug) seoSlug.value = existing.seoSlug;
+      if (seoImage && existing.seoImage) seoImage.value = existing.seoImage;
+      if (seoFocus && existing.seoFocus) seoFocus.value = existing.seoFocus;
+      if (seoCanonical && existing.seoCanonical) seoCanonical.value = existing.seoCanonical;
+      if (seoAuthor && existing.seoAuthor) seoAuthor.value = existing.seoAuthor;
+      if (seoIndex && typeof existing.seoIndex === 'boolean') seoIndex.checked = existing.seoIndex;
+      if (seoDescCount && seoDesc) seoDescCount.textContent = seoDesc.value.length + ' / 160';
       if (existing.updatedAt) {
         const d = new Date(existing.updatedAt);
         autosaveText.textContent = `LOADED · LAST SAVED ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
@@ -1425,11 +1511,11 @@ The afternoon is when the room remembers the people I have been.
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       // Actually persist
-      WM.drafts.save(DRAFT_ID, {
+      WM.drafts.save(DRAFT_ID, Object.assign({
         title: titleInput.value,
         body: md.value,
         wordCount: parseInt(wordCount.textContent.replace(/,/g, '')) || 0
-      });
+      }, metaExtras()));
       autosave.classList.remove('saving');
       const now = new Date();
       const h = String(now.getHours()).padStart(2, '0');
@@ -1459,18 +1545,27 @@ The afternoon is when the room remembers the people I have been.
   update();
   // If no existing data, save current default as a starting draft
   if (!WM.drafts.get(DRAFT_ID)) {
-    WM.drafts.save(DRAFT_ID, { title: titleInput.value, body: md.value });
+    WM.drafts.save(DRAFT_ID, Object.assign({ title: titleInput.value, body: md.value }, metaExtras()));
   }
+
+  // SEO / meta fields trigger autosave too
+  [themeSelect, scheduleAt, seoKeywords, seoSlug, seoImage, seoFocus, seoCanonical, seoAuthor, seoIndex].forEach(el => {
+    if (el) el.addEventListener('change', flagSaving);
+  });
+  if (seoDesc) seoDesc.addEventListener('input', () => {
+    if (seoDescCount) seoDescCount.textContent = seoDesc.value.length + ' / 160';
+    flagSaving();
+  });
 
   // ───── PUBLISH / SCHEDULE BUTTONS (visual confirm + save) ─────
   document.querySelectorAll('.bar-btn-primary').forEach(btn => {
     btn.addEventListener('click', () => {
-      WM.drafts.save(DRAFT_ID, {
+      WM.drafts.save(DRAFT_ID, Object.assign({
         title: titleInput.value,
         body: md.value,
         status: 'published',
         publishedAt: Date.now()
-      });
+      }, metaExtras()));
       const t = document.createElement('div');
       t.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:14px 22px;font-family:var(--font-display);font-style:italic;font-size:16px;border-radius:2px;z-index:999;box-shadow:0 12px 28px -12px rgba(0,0,0,0.4);';
       t.textContent = '"' + titleInput.value + '" — published (locally)';

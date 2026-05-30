@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=10">
 <title>Writer Hub — Kody Lâm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&family=Gloock&family=Crimson+Pro:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Atelier — workshop tuning */
@@ -1674,7 +1674,7 @@
 
   <a href="index.html" class="topbar-brand">
     
-    <img src="favicon.svg?v=8" alt="KLC — Kody Lâm" style="width:33px;height:33px;vertical-align:middle;margin-right:13px;flex:0 0 auto;"><span class="brand-name" data-site="name" style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:25px;letter-spacing:0.02em;">Kody Lâm</span>
+    <span style="display:inline-flex;flex-direction:column;line-height:1.04;"><span aria-hidden="false" style="font-family:'Gloock',Georgia,serif;font-weight:400;font-size:25px;letter-spacing:0.05em;color:inherit;">K·L·C</span><span class="brand-name" data-site="name" style="font-family:'Crimson Pro',Georgia,serif;font-style:italic;font-weight:500;font-size:13px;letter-spacing:0.04em;opacity:0.65;margin-top:1px;">Kody Lâm</span></span>
   </a>
   <span class="brand-tag">WRITER HUB</span>
 
@@ -1810,7 +1810,6 @@
         <div class="panel-card">
           <div class="card-head">
             <h3><em>Recent</em> in the studio</h3>
-            <a href="#">See all →</a>
           </div>
           <ul class="activity-list">
             <li class="activity-row jade">
@@ -1844,7 +1843,6 @@
         <div class="panel-card">
           <div class="card-head">
             <h3><em>Marks</em> left for you</h3>
-            <a href="#">Inbox →</a>
           </div>
           <div class="marks-list">
             <div class="mark-card">
@@ -1910,7 +1908,6 @@
       <div class="schedule">
         <div class="card-head" style="border: none; padding: 0; margin: 0 0 4px;">
           <h3><em>Next 14 days</em></h3>
-          <a href="#">Open calendar →</a>
         </div>
         <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); letter-spacing: 0.12em;">
           MAY 26 → JUN 8 · 2 SCHEDULED, 1 PENCILED
@@ -2264,7 +2261,6 @@
           <div class="panel-sub">24 items · 18 MB used</div>
         </div>
         <div class="panel-actions">
-          <button class="btn-ghost">Filter</button>
           <button class="btn-ink"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Upload</button>
         </div>
       </div>
@@ -2390,7 +2386,6 @@
       <div class="chart-card">
         <div class="card-head" style="border: none; padding: 0; margin: 0 0 6px;">
           <h3><em>Reads</em> over 30 days</h3>
-          <a href="#">Download CSV →</a>
         </div>
         <svg class="chart-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
           <defs>
@@ -2420,7 +2415,6 @@
         <div class="chart-card">
           <div class="card-head" style="border: none; padding: 0; margin: 0 0 8px;">
             <h3>Top <em>pieces</em></h3>
-            <a href="#">View all →</a>
           </div>
           <ol class="top-pieces">
             <li class="top-row">
@@ -2534,11 +2528,6 @@
           </div>
           <div class="detail-body">
             "I read this at midnight after a strange week. It steadied me. Thank you for not writing loudly."
-          </div>
-          <div style="display: flex; gap: 8px; margin-bottom: 24px;">
-            <button class="btn-ghost">Mark as read</button>
-            <button class="btn-ghost">Star ★</button>
-            <button class="btn-ghost">Move to collection</button>
           </div>
           <div class="reply-form">
             <div style="font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">Reply privately (only if the reader signed)</div>
@@ -2760,13 +2749,14 @@
     const cfg = window.WM_CONFIG || {};
     const sbConfigured = cfg.supabaseUrl && cfg.supabaseAnonKey &&
       !String(cfg.supabaseUrl).includes('YOUR_') && !String(cfg.supabaseAnonKey).includes('YOUR_');
-    const pass = (cfg.adminPassphrase || '').trim();
+    const u = (cfg.adminUser || '').trim();
+    const p = (cfg.adminPassword || '').trim();
 
-    // — Passphrase gate (synchronous, offline protection) —
-    if (!sbConfigured && pass) {
+    // — Username + password gate (synchronous, offline protection) —
+    if (!sbConfigured && u && p) {
       let ok = false;
-      try { ok = sessionStorage.getItem('wm.gate') === pass; } catch (e) {}
-      if (!ok) { showGate(pass); return; }
+      try { ok = sessionStorage.getItem('wm.gateUser') === u && sessionStorage.getItem('wm.gatePass') === p; } catch (e) {}
+      if (!ok) { showGate(u, p); return; }
     }
 
     // — Supabase auth guard (real protection) —
@@ -2784,27 +2774,28 @@
     if (typeof WM !== 'undefined' && WM.online !== undefined) guard({ online: WM.online });
     else window.addEventListener('wm:ready', e => guard(e.detail), { once: true });
 
-    function showGate(expected) {
+    function showGate(expU, expP) {
       const ov = document.createElement('div');
       ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0E0B16;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Georgia,serif;';
       ov.innerHTML =
         '<div style="max-width:360px;width:100%;text-align:center;">' +
         '<div style="font-family:monospace;font-size:10px;letter-spacing:0.25em;color:#8A7038;text-transform:uppercase;margin-bottom:18px;">— Private studio —</div>' +
         '<h1 style="font-size:32px;font-weight:400;color:#EDE6D6;margin:0 0 10px;font-style:italic;">Kody Lâm</h1>' +
-        '<p style="color:#9B9282;font-style:italic;font-size:15px;margin:0 0 24px;">This room is closed. Enter your passphrase.</p>' +
-        '<input id="gatePass" type="password" placeholder="passphrase" autofocus style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;">' +
+        '<p style="color:#9B9282;font-style:italic;font-size:15px;margin:0 0 24px;">This room is closed. Sign in to enter.</p>' +
+        '<input id="gateUser" type="text" placeholder="username" autocomplete="username" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;margin-bottom:10px;">' +
+        '<input id="gatePass" type="password" placeholder="password" autocomplete="current-password" style="width:100%;background:#16121C;border:1px solid #2A2230;border-radius:2px;padding:13px 15px;font-family:Georgia,serif;font-size:15px;color:#EDE6D6;outline:none;text-align:center;letter-spacing:0.05em;">' +
         '<button id="gateBtn" style="width:100%;margin-top:12px;background:#C9A961;color:#0E0B16;border:none;border-radius:2px;padding:13px;font-family:Georgia,serif;font-style:italic;font-size:17px;cursor:pointer;">Enter →</button>' +
         '<div id="gateErr" style="color:#C77A6A;font-style:italic;font-size:14px;margin-top:14px;min-height:18px;"></div>' +
         '<a href="index.html" style="display:inline-block;margin-top:8px;color:#6A6256;font-family:monospace;font-size:11px;letter-spacing:0.1em;text-decoration:none;">← back to the site</a>' +
         '</div>';
       (document.body || document.documentElement).appendChild(ov);
-      const inp = ov.querySelector('#gatePass'), btn = ov.querySelector('#gateBtn'), err = ov.querySelector('#gateErr');
+      const usr = ov.querySelector('#gateUser'), inp = ov.querySelector('#gatePass'), btn = ov.querySelector('#gateBtn'), err = ov.querySelector('#gateErr');
       function tryPass() {
-        if (inp.value === expected) {
-          try { sessionStorage.setItem('wm.gate', expected); } catch (e) {}
+        if (usr.value === expU && inp.value === expP) {
+          try { sessionStorage.setItem('wm.gateUser', expU); sessionStorage.setItem('wm.gatePass', expP); } catch (e) {}
           location.reload();
         } else {
-          err.textContent = 'Not quite. Try again.';
+          err.textContent = 'Wrong username or password.';
           inp.value = ''; inp.focus();
           ov.querySelector('div').animate(
             [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
@@ -2812,8 +2803,9 @@
         }
       }
       btn.addEventListener('click', tryPass);
+      usr.addEventListener('keydown', e => { if (e.key === 'Enter') inp.focus(); });
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') tryPass(); });
-      setTimeout(() => inp.focus(), 50);
+      setTimeout(() => usr.focus(), 50);
     }
   })();
 </script>

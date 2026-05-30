@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=10">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kody Lâm">
 <meta property="og:title" content="Kody Lâm">
@@ -18,7 +18,7 @@
 <meta name="description" content="A woman delays going home and lets the city hold her for a few more minutes after the rain.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Gloock&family=Crimson+Pro:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Velvet — reader-optimized */
@@ -564,9 +564,9 @@
   }
   .end-meta {
     font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--ivory-faint);
-    letter-spacing: 0.18em;
+    font-size: 12.5px;
+    color: var(--ivory-soft);
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     margin-bottom: 16px;
   }
@@ -833,6 +833,9 @@
       <span id="readTime">0 / 5 min</span>
     </div>
     <div class="chrome-actions">
+      <button class="chrome-btn" id="soundBtn" title="Âm thanh nền (mood)" aria-label="Toggle ambient sound">
+        <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
       <button class="chrome-btn" id="bookmarkBtn" title="Bookmark">
         <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       </button>
@@ -868,6 +871,18 @@
       <button data-width="600" style="font-size: 14px;">Narrow</button>
       <button class="active" data-width="680" style="font-size: 14px;">Default</button>
       <button data-width="780" style="font-size: 14px;">Wide</button>
+    </div>
+  </div>
+  <div class="settings-group">
+    <label class="settings-label">Âm thanh nền (mood)</label>
+    <div class="settings-options" id="soundToggleOpts">
+      <button data-sound="off" class="active" style="font-size: 13px;">Tắt</button>
+      <button data-sound="on" style="font-size: 13px;">Bật</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="opacity:0.6;flex:0 0 auto;"><path d="M11 5L6 9H2v6h4l5 4V5z"/></svg>
+      <input type="range" id="soundVol" min="0" max="100" value="50" style="flex:1;accent-color:var(--gold);height:3px;cursor:pointer;">
+      <span id="soundVolVal" style="font-family:var(--font-mono);font-size:10px;color:var(--ivory-faint);min-width:30px;text-align:right;">50%</span>
     </div>
   </div>
 </aside>
@@ -911,17 +926,17 @@
     <div class="end-meta">— END OF FOLIO I —</div>
     <p class="end-message">If this stayed with you, it can stay a little longer.</p>
     <div class="end-actions">
-      <button class="end-btn">
+      <button class="end-btn" id="endShelf">
         <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        Save to shelf
+        <span class="lbl">Save to shelf</span>
       </button>
-      <button class="end-btn">
+      <button class="end-btn" id="endShare">
         <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        Share quietly
+        <span class="lbl">Share quietly</span>
       </button>
-      <button class="end-btn">
+      <button class="end-btn" id="endMark">
         <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        Mark as read
+        <span class="lbl">Mark as read</span>
       </button>
     </div>
   </div>
@@ -1115,6 +1130,99 @@
       if (ml) setTimeout(() => ml.classList.add('lit'), 120);
     }
 
+    // ─── Per-piece SEO (description / keywords / social) ───
+    (function setSEO() {
+      function meta(key, val, isProp) {
+        if (!val) return;
+        const sel = isProp ? 'meta[property="' + key + '"]' : 'meta[name="' + key + '"]';
+        let el = document.head.querySelector(sel);
+        if (!el) { el = document.createElement('meta'); el.setAttribute(isProp ? 'property' : 'name', key); document.head.appendChild(el); }
+        el.setAttribute('content', val);
+      }
+      const desc = story.seoDescription || story.excerpt || story.summary || '';
+      const kw = story.seoKeywords || [story.form, story.motif, story.lang === 'vi' ? 'tản văn' : ''].filter(Boolean).join(', ');
+      document.title = story.title + ' — Kody Lâm';
+      meta('description', desc);
+      meta('keywords', kw);
+      meta('og:title', story.title + ' — Kody Lâm', true);
+      meta('og:description', desc, true);
+      meta('twitter:title', story.title + ' — Kody Lâm', true);
+      meta('twitter:description', desc, true);
+      meta('author', story.seoAuthor || 'Kody Lâm');
+      meta('robots', story.seoIndex === false ? 'noindex, nofollow' : 'index, follow');
+      meta('og:type', 'article', true);
+      // canonical link
+      const canHref = story.seoCanonical || location.href.split('#')[0];
+      let can = document.head.querySelector('link[rel="canonical"]');
+      if (!can) { can = document.createElement('link'); can.rel = 'canonical'; document.head.appendChild(can); }
+      can.setAttribute('href', canHref);
+      if (story.seoImage) { meta('og:image', story.seoImage, true); meta('twitter:image', story.seoImage, true); }
+    })();
+
+    // ─── Ambient mood SOUND + VOLUME (Web Audio · off by default) ───
+    (function ambientSound() {
+      const btn = document.getElementById('soundBtn');
+      const volSlider = document.getElementById('soundVol');
+      const volVal = document.getElementById('soundVolVal');
+      const toggleOpts = document.getElementById('soundToggleOpts');
+      const motif = story.motif || 'default';
+      let ctx = null, master = null, nodes = [], on = false;
+      const maxVol = (motif === 'rain') ? 0.16 : (motif === 'water' || motif === 'city') ? 0.12 : 0.10;
+      let vol = 0.5;
+      try { const v = parseFloat(localStorage.getItem('wm.vol')); if (!isNaN(v)) vol = Math.min(1, Math.max(0, v)); } catch (e) {}
+      if (volSlider) volSlider.value = Math.round(vol * 100);
+      if (volVal) volVal.textContent = Math.round(vol * 100) + '%';
+      function eff() { return maxVol * vol; }
+      const iconOn  = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.8 5.5a9 9 0 010 13"/>';
+      const iconOff = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+      function noiseSrc(actx) {
+        const len = actx.sampleRate * 2, buf = actx.createBuffer(1, len, actx.sampleRate), data = buf.getChannelData(0);
+        let last = 0;
+        for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; data[i] = last * 3.2; }
+        const s = actx.createBufferSource(); s.buffer = buf; s.loop = true; return s;
+      }
+      function start() {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+        if (motif === 'rain' || motif === 'water' || motif === 'city') {
+          const src = noiseSrc(ctx), lp = ctx.createBiquadFilter();
+          lp.type = 'lowpass'; lp.frequency.value = motif === 'rain' ? 1900 : 850;
+          src.connect(lp); lp.connect(master); src.start(); nodes.push(src, lp);
+          if (motif === 'water') {
+            const lfo = ctx.createOscillator(), lg = ctx.createGain();
+            lfo.frequency.value = 0.08; lg.gain.value = 380; lfo.connect(lg); lg.connect(lp.frequency); lfo.start(); nodes.push(lfo, lg);
+          }
+        } else {
+          [55, 82.4, 110].forEach((f, i) => {
+            const o = ctx.createOscillator(), g = ctx.createGain();
+            o.type = 'sine'; o.frequency.value = f; g.gain.value = [0.5, 0.3, 0.16][i];
+            o.connect(g); g.connect(master); o.start(); nodes.push(o, g);
+          });
+        }
+        master.gain.linearRampToValueAtTime(eff(), ctx.currentTime + 1.2);
+      }
+      function stop() {
+        if (master && ctx) { try { master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6); } catch (e) {} }
+        const old = ctx, oldNodes = nodes; nodes = [];
+        setTimeout(() => { try { oldNodes.forEach(n => n.stop && n.stop()); old && old.close(); } catch (e) {} }, 700);
+        ctx = null; master = null;
+      }
+      function setOn(v) {
+        on = v;
+        if (btn) { btn.classList.toggle('active', on); const svg = btn.querySelector('svg'); if (svg) svg.innerHTML = on ? iconOn : iconOff; }
+        if (toggleOpts) toggleOpts.querySelectorAll('button').forEach(b => b.classList.toggle('active', (b.dataset.sound === 'on') === on));
+        try { if (on) start(); else stop(); } catch (e) { on = false; if (btn) btn.classList.remove('active'); }
+      }
+      if (btn) btn.addEventListener('click', () => setOn(!on));
+      if (toggleOpts) toggleOpts.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setOn(b.dataset.sound === 'on')));
+      if (volSlider) volSlider.addEventListener('input', () => {
+        vol = (+volSlider.value) / 100;
+        if (volVal) volVal.textContent = volSlider.value + '%';
+        try { localStorage.setItem('wm.vol', vol); } catch (e) {}
+        if (on && master && ctx) { try { master.gain.setTargetAtTime(eff(), ctx.currentTime, 0.08); } catch (e) {} }
+      });
+    })();
+
     // ─── Body: interactive vs prose ───
     const body = document.getElementById('readerBody');
     if (story.lang === 'vi') body.setAttribute('lang', 'vi');
@@ -1290,6 +1398,61 @@
         syncBtn();                  // then update UI from new state
       });
     }
+
+    // ═══════════════════ END ACTIONS (save / share / mark read) ═══════════════════
+    const endShelf = document.getElementById('endShelf');
+    if (endShelf) {
+      const lbl = endShelf.querySelector('.lbl');
+      const sync = () => {
+        const saved = WM.shelf.has(story.id);
+        endShelf.classList.toggle('active', saved);
+        if (lbl) lbl.textContent = saved ? 'Saved to shelf ✓' : 'Save to shelf';
+      };
+      sync();
+      endShelf.addEventListener('click', () => { WM.shelf.toggle(story.id); sync(); });
+    }
+
+    const endMark = document.getElementById('endMark');
+    if (endMark) {
+      const lbl = endMark.querySelector('.lbl');
+      const already = () => { try { return WM.marks.forStory && WM.marks.forStory(story.id).some(m => m.read); } catch (e) { return false; } };
+      const sync = () => {
+        const done = already();
+        endMark.classList.toggle('active', done);
+        if (lbl) lbl.textContent = done ? 'Marked as read ✓' : 'Mark as read';
+      };
+      sync();
+      endMark.addEventListener('click', () => {
+        try { WM.marks.markRead(story.id, story.title); } catch (e) {}
+        endMark.classList.add('active');
+        if (lbl) lbl.textContent = 'Marked as read ✓';
+      });
+    }
+
+    const endShare = document.getElementById('endShare');
+    if (endShare) {
+      const lbl = endShare.querySelector('.lbl');
+      endShare.addEventListener('click', async () => {
+        const url = location.href;
+        const shareData = { title: story.title + ' — Kody Lâm', text: story.title, url };
+        try {
+          if (navigator.share) { await navigator.share(shareData); return; }
+        } catch (e) { /* user cancelled — fall through */ }
+        try {
+          await navigator.clipboard.writeText(url);
+          if (lbl) { const old = lbl.textContent; lbl.textContent = 'Link copied ✓'; setTimeout(() => lbl.textContent = old, 1800); }
+        } catch (e) {
+          if (lbl) lbl.textContent = 'Copy this page link';
+        }
+      });
+    }
+
+    // ═══════════════════ CONTINUE-READING CARDS → real stories ═══════════════════
+    document.querySelectorAll('.cont-card').forEach(card => {
+      const h4 = card.querySelector('h4');
+      const match = h4 ? WM.stories.find(s => s.title === h4.textContent.trim()) : null;
+      card.setAttribute('href', match ? 'reader.html?id=' + match.id : 'library.html');
+    });
   })();
 </script>
 </body>

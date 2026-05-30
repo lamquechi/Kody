@@ -24,7 +24,19 @@ window.WM_CONFIG = {
   //    the Hub must type it. This is a light gate — good enough to
   //    stop casual visitors, but the passphrase lives in this file,
   //    so it is NOT bank-level security. Leave '' to disable.
-  adminPassphrase: '',  // e.g. 'mưa-tháng-sáu'  (set your own)
+  // ── Admin login (private studio) ───────────────────────────
+  // The Writer Hub + Editor are yours alone. Choose ONE method:
+  //
+  //  • BEST (real security): connect Supabase above, then log in with
+  //    your account. Only your logged-in admin account can enter.
+  //
+  //  • QUICK (works offline): set a username AND password below. Anyone
+  //    opening the Hub must type BOTH correctly. This is a light gate —
+  //    the values live in this file, so it is not bank-level security,
+  //    but it stops anyone who doesn't know your username + password.
+  //    Leave BOTH blank to disable the lock (open/demo mode).
+  adminUser:     '',   // e.g. 'kody'
+  adminPassword: '',   // e.g. 'mua-thang-sau-2026'
 
   // ── Beta readers (optional) ────────────────────────────────
   // A separate, gentler door. Beta readers you trust can read your
