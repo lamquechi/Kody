@@ -805,17 +805,15 @@
     <a href="index.html" class="back-link" id="backToAtelier">
       <span class="arrow">←</span>
       <span aria-hidden="true" style="display:inline-block;width:16px;height:1px;background:currentColor;opacity:0.55;margin-right:13px;vertical-align:middle;"></span>
-      <span>Trang chủ</span>
+      <span>Home</span>
     </a>
     <div class="nav-center">The Library <span class="ornament">·</span> <span style="font-family:'Crimson Pro',Georgia,serif;font-style:italic;letter-spacing:0.01em;">Kody Lâm</span></div>
     <div class="lang-toggle">
-      <button class="active" data-lang="all">ALL</button>
-      <span class="divider">·</span>
-      <button data-lang="en">EN</button>
+      <button class="active" data-lang="en">EN</button>
       <span class="divider">·</span>
       <button data-lang="vi">VI</button>
       <span class="divider">·</span>
-      <button id="modeBtn" title="Sáng / Tối" aria-label="Toggle light or dark" style="display:inline-flex;align-items:center;padding:4px;">
+      <button id="modeBtn" title="Light / Dark" aria-label="Toggle light or dark" style="display:inline-flex;align-items:center;padding:4px;">
         <svg id="modeIcon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:middle;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>
       </button>
     </div>
@@ -845,13 +843,18 @@
       <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     </div>
     <div class="filter-controls">
-      <div class="filter-row" id="filterRow">
-        <button class="chip active" data-cat="all">All</button>
+      <div class="filter-row" id="filterRow" role="group" aria-label="Filter by form">
+        <button class="chip active" data-cat="all">All forms</button>
         <button class="chip" data-cat="fiction">Fiction</button>
         <button class="chip" data-cat="tan-van">Tản văn</button>
         <button class="chip" data-cat="short">Short</button>
       </div>
-      <select class="sort-select" id="sortSelect">
+      <div class="filter-row langfilter-row" id="langFilterRow" role="group" aria-label="Filter by language">
+        <button class="chip active" data-filter-lang="all">All languages</button>
+        <button class="chip" data-filter-lang="en">EN</button>
+        <button class="chip" data-filter-lang="vi">VI</button>
+      </div>
+      <select class="sort-select" id="sortSelect" aria-label="Sort works">
         <option value="latest">Sort · Latest</option>
         <option value="length">Sort · By length</option>
         <option value="motif">Sort · By motif</option>
@@ -887,16 +890,16 @@
 
     <article class="feat-card vi-piece reveal" data-id="mot-nua-cua-im-lang">
       <div>
-        <div class="feat-tag"><span class="dot"></span> TIẾNG VIỆT · NỔI BẬT</div>
+        <div class="feat-tag"><span class="dot"></span> VIETNAMESE · FEATURED</div>
         <div class="feat-meta">
           <span>Tản văn</span>
-          <span>4 min · Đọc chậm</span>
-          <span>Motif · Im lặng</span>
+          <span>4 min · Slow read</span>
+          <span>Motif · Silence</span>
         </div>
         <h3 class="feat-title" lang="vi">Một Nửa Của Im Lặng</h3>
         <p class="feat-excerpt" lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p>
       </div>
-      <a href="reader.html" class="feat-cta">Đọc bài này <span class="arrow">→</span></a>
+      <a href="reader.html" class="feat-cta">Read this piece <span class="arrow">→</span></a>
     </article>
   </div>
 
@@ -1054,7 +1057,7 @@
     <div class="footer-brand"><span style="color: var(--gold)">·</span> Kody Lâm</div>
     <div>THE LIBRARY · 7 PIECES · 2026</div>
     <div class="footer-links">
-      <a href="index.html">Trang chủ</a>
+      <a href="index.html">Home</a>
       <a href="about.html">About</a>
       <a href="index.html#elsewhere">Newsletter</a>
     </div>
@@ -1069,8 +1072,8 @@
 <script>
   // ───── SEARCH + FILTER + SORT ─────
   const searchInput = document.getElementById('searchInput');
-  const filterChips = document.querySelectorAll('.chip');
-  const langButtons = document.querySelectorAll('.lang-toggle button[data-lang]');
+  const filterChips = document.querySelectorAll('#filterRow .chip');
+  const langButtons = document.querySelectorAll('#langFilterRow .chip');
   const indexList = document.getElementById('indexList');
   const rows = Array.from(indexList.querySelectorAll('.index-row'));
   const emptyState = document.getElementById('emptyState');
@@ -1115,7 +1118,7 @@
     btn.addEventListener('click', () => {
       langButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      state.lang = btn.dataset.lang;
+      state.lang = btn.dataset.filterLang;
       applyFilters();
     });
   });

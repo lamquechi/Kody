@@ -639,10 +639,11 @@
     position: relative; overflow: hidden;
   }
   .card-cover::after {
-    content: '＋ THÊM ẢNH';
+    content: '＋ ADD IMAGE';
     font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em;
     color: rgba(20, 17, 14, 0.22);
   }
+  html[lang="vi"] .card-cover::after { content: '＋ THÊM ẢNH'; }
   .card-cover.has-cover::after { display: none; }
   .story-card.vi-piece .card-cover { background: linear-gradient(135deg, #e7e9ec 0%, #d9dde2 100%); }
   .card-tag {

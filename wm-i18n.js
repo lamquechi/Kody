@@ -164,7 +164,61 @@
     'sign out': 'Đăng xuất',
     'save changes': 'Lưu thay đổi',
     'send reply': 'Gửi trả lời',
-    'filter': 'Lọc'
+    'filter': 'Lọc',
+
+    // ── Nav / back-links ──
+    'home': 'Trang chủ',
+
+    // ── Library toolbar: work-language filter (separate from UI language) ──
+    'all languages': 'Mọi ngôn ngữ',
+    'sort · latest': 'Sắp xếp · Mới nhất',
+    'sort · by length': 'Sắp xếp · Theo độ dài',
+    'sort · by motif': 'Sắp xếp · Theo mô-típ',
+    'sort works': 'Sắp xếp tác phẩm',
+    'filter by form': 'Lọc theo thể loại',
+    'filter by language': 'Lọc theo ngôn ngữ',
+
+    // ── Library featured cards + index columns ──
+    'featured · begin here': 'Nổi bật · Bắt đầu ở đây',
+    'vietnamese · featured': 'Tiếng Việt · Nổi bật',
+    'motif · rain': 'Motif · Mưa',
+    'motif · silence': 'Motif · Im lặng',
+    '4 min · slow read': '4 min · Đọc chậm',
+    '5 min read': '5 phút đọc',
+    '4 min read': '4 phút đọc',
+    'title': 'Tiêu đề',
+    'first lines': 'Câu mở đầu',
+    'form · motif': 'Thể loại · Mô-típ',
+    'length': 'Độ dài',
+    'no pieces match.': 'Không có bài nào khớp.',
+    'try fewer filters or a different search.': 'Hãy bớt bộ lọc hoặc tìm từ khác.',
+
+    // ── Reader chrome tooltips + settings ──
+    'light / dark': 'Sáng / Tối',
+    'ambient sound': 'Âm thanh nền',
+    'ambient sound (mood)': 'Âm thanh nền (mood)',
+    'reading settings': 'Tùy chỉnh đọc',
+    'bookmark': 'Lưu trang',
+    'save to the shelf': 'Lưu vào kệ',
+    'day': 'Ngày',
+    'off': 'Tắt',
+    'on': 'Bật',
+    'toggle light or dark': 'Bật/tắt chế độ sáng tối',
+    'toggle ambient sound': 'Bật/tắt âm thanh nền',
+    'bookmark this piece': 'Đánh dấu bài này',
+
+    // ── Index (home) shelf-card tags + meta ──
+    'tản văn · window': 'Tản văn · Cửa sổ',
+    'tản văn · silence': 'Tản văn · Im lặng',
+    'tản văn · city': 'Tản văn · Thành phố',
+    'fiction · rain': 'Truyện · Mưa',
+    'fiction · night': 'Truyện · Đêm',
+    'short · water': 'Truyện ngắn · Nước',
+    'short · drafts': 'Truyện ngắn · Bản nháp',
+    '3 min read': '3 phút đọc',
+    '6 min read': '6 phút đọc',
+    'view all pieces': 'Xem tất cả',
+    'see all': 'Xem tất cả'
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
@@ -177,6 +231,8 @@
     '.feat-cta', '.tab', '.chip', '.pill',
     '.settings-label', '.settings-panel h4',
     'label', '.panel-title', '.panel-sub', '.stat-label',
+    '.settings-label', '.settings-control button',
+    'option', '[title]',
     '.search-input', 'input[placeholder]', 'textarea[placeholder]'
   ].join(',');
 
@@ -192,6 +248,13 @@
       document.documentElement.lang = lang;
 
       document.querySelectorAll(SELECTORS).forEach(el => {
+        // Tooltip (title) translates independently of text — an element can have both
+        if (el.hasAttribute('title')) {
+          if (el.dataset.i18nTitle === undefined) el.dataset.i18nTitle = el.getAttribute('title');
+          const keyT = norm(el.dataset.i18nTitle);
+          if (toVi && VI[keyT]) el.setAttribute('title', VI[keyT].replace(/<[^>]+>/g, ''));
+          else el.setAttribute('title', el.dataset.i18nTitle);
+        }
         // Placeholder-bearing fields translate their placeholder, not text
         if (el.hasAttribute('placeholder')) {
           if (el.dataset.i18nPh === undefined) el.dataset.i18nPh = el.getAttribute('placeholder');
@@ -217,10 +280,10 @@
         }
       });
 
-      // Reflect active state on any lang toggles present
-      document.querySelectorAll('[data-lang]').forEach(b => {
-        if (b.dataset.lang === 'en' || b.dataset.lang === 'vi')
-          b.classList.toggle('active', b.dataset.lang === lang);
+      // Reflect active state on UI language toggles (not on content [data-lang] tags)
+      document.querySelectorAll('.lang-toggle [data-lang], [data-ui-lang]').forEach(b => {
+        const l = b.dataset.lang || b.dataset.uiLang;
+        if (l === 'en' || l === 'vi') b.classList.toggle('active', l === lang);
       });
 
       try { localStorage.setItem('wm.lang', lang); } catch (e) {}
@@ -229,9 +292,11 @@
     init: function () {
       let saved = 'en';
       try { saved = localStorage.getItem('wm.lang') || 'en'; } catch (e) {}
-      // Wire any lang toggle buttons on the page
-      document.querySelectorAll('[data-lang]').forEach(btn => {
-        const l = btn.dataset.lang;
+      // Wire only the dedicated UI language toggle buttons (within .lang-toggle
+      // or marked with [data-ui-lang]). Plain [data-lang] is reserved for
+      // content metadata (e.g. library rows tagging their work-language).
+      document.querySelectorAll('.lang-toggle [data-lang], [data-ui-lang]').forEach(btn => {
+        const l = btn.dataset.lang || btn.dataset.uiLang;
         if (l !== 'en' && l !== 'vi') return;
         btn.addEventListener('click', () => WMref.i18n.apply(l));
       });
