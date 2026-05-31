@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="atelier">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -628,9 +628,47 @@
     section { padding: 56px 20px; }
     .hero { padding: 56px 20px; }
   }
+
+  /* ───────────── LIGHT / DARK TOGGLE BUTTON ───────────── */
+  .theme-toggle {
+    background: none; border: 1px solid var(--rule); border-radius: 100px;
+    width: 34px; height: 34px; margin-left: 14px; cursor: pointer; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--ink-soft); font-size: 15px; line-height: 1; transition: all 0.25s var(--ease);
+  }
+  .theme-toggle:hover { border-color: var(--persimmon); color: var(--persimmon); }
+  .theme-icon-moon { display: none; }
+  body.dark .theme-icon-sun { display: none; }
+  body.dark .theme-icon-moon { display: inline; }
+
+  /* ───────────── DARK MODE — Atelier at night ───────────── */
+  body.dark {
+    --paper:      #15120D;
+    --paper-warm: #1D1913;
+    --paper-deep: #26211A;
+    --paper-edge: #3A3327;
+    --ink:        #ECE5D8;
+    --ink-soft:   #B3A795;
+    --ink-faint:  #847868;
+    --ink-ghost:  #5A5142;
+    --persimmon:  #D9694A;
+    --rain-blue:  #6E97AC;
+    --wine:       #C77A6A;
+    --jade:       #8FB39E;
+    --rule:       #352F26;
+  }
+  body.dark .topnav { background: rgba(21, 18, 13, 0.86); border-bottom-color: var(--rule); }
+  /* the contact band is a deliberate dark panel in BOTH modes (its --ink bg
+     flips light in dark mode, so pin it + keep the inverted cream text) */
+  body.dark .contact { background: #1A140F; color: #EDE6D6; }
+  body.dark .contact-form input,
+  body.dark .contact-form textarea,
+  body.dark .contact-direct a { color: #EDE6D6; }
+  body.dark .portrait-overlay { color: #EDE6D6; }
 </style>
 </head>
 <body>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -651,6 +689,7 @@
       <span style="color: var(--ink-faint);">·</span>
       <button data-lang="vi" style="background: none; border: none; color: var(--ink-faint); cursor: pointer; padding: 4px 6px;">VI</button>
     </div>
+    <button id="themeToggle" class="theme-toggle" title="Sáng / Tối" aria-label="Toggle light or dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
   </div>
 </nav>
 
@@ -846,6 +885,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ═══════════════════ READ IDENTITY ═══════════════════
   (function () {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="atelier">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1083,10 +1083,7 @@
 </style>
 </head>
 <body>
-<script>
-  // Apply saved light/dark theme immediately (before paint) to avoid flash
-  try { if (localStorage.getItem('wm.theme') === 'dark') document.body.classList.add('dark'); } catch (e) {}
-</script>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 <div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <div class="grain" aria-hidden="true"></div>
@@ -1418,6 +1415,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ───── CURTAIN TRANSITION (with navigation) ─────
   const curtain = document.getElementById('curtain');
@@ -1496,15 +1494,7 @@
     });
   });
 
-  // ═══════════════════ LIGHT / DARK TOGGLE ═══════════════════
-  (function () {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const dark = document.body.classList.toggle('dark');
-      try { localStorage.setItem('wm.theme', dark ? 'dark' : 'light'); } catch (e) {}
-    });
-  })();
+  // Light / dark toggle is handled site-wide by wm-theme.js (wires #themeToggle).
 
   // ═══════════════════ NEWSLETTER SIGNUP ═══════════════════
   (function () {
