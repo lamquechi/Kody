@@ -209,7 +209,7 @@ Biết đâu, một nửa của im lặng là tổn thương. Nửa còn lại l
       title: 'A Door at Three AM',
       titleHTML: 'A <em>Door</em><br>at Three AM',
       lang: 'en',
-      form: 'interactive',
+      form: 'fiction',
       motif: 'night',
       themeVariant: 'mercury',
       readTime: 6,
@@ -217,8 +217,25 @@ Biết đâu, một nửa của im lặng là tổn thương. Nửa còn lại l
       publishedAt: '2026-05-22',
       reads: 94,
       marks: 5,
-      description: 'A short interactive piece. Three choices, three small endings — none of them final.',
+      description: 'A short night piece — a door, a kettle, and the silence on the other side.',
       excerpt: 'You arrive at the door at 3 AM. The lights are still on inside.',
+      body: `You arrive at the door at three AM. *The lights are still on inside.*
+
+You can hear, faintly, the kettle settling. Someone is awake who shouldn't be.
+
+> The street behind you has already forgotten you came.
+
+You have three minutes before the rain starts again. You knock. The kettle stops.
+
+After a long pause, the door opens. A face you have not seen in two years stands in the warm light, holding a cup. *Neither of you speaks first.*
+
+The rain begins. You both look at it.
+
+"You came," they say. Not a question.
+
+> Some doors only open when you have learned what to do with the silence on the other side.
+
+You step inside.`,
       scenes: {
         start: {
           body: `You arrive at the door at three AM. *The lights are still on inside.*
@@ -435,7 +452,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   const SITE_KEY = 'wm.site';
   const SITE_DEFAULT = {
     siteName: 'Kody Lâm',
-    siteMark: 'W',
+    siteMark: 'K',
     siteTagline: 'A small archive of rain, rooms, and unsent words.',
     siteFooterLine: 'A quiet literary portfolio for a bilingual writer.',
     defaultLang: 'en'

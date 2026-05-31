@@ -74,6 +74,26 @@
   body.variant-amber   { --night: #15110D; --night-soft: #1F1812; --night-deep: #0A0805; --gold: #D38C4E; --gold-deep: #8A5C30; --oxblood: #5C3A1F; }
   body.variant-moss    { --night: #0D1410; --night-soft: #131E17; --night-deep: #060B08; --gold: #8DAE7A; --gold-deep: #5A7A4D; --oxblood: #3D5642; }
 
+  /* ─── LIGHT MODE — soft warm cream, overrides any per-story variant ─── */
+  body.light-mode {
+    --night:        #F4F0E6;
+    --night-soft:   #FBF8F0;
+    --night-deep:   #E9E3D5;
+    --ivory:        #231F18;
+    --ivory-warm:   #332D24;
+    --ivory-soft:   #6E6557;
+    --ivory-faint:  #A89E8C;
+    --gold:         #9A7B38;
+    --gold-deep:    #6E5526;
+    --oxblood:      #8A2B2E;
+    --rule:         #DBD4C5;
+    --rule-soft:    #E8E2D5;
+  }
+  body.light-mode .grain { opacity: 0.05; }
+  body.light-mode .chrome { background: rgba(244, 240, 230, 0.92); }
+  body.light-mode ::selection { background: var(--gold); color: #FBF8F0; }
+  body.light-mode .pull { color: var(--gold-deep); }
+
   /* ─── Interactive scenes ─── */
   .scene-choices {
     max-width: var(--reader-width);
@@ -528,13 +548,14 @@
   /* Mid-piece pull quote (optional) */
   .pull {
     margin: clamp(40px, 6vw, 64px) -20px;
-    padding: 28px 32px;
+    padding: 30px 34px;
     border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
     font-family: var(--font-display);
     font-style: italic;
-    font-size: clamp(22px, 3vw, 28px);
-    line-height: 1.4;
+    font-size: clamp(25px, 3.5vw, 34px);
+    font-weight: 600;
+    line-height: 1.42;
     color: var(--gold);
     text-align: center;
   }
@@ -833,6 +854,9 @@
       <span id="readTime">0 / 5 min</span>
     </div>
     <div class="chrome-actions">
+      <button class="chrome-btn" id="modeBtn" title="Sáng / Tối" aria-label="Toggle light or dark">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>
+      </button>
       <button class="chrome-btn" id="soundBtn" title="Âm thanh nền (mood)" aria-label="Toggle ambient sound">
         <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
       </button>
@@ -1471,6 +1495,38 @@
       const h4 = card.querySelector('h4');
       const match = h4 ? WM.stories.find(s => s.title === h4.textContent.trim()) : null;
       card.setAttribute('href', match ? 'reader.html?id=' + match.id : 'library.html');
+    });
+  })();
+</script>
+<script>
+  /* ─── Reader Light / Dark mode (persisted) ─── */
+  (function () {
+    var KEY = 'wm.reader.mode';
+    var body = document.body;
+    function isLight() { return body.classList.contains('light-mode'); }
+    function setIcon() {
+      var btn = document.getElementById('modeBtn');
+      if (!btn) return;
+      // sun when dark (tap to go light) → moon when light (tap to go dark)
+      btn.innerHTML = isLight()
+        ? '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'
+        : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>';
+      btn.title = isLight() ? 'Chuyển sang Tối' : 'Chuyển sang Sáng';
+    }
+    function apply(mode) {
+      if (mode === 'light') body.classList.add('light-mode');
+      else body.classList.remove('light-mode');
+      setIcon();
+    }
+    var saved = 'dark';
+    try { saved = localStorage.getItem(KEY) || 'dark'; } catch (e) {}
+    apply(saved);
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('#modeBtn');
+      if (!btn) return;
+      var next = isLight() ? 'dark' : 'light';
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
     });
   })();
 </script>

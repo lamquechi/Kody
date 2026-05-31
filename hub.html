@@ -3027,9 +3027,24 @@
 
     function bindActions() {
       document.getElementById('saveIdentity')?.addEventListener('click', () => {
-        // Only save identity fields when on Identity tab
         const activeTab = document.querySelector('[data-settings-sub].active');
-        if (activeTab && activeTab.dataset.settingsSub !== 'identity') return;
+        const sub = activeTab ? activeTab.dataset.settingsSub : 'identity';
+        const onServer = !!(window.WM && WM.online && WM.user);
+        // ── SITE tab: save public-facing site config (pushes to Supabase) ──
+        if (sub === 'site') {
+          const sdata = {
+            siteName: document.getElementById('site-name')?.value.trim() || 'Kody Lâm',
+            siteMark: document.getElementById('site-mark')?.value.trim() || 'K',
+            siteTagline: document.getElementById('site-tagline')?.value.trim() || '',
+            siteFooterLine: document.getElementById('site-footer')?.value.trim() || ''
+          };
+          if (window.WM && WM.site && WM.site.set) WM.site.set(sdata);
+          document.getElementById('unsavedIndicator')?.classList.remove('show');
+          showToast('Đã lưu Site' + (onServer ? ' · lên server ✓' : ' · cục bộ'));
+          return;
+        }
+        if (sub !== 'identity') { showToast('Tab này chưa có mục để lưu.'); return; }
+        // ── IDENTITY tab ──
         const data = {
           penName: document.getElementById('id-penName')?.value.trim() || '',
           callName: document.getElementById('id-callName')?.value.trim() || '',
@@ -3069,6 +3084,31 @@
           });
         });
       });
+
+      // ── Pre-fill Site fields from current config + live preview ──
+      (function initSiteFields() {
+        if (!(window.WM && WM.site && WM.site.get)) return;
+        const s = WM.site.get();
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && !el.value) el.value = v || ''; };
+        setVal('site-name', s.siteName);
+        setVal('site-mark', s.siteMark);
+        setVal('site-tagline', s.siteTagline);
+        setVal('site-footer', s.siteFooterLine);
+        const g = id => (document.getElementById(id)?.value || '');
+        const sync = () => {
+          const pn = document.getElementById('site-preview-name'); if (pn) pn.textContent = g('site-name') || 'Kody Lâm';
+          const pm = document.getElementById('site-preview-mark'); if (pm) pm.textContent = g('site-mark') || 'K';
+          const pt = document.getElementById('site-preview-tagline'); if (pt) pt.textContent = g('site-tagline');
+          const pf = document.getElementById('site-preview-footer'); if (pf) pf.textContent = g('site-footer');
+        };
+        ['site-name', 'site-mark', 'site-tagline', 'site-footer'].forEach(id => {
+          document.getElementById(id)?.addEventListener('input', () => {
+            sync();
+            document.getElementById('unsavedIndicator')?.classList.add('show');
+          });
+        });
+        sync();
+      })();
 
       // Backup export
       document.getElementById('exportBtn')?.addEventListener('click', () => {
