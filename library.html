@@ -61,6 +61,13 @@
     --rule-soft:    #E8E2D5;
   }
   body.light-mode .grain { opacity: 0.05; }
+  body.light-mode .topnav { background: rgba(244, 240, 230, 0.9); }
+  body.light-mode .controls { background: rgba(248, 244, 236, 0.96); }
+  body.light-mode .filter-pill { border-color: var(--rule); color: var(--ivory-soft); }
+  body.light-mode .filter-pill.active { background: var(--gold); color: #FBF8F0; border-color: var(--gold); }
+  body.light-mode .sort-select { color: var(--ivory-soft); border-color: var(--rule); }
+  body.light-mode .sort-select option { background: #FBF8F0; color: #231F18; }
+  body.light-mode .search-input { color: var(--ivory); border-color: var(--rule); }
   body.light-mode ::selection { background: var(--gold); color: #FBF8F0; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -787,7 +794,7 @@
     <a href="index.html" class="back-link" id="backToAtelier">
       <span class="arrow">←</span>
       <span aria-hidden="true" style="display:inline-block;width:16px;height:1px;background:currentColor;opacity:0.55;margin-right:13px;vertical-align:middle;"></span>
-      <span>Atelier</span>
+      <span>Trang chủ</span>
     </a>
     <div class="nav-center">The Library <span class="ornament">·</span> <span style="font-family:'Crimson Pro',Georgia,serif;font-style:italic;letter-spacing:0.01em;">Kody Lâm</span></div>
     <div class="lang-toggle">
@@ -1036,7 +1043,7 @@
     <div class="footer-brand"><span style="color: var(--gold)">·</span> Kody Lâm</div>
     <div>THE LIBRARY · 7 PIECES · 2026</div>
     <div class="footer-links">
-      <a href="index.html">Atelier</a>
+      <a href="index.html">Trang chủ</a>
       <a href="about.html">About</a>
       <a href="index.html#elsewhere">Newsletter</a>
     </div>
