@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="velvet">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -834,6 +834,7 @@
 </style>
 </head>
 <body>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
@@ -1117,6 +1118,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ═══════════════════ ROUTE + POPULATE FROM URL ?id= ═══════════════════
   (function () {
@@ -1502,8 +1504,9 @@
   })();
 </script>
 <script>
-  /* ─── Reader Light / Dark mode (persisted) ─── */
+  /* Reader light/dark is handled site-wide by wm-theme.js (wires #modeBtn). */
   (function () {
+    return; // superseded by wm-theme.js
     var KEY = 'wm.reader.mode';
     var body = document.body;
     function isLight() { return body.classList.contains('light-mode'); }

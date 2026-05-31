@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="velvet">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -506,9 +506,35 @@
     transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
   }
   .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ─── LIGHT MODE — soft warm cream (toggle in nav) ─── */
+  body.light-mode {
+    --night:       #F4F0E6;
+    --night-soft:  #FBF8F0;
+    --night-deep:  #ECE6D9;
+    --ivory:       #231F18;
+    --ivory-soft:  #6E6557;
+    --ivory-faint: #A89E8C;
+    --gold:        #9A7B38;
+    --gold-deep:   #6E5526;
+    --oxblood:     #8A2B2E;
+    --rain-blue:   #3E6B82;
+    --rule:        #DBD4C5;
+    --rule-soft:   #E8E2D5;
+  }
+  body.light-mode .grain { opacity: 0.05; }
+  body.light-mode .vignette { display: none; }
+  body.light-mode .topnav { background: rgba(244, 240, 230, 0.9); }
+  /* motif accents are tuned for a dark ground — darken just enough to read as text on cream */
+  body.light-mode .piece-tag,
+  body.light-mode .motif-num,
+  body.light-mode .motif-headtext h2 em {
+    color: color-mix(in srgb, var(--motif-color, var(--gold)) 50%, #231F18);
+  }
 </style>
 </head>
 <body>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
@@ -530,6 +556,7 @@
         <span style="opacity:0.4;">·</span>
         <button data-lang="vi" style="background:none;border:none;color:var(--ivory-faint,#8A8478);cursor:pointer;padding:2px 4px;">VI</button>
       </span>
+      <button id="modeBtn" title="Sáng / Tối" aria-label="Toggle light or dark" style="display:inline-flex;align-items:center;padding:4px;margin-left:6px;color:var(--ivory,#EDE6D6);background:none;border:none;cursor:pointer;"><svg id="modeIcon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:middle;"></svg></button>
     </div>
   </div>
 </nav>
@@ -695,7 +722,7 @@
         <span class="piece-tag">INTERACTIVE · 6 MIN</span>
         <div class="piece-title">A Door at Three AM</div>
         <p class="piece-excerpt">A short interactive piece. Three choices, three small endings — none of them final.</p>
-        <div class="piece-meta"><span>EN</span><span>·</span><span style="color: #7AAEC4;">⁂ INTERACTIVE</span></div>
+        <div class="piece-meta"><span>EN</span><span>·</span><span style="color: var(--rain-blue);">⁂ INTERACTIVE</span></div>
       </a>
     </div>
   </section>
@@ -781,6 +808,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ═══════════════════ WIRE STORY NAVIGATION ═══════════════════
   // Each piece-card: match by title to WM.stories and rewrite href

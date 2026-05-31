@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="velvet">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
@@ -59,6 +59,7 @@
     --oxblood:      #8A2B2E;
     --rule:         #DBD4C5;
     --rule-soft:    #E8E2D5;
+    --rain-blue:    #3E6B82;
   }
   body.light-mode .grain { opacity: 0.05; }
   body.light-mode .topnav { background: rgba(244, 240, 230, 0.9); }
@@ -776,9 +777,19 @@
   .curtain.opening { visibility: visible; }
   .curtain.opening .curtain-panel.left { transform: translateX(-101%); }
   .curtain.opening .curtain-panel.right { transform: translateX(101%); }
+  /* ── Legibility: larger, clearer mono labels (column heads / tags / meta /
+        chips / sort were 10px + faint, with thin strokes) ── */
+  .index-header { font-size: 12px; font-weight: 500; color: var(--ivory-soft); letter-spacing: 0.14em; }
+  .idx-tags  { font-size: 12px; font-weight: 500; color: var(--ivory-soft); }
+  .idx-meta  { font-size: 12px; font-weight: 500; color: var(--ivory-soft); }
+  .idx-marker { color: var(--ivory-soft); }
+  .idx-excerpt { font-size: 16px; }
+  .chip { font-size: 12px; font-weight: 500; }
+  .sort-select { font-size: 12px; font-weight: 500; }
 </style>
 </head>
 <body>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
@@ -1010,7 +1021,7 @@
         <div class="idx-title">A Door at Three AM</div>
         <div class="idx-excerpt">"You arrive at the door at three AM. The lights are still on inside."</div>
         <div class="idx-tags">
-          <div style="background: rgba(122, 174, 196, 0.15); color: #7AAEC4;">⁂ INTERACTIVE</div>
+          <div style="background: rgba(122, 174, 196, 0.15); color: var(--rain-blue);">⁂ INTERACTIVE</div>
           <div>MOTIF · NIGHT</div>
         </div>
         <div class="idx-meta">
@@ -1054,6 +1065,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ───── SEARCH + FILTER + SORT ─────
   const searchInput = document.getElementById('searchInput');
@@ -1173,8 +1185,9 @@
   });
 </script>
 <script>
-  /* ─── Library Light / Dark mode (shared with Reader) ─── */
+  /* Library light/dark is handled site-wide by wm-theme.js (wires #modeBtn). */
   (function () {
+    return; // superseded by wm-theme.js
     var KEY = 'wm.reader.mode';
     var body = document.body;
     var sun = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/>';

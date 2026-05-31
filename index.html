@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-world="atelier">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -222,30 +222,33 @@
   body.dark .theme-icon-sun { display: none; }
   body.dark .theme-icon-moon { display: inline; }
 
-  /* Dark variant of the Atelier palette — keeps persimmon accent */
+  /* Dark mode — a deep, cool, low-light "night studio": darker and more
+     mysterious than the old warm-brown; persimmon kept as the one warm accent */
   body.dark {
-    --paper:        #15120D;
-    --paper-warm:   #1D1913;
-    --paper-deep:   #26211A;
-    --ink:          #ECE5D8;
-    --ink-soft:     #B3A795;
-    --ink-faint:    #847868;
-    --persimmon:    #D9694A;
-    --rain-blue:    #6E97AC;
+    --paper:        #0C0C0F;
+    --paper-warm:   #141418;
+    --paper-deep:   #1B1B20;
+    --paper-edge:   #2A2A31;
+    --ink:          #ECE7DD;
+    --ink-soft:     #ADA89E;
+    --ink-faint:    #6F6B63;
+    --ink-ghost:    #45433E;
+    --persimmon:    #DB6B4C;
+    --rain-blue:    #7BA6BD;
     --wine:         #C77A6A;
-    --rule:         #352F26;
+    --rule:         #26262C;
   }
   body.dark img.grain-img,
   body.dark .paper-texture { opacity: 0.5; }
-  body.dark .topnav { background: rgba(18, 15, 11, 0.88); border-bottom-color: var(--rule); }
-  /* Dark-mode fixes: keep CTAs and the bilingual band readable */
+  body.dark .topnav { background: rgba(9, 9, 12, 0.9); border-bottom-color: var(--rule); }
+  /* Dark-mode: persimmon CTA needs dark text on its light fill.
+     The bilingual + newsletter bands now adapt via semantic vars (--ink / --paper-warm),
+     so they need no per-mode patch. */
   body.dark .btn-enter { background: var(--persimmon); color: #1A140F; }
   body.dark .btn-enter:hover { background: #E67A5B; }
-  body.dark .bilingual { background: var(--paper-warm); color: var(--ink); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  body.dark .newsletter-inline { background: var(--paper-warm); color: var(--ink); border: 1px solid var(--rule); }
-  body.dark .ambient-bg span:nth-child(1) { background: radial-gradient(circle, rgba(217, 105, 74, 0.22), transparent 70%); }
-  body.dark .ambient-bg span:nth-child(2) { background: radial-gradient(circle, rgba(110, 151, 172, 0.22), transparent 70%); }
-  body.dark .ambient-bg span:nth-child(3) { background: radial-gradient(circle, rgba(201, 169, 97, 0.18), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(1) { background: radial-gradient(circle, rgba(180, 92, 68, 0.10), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(2) { background: radial-gradient(circle, rgba(86, 116, 148, 0.14), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(3) { background: radial-gradient(circle, rgba(112, 102, 150, 0.12), transparent 70%); }
   body { transition: background 0.4s var(--ease), color 0.4s var(--ease); }
 
   @media (max-width: 720px) {
@@ -754,7 +757,7 @@
     font-family: var(--font-display);
     font-size: clamp(22px, 3vw, 28px);
     line-height: 1.45;
-    color: var(--paper);
+    color: var(--ink);
     font-style: italic;
   }
   @media (max-width: 820px) {
@@ -899,35 +902,35 @@
     font-weight: 400;
     line-height: 1.2;
     margin-bottom: 6px;
-    color: #F7F4EE;
+    color: var(--ink);
   }
   .newsletter-inline p {
-    color: rgba(247, 244, 238, 0.7);
+    color: var(--ink-soft);
     font-size: 13.5px;
     line-height: 1.5;
   }
   .newsletter-form {
     display: flex; gap: 0;
-    border-bottom: 1px solid rgba(247, 244, 238, 0.4);
+    border-bottom: 1px solid var(--rule);
   }
   .newsletter-form input {
     flex: 1;
     background: transparent;
     border: none;
-    color: var(--paper);
+    color: var(--ink);
     font-family: var(--font-display);
     font-size: 18px;
     padding: 12px 0;
     outline: none;
   }
   .newsletter-form input::placeholder {
-    color: rgba(247, 244, 238, 0.4);
+    color: var(--ink-faint);
     font-style: italic;
   }
   .newsletter-form button {
     background: transparent;
     border: none;
-    color: var(--paper);
+    color: var(--persimmon);
     font-family: var(--font-display);
     font-style: italic;
     font-size: 16px;
@@ -1083,10 +1086,7 @@
 </style>
 </head>
 <body>
-<script>
-  // Apply saved light/dark theme immediately (before paint) to avoid flash
-  try { if (localStorage.getItem('wm.theme') === 'dark') document.body.classList.add('dark'); } catch (e) {}
-</script>
+<script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 <div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <div class="grain" aria-hidden="true"></div>
@@ -1418,6 +1418,7 @@
 <script src="wm.js?v=6"></script>
 <script src="wm-supabase.js?v=6"></script>
 <script src="wm-i18n.js?v=6"></script>
+<script src="wm-theme.js?v=1"></script>
 <script>
   // ───── CURTAIN TRANSITION (with navigation) ─────
   const curtain = document.getElementById('curtain');
@@ -1496,15 +1497,7 @@
     });
   });
 
-  // ═══════════════════ LIGHT / DARK TOGGLE ═══════════════════
-  (function () {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const dark = document.body.classList.toggle('dark');
-      try { localStorage.setItem('wm.theme', dark ? 'dark' : 'light'); } catch (e) {}
-    });
-  })();
+  // Light / dark toggle is handled site-wide by wm-theme.js (wires #themeToggle).
 
   // ═══════════════════ NEWSLETTER SIGNUP ═══════════════════
   (function () {
