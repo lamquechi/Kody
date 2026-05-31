@@ -1058,7 +1058,7 @@
   // ───── SEARCH + FILTER + SORT ─────
   const searchInput = document.getElementById('searchInput');
   const filterChips = document.querySelectorAll('.chip');
-  const langButtons = document.querySelectorAll('.lang-toggle button');
+  const langButtons = document.querySelectorAll('.lang-toggle button[data-lang]');
   const indexList = document.getElementById('indexList');
   const rows = Array.from(indexList.querySelectorAll('.index-row'));
   const emptyState = document.getElementById('emptyState');
