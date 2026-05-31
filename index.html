@@ -71,7 +71,46 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+    position: relative;
   }
+
+  /* Animated ambient background — soft drifting colour, easy on the eyes */
+  .ambient-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .ambient-bg span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(48px);
+    will-change: transform;
+  }
+  .ambient-bg span:nth-child(1) {
+    width: 46vw; height: 46vw; top: -12vw; left: -8vw;
+    background: radial-gradient(circle, rgba(194, 85, 53, 0.14), transparent 70%);
+    animation: drift-a 34s ease-in-out infinite;
+  }
+  .ambient-bg span:nth-child(2) {
+    width: 42vw; height: 42vw; bottom: -14vw; right: -8vw;
+    background: radial-gradient(circle, rgba(91, 126, 140, 0.15), transparent 70%);
+    animation: drift-b 42s ease-in-out infinite;
+  }
+  .ambient-bg span:nth-child(3) {
+    width: 36vw; height: 36vw; top: 32vh; left: 46vw;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.12), transparent 70%);
+    animation: drift-c 50s ease-in-out infinite;
+  }
+  @keyframes drift-a { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(7vw, 6vh) scale(1.08); } }
+  @keyframes drift-b { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-6vw, -5vh) scale(1.1); } }
+  @keyframes drift-c { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-5vw, 6vh) scale(0.92); } }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-bg span { animation: none !important; }
+  }
+  /* keep all page content above the ambient layer */
+  .nav-wrap, nav, header, section, footer, .container-wide, .curtain { position: relative; z-index: 1; }
 
   /* Paper grain overlay */
   .grain {
@@ -1037,6 +1076,7 @@
   // Apply saved light/dark theme immediately (before paint) to avoid flash
   try { if (localStorage.getItem('wm.theme') === 'dark') document.body.classList.add('dark'); } catch (e) {}
 </script>
+<div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <div class="grain" aria-hidden="true"></div>
 
