@@ -46,6 +46,23 @@
     --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   }
 
+  /* ─── LIGHT MODE — soft warm cream (toggle in nav) ─── */
+  body.light-mode {
+    --night:        #F4F0E6;
+    --night-soft:   #FBF8F0;
+    --night-deep:   #ECE6D9;
+    --ivory:        #231F18;
+    --ivory-soft:   #6E6557;
+    --ivory-faint:  #A89E8C;
+    --gold:         #9A7B38;
+    --gold-deep:    #6E5526;
+    --oxblood:      #8A2B2E;
+    --rule:         #DBD4C5;
+    --rule-soft:    #E8E2D5;
+  }
+  body.light-mode .grain { opacity: 0.05; }
+  body.light-mode ::selection { background: var(--gold); color: #FBF8F0; }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
@@ -779,6 +796,10 @@
       <button data-lang="en">EN</button>
       <span class="divider">·</span>
       <button data-lang="vi">VI</button>
+      <span class="divider">·</span>
+      <button id="modeBtn" title="Sáng / Tối" aria-label="Toggle light or dark" style="display:inline-flex;align-items:center;padding:4px;">
+        <svg id="modeIcon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:middle;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>
+      </button>
     </div>
   </div>
 </nav>
@@ -1143,6 +1164,37 @@
       });
     }
   });
+</script>
+<script>
+  /* ─── Library Light / Dark mode (shared with Reader) ─── */
+  (function () {
+    var KEY = 'wm.reader.mode';
+    var body = document.body;
+    var sun = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/>';
+    var moon = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+    function isLight() { return body.classList.contains('light-mode'); }
+    function setIcon() {
+      var ic = document.getElementById('modeIcon');
+      if (ic) ic.innerHTML = isLight() ? moon : sun;
+      var b = document.getElementById('modeBtn');
+      if (b) b.title = isLight() ? 'Chuyển sang Tối' : 'Chuyển sang Sáng';
+    }
+    function apply(mode) {
+      if (mode === 'light') body.classList.add('light-mode');
+      else body.classList.remove('light-mode');
+      setIcon();
+    }
+    var saved = 'dark';
+    try { saved = localStorage.getItem(KEY) || 'dark'; } catch (e) {}
+    apply(saved);
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('#modeBtn');
+      if (!btn) return;
+      var next = isLight() ? 'dark' : 'light';
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  })();
 </script>
 </body>
 </html>

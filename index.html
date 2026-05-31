@@ -246,8 +246,9 @@
   .hero-companion {
     font-family: var(--font-display);
     font-style: normal;
-    font-size: 19px;
-    color: var(--ink-faint);
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--ink-soft);
     max-width: 580px;
     margin-bottom: 48px;
     padding-left: 16px;
@@ -717,7 +718,8 @@
   }
   .about-grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
+    grid-template-columns: 1fr;
+    max-width: 720px;
     gap: 80px;
     align-items: start;
   }
@@ -1310,45 +1312,15 @@
           <span class="arrow">→</span>
         </a>
       </div>
-
-      <div class="about-identity reveal">
-        <div class="identity-row">
-          <span class="identity-label">Forms</span>
-          <span class="identity-text">short fiction, tản văn, fragments, lyrical prose, bilingual notes</span>
-        </div>
-        <div class="identity-row">
-          <span class="identity-label">Motifs</span>
-          <span class="identity-text">water, memory, windows, evening light, silence, rooms, city weather</span>
-        </div>
-        <div class="identity-row">
-          <span class="identity-label">Voice</span>
-          <span class="identity-text">quiet, intimate, reflective, image-driven, emotionally precise</span>
-        </div>
-        <div class="identity-row">
-          <span class="identity-label">Reader promise</span>
-          <span class="identity-text">each piece should be easy to enter, but leave a small afterimage</span>
-        </div>
-        <div class="identity-row">
-          <span class="identity-label">Direction</span>
-          <span class="identity-text">minimal interface, strong typography, subtle mood, no visual noise</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ───────────── ELSEWHERE ───────────── -->
-<section class="elsewhere" id="elsewhere">
-  <div class="container-wide">
-    <div class="section-head reveal">
-      <div class="section-num">04 · ELSEWHERE</div>
-      <div>
-        <span class="eyebrow">Presence</span>
-        <h2>A few <em>places</em><br>to follow the work.</h2>
-      </div>
     </div>
 
-    <div class="elsewhere-grid reveal">
+    <!-- Elsewhere — merged into the same block as About -->
+    <div class="reveal" style="margin-top:clamp(44px,6vw,76px);padding-top:clamp(32px,4.5vw,52px);border-top:1px solid var(--rule);">
+      <span class="eyebrow" style="color:var(--persimmon);letter-spacing:0.2em;">Elsewhere</span>
+      <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,40px);font-weight:500;line-height:1.12;margin-top:10px;">A few <em style="font-style:italic;">places</em> to follow the work.</h2>
+    </div>
+
+    <div class="elsewhere-grid reveal" id="elsewhere" style="margin-top:32px;">
       <a href="#" class="presence-card">
         <span class="presence-meta">ESSAYS · UPDATES</span>
         <h3>Newsletter</h3>
