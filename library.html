@@ -777,6 +777,15 @@
   .curtain.opening { visibility: visible; }
   .curtain.opening .curtain-panel.left { transform: translateX(-101%); }
   .curtain.opening .curtain-panel.right { transform: translateX(101%); }
+  /* ── Legibility: larger, clearer mono labels (column heads / tags / meta /
+        chips / sort were 10px + faint, with thin strokes) ── */
+  .index-header { font-size: 12px; font-weight: 500; color: var(--ivory-soft); letter-spacing: 0.14em; }
+  .idx-tags  { font-size: 12px; font-weight: 500; color: var(--ivory-soft); }
+  .idx-meta  { font-size: 12px; font-weight: 500; color: var(--ivory-soft); }
+  .idx-marker { color: var(--ivory-soft); }
+  .idx-excerpt { font-size: 16px; }
+  .chip { font-size: 12px; font-weight: 500; }
+  .sort-select { font-size: 12px; font-weight: 500; }
 </style>
 </head>
 <body>

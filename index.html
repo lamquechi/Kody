@@ -222,30 +222,33 @@
   body.dark .theme-icon-sun { display: none; }
   body.dark .theme-icon-moon { display: inline; }
 
-  /* Dark variant of the Atelier palette — keeps persimmon accent */
+  /* Dark mode — a deep, cool, low-light "night studio": darker and more
+     mysterious than the old warm-brown; persimmon kept as the one warm accent */
   body.dark {
-    --paper:        #15120D;
-    --paper-warm:   #1D1913;
-    --paper-deep:   #26211A;
-    --ink:          #ECE5D8;
-    --ink-soft:     #B3A795;
-    --ink-faint:    #847868;
-    --persimmon:    #D9694A;
-    --rain-blue:    #6E97AC;
+    --paper:        #0C0C0F;
+    --paper-warm:   #141418;
+    --paper-deep:   #1B1B20;
+    --paper-edge:   #2A2A31;
+    --ink:          #ECE7DD;
+    --ink-soft:     #ADA89E;
+    --ink-faint:    #6F6B63;
+    --ink-ghost:    #45433E;
+    --persimmon:    #DB6B4C;
+    --rain-blue:    #7BA6BD;
     --wine:         #C77A6A;
-    --rule:         #352F26;
+    --rule:         #26262C;
   }
   body.dark img.grain-img,
   body.dark .paper-texture { opacity: 0.5; }
-  body.dark .topnav { background: rgba(18, 15, 11, 0.88); border-bottom-color: var(--rule); }
+  body.dark .topnav { background: rgba(9, 9, 12, 0.9); border-bottom-color: var(--rule); }
   /* Dark-mode: persimmon CTA needs dark text on its light fill.
      The bilingual + newsletter bands now adapt via semantic vars (--ink / --paper-warm),
      so they need no per-mode patch. */
   body.dark .btn-enter { background: var(--persimmon); color: #1A140F; }
   body.dark .btn-enter:hover { background: #E67A5B; }
-  body.dark .ambient-bg span:nth-child(1) { background: radial-gradient(circle, rgba(217, 105, 74, 0.22), transparent 70%); }
-  body.dark .ambient-bg span:nth-child(2) { background: radial-gradient(circle, rgba(110, 151, 172, 0.22), transparent 70%); }
-  body.dark .ambient-bg span:nth-child(3) { background: radial-gradient(circle, rgba(201, 169, 97, 0.18), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(1) { background: radial-gradient(circle, rgba(180, 92, 68, 0.10), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(2) { background: radial-gradient(circle, rgba(86, 116, 148, 0.14), transparent 70%); }
+  body.dark .ambient-bg span:nth-child(3) { background: radial-gradient(circle, rgba(112, 102, 150, 0.12), transparent 70%); }
   body { transition: background 0.4s var(--ease), color 0.4s var(--ease); }
 
   @media (max-width: 720px) {
