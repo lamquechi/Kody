@@ -238,11 +238,11 @@
   body.dark img.grain-img,
   body.dark .paper-texture { opacity: 0.5; }
   body.dark .topnav { background: rgba(18, 15, 11, 0.88); border-bottom-color: var(--rule); }
-  /* Dark-mode fixes: keep CTAs and the bilingual band readable */
+  /* Dark-mode: persimmon CTA needs dark text on its light fill.
+     The bilingual + newsletter bands now adapt via semantic vars (--ink / --paper-warm),
+     so they need no per-mode patch. */
   body.dark .btn-enter { background: var(--persimmon); color: #1A140F; }
   body.dark .btn-enter:hover { background: #E67A5B; }
-  body.dark .bilingual { background: var(--paper-warm); color: var(--ink); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  body.dark .newsletter-inline { background: var(--paper-warm); color: var(--ink); border: 1px solid var(--rule); }
   body.dark .ambient-bg span:nth-child(1) { background: radial-gradient(circle, rgba(217, 105, 74, 0.22), transparent 70%); }
   body.dark .ambient-bg span:nth-child(2) { background: radial-gradient(circle, rgba(110, 151, 172, 0.22), transparent 70%); }
   body.dark .ambient-bg span:nth-child(3) { background: radial-gradient(circle, rgba(201, 169, 97, 0.18), transparent 70%); }
@@ -754,7 +754,7 @@
     font-family: var(--font-display);
     font-size: clamp(22px, 3vw, 28px);
     line-height: 1.45;
-    color: var(--paper);
+    color: var(--ink);
     font-style: italic;
   }
   @media (max-width: 820px) {
@@ -899,35 +899,35 @@
     font-weight: 400;
     line-height: 1.2;
     margin-bottom: 6px;
-    color: #F7F4EE;
+    color: var(--ink);
   }
   .newsletter-inline p {
-    color: rgba(247, 244, 238, 0.7);
+    color: var(--ink-soft);
     font-size: 13.5px;
     line-height: 1.5;
   }
   .newsletter-form {
     display: flex; gap: 0;
-    border-bottom: 1px solid rgba(247, 244, 238, 0.4);
+    border-bottom: 1px solid var(--rule);
   }
   .newsletter-form input {
     flex: 1;
     background: transparent;
     border: none;
-    color: var(--paper);
+    color: var(--ink);
     font-family: var(--font-display);
     font-size: 18px;
     padding: 12px 0;
     outline: none;
   }
   .newsletter-form input::placeholder {
-    color: rgba(247, 244, 238, 0.4);
+    color: var(--ink-faint);
     font-style: italic;
   }
   .newsletter-form button {
     background: transparent;
     border: none;
-    color: var(--paper);
+    color: var(--persimmon);
     font-family: var(--font-display);
     font-style: italic;
     font-size: 16px;
