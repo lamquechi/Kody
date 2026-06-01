@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept B — ATLAS (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#08070D; --night-2:#0E0B16; --night-3:#16121E;
+    --ivory:#EDE6D6; --ivory-soft:#A09684; --ivory-faint:#5A5448;
+    --gold:#C9A961; --gold-deep:#8A7038;
+    --oxblood:#6E1F22; --plum:#3A2B4A;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"Lora",Georgia,serif;
+    --font-mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);font-size:17px;line-height:1.75;color:var(--ivory);background:var(--night);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  /* star dust */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(rgba(237,230,214,0.18) 1px,transparent 1px),radial-gradient(rgba(201,169,97,0.16) 1px,transparent 1px);background-size:96px 96px,140px 140px;background-position:0 0,40px 60px;opacity:0.35;mix-blend-mode:screen;z-index:1}
+  /* nebula */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 60vw 50vh at 70% 30%,rgba(110,31,34,0.18),transparent 60%),radial-gradient(ellipse 50vw 40vh at 20% 70%,rgba(58,43,74,0.22),transparent 60%);z-index:0}
+  .preview-banner{position:fixed;top:0;left:0;right:0;background:#000;color:var(--gold);text-align:center;padding:8px 0;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:100;border-bottom:1px solid var(--gold-deep)}
+  .preview-banner em{font-style:italic;color:var(--ivory);font-family:var(--font-display);text-transform:none;letter-spacing:0.02em;font-size:14px}
+  .stage{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:64px 56px 80px;margin-top:34px}
+
+  /* Nav — minimal floating */
+  nav.topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:80px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase}
+  nav .brand{font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--gold);letter-spacing:0.02em;text-transform:none}
+  nav .links{display:flex;gap:32px;color:var(--ivory-soft)}
+  nav .links a{color:inherit;text-decoration:none;transition:.2s}
+  nav .links a:hover{color:var(--gold)}
+
+  /* HERO — title vertical right, big atmospheric block left */
+  .hero{display:grid;grid-template-columns:1fr 84px;gap:48px;min-height:62vh;align-items:center;padding-bottom:64px;border-bottom:1px solid rgba(201,169,97,0.16)}
+  .hero-text{position:relative}
+  .hero-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:32px;display:inline-flex;align-items:center;gap:16px}
+  .hero-eyebrow::before{content:"";width:42px;height:1px;background:var(--gold)}
+  .hero h1{font-family:var(--font-display);font-weight:300;font-size:clamp(64px,9vw,128px);line-height:0.96;letter-spacing:-0.02em;color:var(--ivory);position:relative}
+  .hero h1 em{font-style:italic;color:var(--gold);font-weight:400}
+  .hero h1 span.thin{font-weight:300;color:var(--ivory-soft)}
+  .hero-sub{margin-top:36px;font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.5;color:var(--ivory-soft);max-width:560px}
+  .hero-vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-display);font-style:italic;font-size:14px;letter-spacing:0.32em;color:var(--gold);align-self:stretch;display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(201,169,97,0.3);padding-left:24px}
+
+  /* CONSTELLATION — pieces as nodes */
+  .section-eyebrow{display:flex;align-items:center;gap:14px;margin:80px 0 16px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold-deep)}
+  .section-eyebrow::before{content:"";width:56px;height:1px;background:var(--gold-deep)}
+  .contents-title{font-family:var(--font-display);font-weight:400;font-size:48px;letter-spacing:-0.01em;margin-bottom:48px}
+  .contents-title em{font-style:italic;color:var(--gold)}
+
+  .constellation{position:relative;height:520px;margin:24px 0 80px;border-top:1px solid rgba(201,169,97,0.1);border-bottom:1px solid rgba(201,169,97,0.1);background:radial-gradient(ellipse at center,rgba(201,169,97,0.06),transparent 70%)}
+  .star{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 24px rgba(201,169,97,0.7),0 0 4px var(--ivory);cursor:pointer;transition:.4s}
+  .star::after{content:attr(data-title);position:absolute;left:18px;top:-6px;white-space:nowrap;font-family:var(--font-display);font-style:italic;font-size:18px;color:var(--ivory);opacity:0.85;transition:.3s}
+  .star:hover{transform:scale(1.6);background:var(--ivory)}
+  .star:hover::after{opacity:1;color:var(--gold)}
+  .star .motif{position:absolute;left:18px;top:18px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ivory-faint);white-space:nowrap}
+  .line{position:absolute;background:linear-gradient(90deg,transparent,rgba(201,169,97,0.25),transparent);height:1px;transform-origin:0 0;pointer-events:none}
+
+  /* legend */
+  .legend{display:flex;gap:24px;flex-wrap:wrap;font-family:var(--font-mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ivory-soft);margin-top:-48px;margin-bottom:48px;padding-top:24px;border-top:1px solid rgba(201,169,97,0.1)}
+  .legend span{display:inline-flex;align-items:center;gap:8px}
+  .legend span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+  footer{margin-top:64px;padding-top:32px;border-top:1px solid rgba(201,169,97,0.16);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
+  footer .colophon{font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ivory-soft);max-width:520px;line-height:1.8}
+  footer .colophon em{font-family:var(--font-display);text-transform:none;letter-spacing:0.02em;font-size:18px;font-style:italic;color:var(--gold);display:block;margin-bottom:6px}
+  footer .marks{font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--gold);letter-spacing:0.6em}
+
+  @media (max-width:900px){
+    .stage{padding:48px 24px}
+    .hero{grid-template-columns:1fr;gap:24px}
+    .hero-vert{writing-mode:initial;transform:none;border-left:none;border-top:1px solid rgba(201,169,97,0.3);padding-left:0;padding-top:16px}
+    .constellation{height:auto;padding:24px;display:flex;flex-direction:column;gap:18px;background:transparent}
+    .star{position:static!important;width:auto;height:auto;background:transparent;box-shadow:none;border-left:2px solid var(--gold);padding-left:14px}
+    .star::after{position:static;display:block;font-size:18px}
+    .star .motif{position:static;display:block;margin-top:4px}
+  }
+</style>
+</head>
+<body>
+<div class="preview-banner">Concept B · <em>Atlas</em> — Night Sky / Cinematic</div>
+<div class="stage">
+
+  <nav class="topnav">
+    <span class="brand">Kody Lâm</span>
+    <span class="links">
+      <a href="#">The Library</a>
+      <a href="#">Motifs</a>
+      <a href="#">About</a>
+      <a href="#">EN · VI</a>
+    </span>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-text">
+      <span class="hero-eyebrow">Folio · Atelier · MMXXVI</span>
+      <h1><span class="thin">A small</span> archive<br><em>of unsent</em><br><span class="thin">words.</span></h1>
+      <p class="hero-sub">Rain · rooms · the quiet weather people carry through the city.<br>— Mưa · căn phòng · thứ thời tiết im lặng.</p>
+    </div>
+    <div class="hero-vert">— constellations of rain &amp; silence —</div>
+  </section>
+
+  <div class="section-eyebrow">II · A constellation of seven</div>
+  <h2 class="contents-title">Pieces, plotted by their <em>weather</em>.</h2>
+
+  <div class="constellation" aria-label="Pieces map">
+    <div class="line" style="left:14%;top:30%;width:22%;transform:rotate(18deg)"></div>
+    <div class="line" style="left:36%;top:42%;width:26%;transform:rotate(-12deg)"></div>
+    <div class="line" style="left:60%;top:34%;width:22%;transform:rotate(22deg)"></div>
+    <div class="line" style="left:24%;top:58%;width:28%;transform:rotate(-8deg)"></div>
+
+    <a class="star" href="#" style="left:14%;top:30%" data-title="The City After Rain"><span class="motif">Rain · I</span></a>
+    <a class="star" href="#" style="left:36%;top:42%" data-title="Letters to the Reservoir"><span class="motif">Water · II</span></a>
+    <a class="star" href="#" style="left:24%;top:58%" data-title="In a Room of Small Lights"><span class="motif">Window · III</span></a>
+    <a class="star" href="#" style="left:60%;top:34%" data-title="Mirror City Notes"><span class="motif">City · IV</span></a>
+    <a class="star" href="#" style="left:50%;top:64%" data-title="The Language of Unfinished Things"><span class="motif">Drafts · V</span></a>
+    <a class="star" href="#" style="left:78%;top:48%" data-title="Saigon After Eleven"><span class="motif">Night · VI</span></a>
+    <a class="star" href="#" style="left:84%;top:22%" data-title="Một Nửa Của Im Lặng"><span class="motif">Silence · VII (VI)</span></a>
+  </div>
+
+  <div class="legend">
+    <span>Rain · Water · Window</span>
+    <span>City · Night · Silence</span>
+    <span>Drafts &amp; the unfinished</span>
+    <span style="margin-left:auto;color:var(--gold)">⁂ hover a star</span>
+  </div>
+
+  <footer>
+    <div class="colophon">
+      <em>Kody Lâm</em>
+      A nocturnal archive — read slowly, like maps of a quiet sky.<br>
+      Set in Cormorant Garamond &amp; Lora · MMXXVI
+    </div>
+    <div class="marks">·  ·  ·</div>
+  </footer>
+
+</div>
+</body>
+</html>
