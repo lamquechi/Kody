@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept F — MARGINALIA (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF7; --paper-2:#F1EEE7; --ink:#15130F; --ink-soft:#56504333; --ink-soft2:#565043; --ink-faint:#94897A;
+    --accent:#3A6B5C; --accent-warm:#C0633A; --rule:#E2DDD1;
+    --disp:"Spectral",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:18px;line-height:1.8;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+  .pv{position:fixed;top:0;left:0;right:0;background:#15130F;color:var(--paper);text-align:center;padding:8px;font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:200;border-bottom:1px solid var(--accent)}
+  .pv em{font-style:italic;color:var(--accent-warm);font-family:var(--disp);text-transform:none;letter-spacing:0.02em;font-size:14px}
+  .stage{max-width:1280px;margin:34px auto 0;padding:0 56px 80px}
+
+  nav.top{display:flex;justify-content:space-between;align-items:baseline;padding:34px 0;border-bottom:1px solid var(--ink);margin-bottom:0}
+  nav .brand{font-family:var(--disp);font-weight:500;font-size:22px;letter-spacing:0.01em}
+  nav .brand em{font-style:italic;color:var(--accent-warm)}
+  nav .links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft2)}
+  nav .links a{color:inherit;text-decoration:none;transition:.2s}nav .links a:hover{color:var(--accent-warm)}
+
+  /* the page is a "manuscript" with a wide right margin for notes */
+  .ms{display:grid;grid-template-columns:1fr 280px;gap:0}
+  .ms .body{padding:72px 64px 72px 0;border-right:1px solid var(--rule)}
+  .ms .margin{padding:72px 0 72px 36px;position:relative}
+
+  /* line numbers down the body's left edge */
+  .hero{position:relative}
+  .hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+  .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(46px,6.5vw,92px);line-height:1.02;letter-spacing:-0.02em}
+  .hero h1 em{font-style:italic;color:var(--accent-warm)}
+  .hero .lede{margin-top:30px;max-width:620px;font-size:21px;line-height:1.6;color:var(--ink-soft2)}
+  .hero .lede .annot{border-bottom:1px dotted var(--accent);cursor:help}
+
+  .margin .note{font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--accent);padding-left:18px;border-left:1px solid var(--accent);margin-bottom:30px}
+  .margin .note .ref{display:block;font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+
+  .index{margin-top:64px}
+  .index .k{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:14px}
+  .index .k::after{content:"";flex:1;height:1px;background:var(--rule)}
+  .entry{padding:26px 0;border-bottom:1px solid var(--rule);cursor:pointer;position:relative;padding-left:0;transition:padding-left .3s}
+  .entry:hover{padding-left:16px}
+  .entry .ln{position:absolute;left:-44px;top:30px;font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+  .entry h3{font-family:var(--disp);font-weight:500;font-size:clamp(24px,2.6vw,32px);line-height:1.1;display:inline}
+  .entry .src{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-left:12px}
+  .entry .src b{color:var(--accent-warm);font-weight:500}
+  .entry p{margin-top:10px;font-style:italic;font-size:16.5px;line-height:1.6;color:var(--ink-soft2);max-width:640px}
+  .entry:hover h3{color:var(--accent-warm)}
+
+  footer{margin-top:8px;padding:40px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:baseline}
+  footer .big{font-family:var(--disp);font-style:italic;font-size:30px}
+  footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint)}
+
+  @media(max-width:880px){
+    .stage{padding:0 20px 60px}
+    .ms{grid-template-columns:1fr}
+    .ms .body{padding:48px 0;border-right:none}
+    .ms .margin{padding:0 0 32px;border-top:1px solid var(--rule)}
+    .entry .ln{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="pv">Concept F · <em>Marginalia</em> — Manuscript with Living Margin</div>
+<div class="stage">
+  <nav class="top">
+    <span class="brand"><em>K</em>ody Lâm</span>
+    <span class="links"><a href="#">Library</a><a href="#">Motifs</a><a href="#">About</a><a href="#" style="color:var(--accent-warm)">EN · VI</a></span>
+  </nav>
+
+  <div class="ms">
+    <div class="body">
+      <section class="hero">
+        <div class="eyebrow">— Folio · a bilingual archive</div>
+        <h1>A small archive of <em>unsent</em> words.</h1>
+        <p class="lede">Short fiction and <span class="annot">tản văn</span> in English and Vietnamese — built like a <span class="annot">moody reading room</span>, not a noisy blog.</p>
+      </section>
+
+      <section class="index">
+        <div class="k">The index · seven pieces</div>
+        <article class="entry"><span class="ln">001</span><h3>The City After Rain</h3><span class="src">Fiction · <b>EN</b> · 5′</span><p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p></article>
+        <article class="entry"><span class="ln">002</span><h3>Letters to the Reservoir</h3><span class="src">Short · <b>EN</b> · 3′</span><p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p></article>
+        <article class="entry"><span class="ln">003</span><h3>In a Room of Small Lights</h3><span class="src">Tản văn · <b>EN</b> · 4′</span><p>"A room lit by small lamps asks for a different honesty than daylight does."</p></article>
+        <article class="entry"><span class="ln">007</span><h3 lang="vi">Một Nửa Của Im Lặng</h3><span class="src">Tản văn · <b>VI</b> · 4′</span><p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p></article>
+      </section>
+
+      <footer>
+        <div class="big">Kody Lâm</div>
+        <div class="col">Set in Spectral · MMXXVI</div>
+      </footer>
+    </div>
+
+    <aside class="margin">
+      <div class="note"><span class="ref">on · tản văn</span>A Vietnamese lyric-essay form: prose that behaves like a held breath.</div>
+      <div class="note"><span class="ref">on · the room</span>Every piece here is a room. Some are lit; some keep their lamps off on purpose.</div>
+      <div class="note"><span class="ref">note to the reader</span>Read slowly. The margin is yours to write in too.</div>
+      <div class="note" style="border-color:var(--accent-warm);color:var(--accent-warm)"><span class="ref">⁂ begin</span>Folio I is the doorway. Start there if you are unsure.</div>
+    </aside>
+  </div>
+</div>
+</body>
+</html>

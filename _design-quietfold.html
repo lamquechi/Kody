@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept D — QUIET FOLD (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EDE4; --paper-2:#E9E2D4; --ink:#191512; --ink-soft:#5C5044; --ink-faint:#9C8F7E;
+    --accent:#B8472E; --rule:#D8CFBE;
+    --disp:"Fraunces",Georgia,serif; --body:"Newsreader",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:18px;line-height:1.7;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+  .pv{position:fixed;top:0;left:0;right:0;background:#191512;color:#F2EDE4;text-align:center;padding:8px;font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:200;border-bottom:1px solid var(--accent)}
+  .pv em{font-style:italic;color:var(--accent);font-family:var(--disp);text-transform:none;letter-spacing:0.02em;font-size:14px}
+
+  /* fixed left spine nav (desktop) */
+  .spine{position:fixed;left:0;top:0;bottom:0;width:64px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:48px 0 28px;z-index:50;background:var(--paper)}
+  .spine .mk{font-family:var(--disp);font-style:italic;font-size:26px;color:var(--accent)}
+  .spine .vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--ink-faint)}
+  .spine .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+  .wrap{margin-left:64px}
+  .inner{max-width:1180px;margin:0 auto;padding:0 56px}
+
+  /* top bar */
+  .top{display:flex;justify-content:flex-end;gap:30px;padding:32px 56px 0;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)}
+  .top a{color:inherit;text-decoration:none;transition:.2s}.top a:hover{color:var(--accent)}
+
+  /* HERO — viewport-scaled word, edge to edge */
+  .hero{padding:60px 0 72px;border-bottom:1px solid var(--rule)}
+  .hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:28px}
+  .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(60px,15vw,220px);line-height:0.82;letter-spacing:-0.03em;margin:0}
+  .hero h1 .l2{display:block;padding-left:14vw;font-style:italic;font-weight:400;color:var(--accent)}
+  .hero h1 .l3{display:block;text-align:right}
+  .hero .sub{margin-top:36px;max-width:540px;font-size:20px;line-height:1.55;color:var(--ink-soft);font-style:italic;font-family:var(--disp);margin-left:auto}
+
+  /* marquee strip */
+  .strip{overflow:hidden;border-bottom:1px solid var(--rule);padding:18px 0;white-space:nowrap}
+  .strip .run{display:inline-block;animation:slide 38s linear infinite;font-family:var(--disp);font-style:italic;font-size:22px;color:var(--ink-faint)}
+  .strip .run span{margin:0 28px}
+  .strip .run span b{color:var(--accent);font-weight:400}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.strip .run{animation:none}}
+
+  /* contents — asymmetric editorial rows */
+  .lead{padding:64px 0 28px}
+  .lead .k{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .lead h2{font-family:var(--disp);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.05;letter-spacing:-0.01em;max-width:780px}
+  .lead h2 em{font-style:italic;color:var(--accent)}
+
+  .row{display:grid;grid-template-columns:120px 1fr auto;gap:40px;align-items:baseline;padding:34px 0;border-top:1px solid var(--rule);cursor:pointer;transition:padding .35s var(--ease,ease)}
+  .row:last-child{border-bottom:1px solid var(--rule)}
+  .row:hover{padding-left:18px}
+  .row .n{font-family:var(--disp);font-style:italic;font-size:18px;color:var(--ink-faint)}
+  .row .mid h3{font-family:var(--disp);font-weight:500;font-size:clamp(26px,3vw,40px);line-height:1.05;letter-spacing:-0.01em;transition:color .3s}
+  .row:hover .mid h3{color:var(--accent)}
+  .row .mid p{margin-top:8px;font-style:italic;color:var(--ink-soft);font-size:16px;max-width:560px}
+  .row .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.7}
+  .row .meta b{color:var(--accent);font-weight:500}
+
+  footer{padding:72px 0 60px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:flex-end}
+  footer .big{font-family:var(--disp);font-style:italic;font-size:40px;color:var(--ink);line-height:1}
+  footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
+
+  @media(max-width:860px){
+    .spine{display:none}.wrap{margin-left:0}.inner,.top{padding-left:20px;padding-right:20px}
+    .row{grid-template-columns:1fr;gap:8px}.row .meta{text-align:left}
+    .hero h1 .l2{padding-left:6vw}
+  }
+</style>
+</head>
+<body>
+<div class="pv">Concept D · <em>Quiet Fold</em> — Kinetic Editorial (2026)</div>
+
+<aside class="spine">
+  <div class="mk">K</div>
+  <div class="vert">Kody Lâm · Atelier</div>
+  <div class="dot"></div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <a href="#">Library</a><a href="#">Motifs</a><a href="#">About</a><a href="#" style="color:var(--accent)">EN · VI</a>
+  </div>
+
+  <div class="inner">
+    <section class="hero">
+      <div class="eyebrow">— A bilingual archive · MMXXVI</div>
+      <h1>Unsent<span class="l2">words,</span><span class="l3">kept dry.</span></h1>
+      <p class="sub">Short fiction & tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+    </section>
+  </div>
+
+  <div class="strip">
+    <div class="run">
+      <span>Rain</span><span><b>·</b></span><span>Silence</span><span><b>·</b></span><span>Rooms</span><span><b>·</b></span><span>Reservoirs</span><span><b>·</b></span><span>Mirrors</span><span><b>·</b></span><span>Saigon after eleven</span><span><b>·</b></span>
+      <span>Rain</span><span><b>·</b></span><span>Silence</span><span><b>·</b></span><span>Rooms</span><span><b>·</b></span><span>Reservoirs</span><span><b>·</b></span><span>Mirrors</span><span><b>·</b></span><span>Saigon after eleven</span><span><b>·</b></span>
+    </div>
+  </div>
+
+  <div class="inner">
+    <div class="lead">
+      <div class="k">The index · seven pieces</div>
+      <h2>Each one a kind of <em>weather</em> — choose the room that matches tonight.</h2>
+    </div>
+
+    <article class="row">
+      <div class="n">I.</div>
+      <div class="mid"><h3>The City After Rain</h3><p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p></div>
+      <div class="meta">Fiction<br>5 min<br><b>EN</b></div>
+    </article>
+    <article class="row">
+      <div class="n">II.</div>
+      <div class="mid"><h3>Letters to the Reservoir</h3><p>"Some memories do not vanish. They settle, like water held behind concrete."</p></div>
+      <div class="meta">Short<br>3 min<br><b>EN</b></div>
+    </article>
+    <article class="row">
+      <div class="n">VII.</div>
+      <div class="mid"><h3 lang="vi">Một Nửa Của Im Lặng</h3><p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p></div>
+      <div class="meta">Tản văn<br>4 min<br><b>VI</b></div>
+    </article>
+
+    <footer>
+      <div class="big">Kody Lâm</div>
+      <div class="col">Rain · rooms · unsent words<br>Set in Fraunces &amp; Newsreader<br>MMXXVI</div>
+    </footer>
+  </div>
+</div>
+</body>
+</html>
