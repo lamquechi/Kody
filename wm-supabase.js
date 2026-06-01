@@ -401,6 +401,46 @@
     } catch (e) { console.warn('[wm] fetchPiece:', e.message); }
     return null;
   };
+  // ─── MIGRATION: push the built-in static pieces into Supabase · ④ ───
+  // Admin-only, idempotent (upsert by id). Lets the static archive become
+  // server-backed so the publish→public pipeline has real data to list.
+  if (WM.isAdmin) {
+    WM.migrateStaticToCloud = async function (onProgress) {
+      const staticPieces = WM.stories.filter(s => !s.fromServer);
+      let done = 0, failed = 0;
+      for (const s of staticPieces) {
+        const row = {
+          id: s.id,
+          slug: s.id,
+          title: s.title || 'Untitled',
+          title_html: s.titleHTML || null,
+          body: s.body || '',
+          scenes: s.scenes || null,
+          form: s.form || 'tan-van',
+          lang: s.lang || 'en',
+          motif: s.motif || null,
+          folio: s.folio || null,
+          read_time: s.readTime || s.minutes || 5,
+          description: s.description || null,
+          excerpt: s.excerpt || null,
+          theme_variant: s.themeVariant || 'velvet',
+          status: 'published',
+          published_at: s.publishedAt ? new Date(s.publishedAt).toISOString() : new Date().toISOString(),
+          reads: s.reads || 0,
+          author_id: WM.user.id,
+          seo_author: 'Kody Lâm',
+          seo_index: true,
+          updated_at: new Date().toISOString()
+        };
+        const { error } = await supabase.from('pieces').upsert(row, { onConflict: 'id' });
+        if (error) { failed++; console.warn('[wm] migrate', s.id, error.message); }
+        else done++;
+        if (typeof onProgress === 'function') onProgress(done + failed, staticPieces.length, s.title);
+      }
+      return { done, failed, total: staticPieces.length };
+    };
+  }
+
   // Pull published pieces now so WM.stories is complete before pages react to wm:ready
   try { await WM.fetchPublished(); } catch (e) {}
 

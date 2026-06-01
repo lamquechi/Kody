@@ -2728,6 +2728,18 @@
             <input type="file" id="importFile" accept=".json" style="display: none;">
           </div>
         </div>
+
+        <!-- Cloud migration (④) -->
+        <div class="settings-form-section" style="margin-top: 24px;">
+          <div class="settings-section-label">Cloud · publish pipeline</div>
+          <p style="margin-bottom: 18px; color: var(--ink-soft); font-size: 14px; line-height: 1.65;">
+            Push the eight built-in pieces into your Supabase database so the public site can list them dynamically and SEO can be set per piece. Idempotent — safe to run more than once (it updates, never duplicates).
+          </p>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-ink" id="migrateCloudBtn">Migrate static pieces → cloud</button>
+            <span id="migrateStatus" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--ink-soft);"></span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3751,6 +3763,47 @@
     // Re-render once Supabase has pulled server characters into localStorage
     window.addEventListener('wm:ready', render);
     window.addEventListener('wm:characters', render);
+  })();
+</script>
+
+<script>
+  // ═══════════════════ CLOUD MIGRATION (④) ═══════════════════
+  (function () {
+    const btn = document.getElementById('migrateCloudBtn');
+    const status = document.getElementById('migrateStatus');
+    if (!btn) return;
+
+    function setState() {
+      const online = window.WM && WM.online && typeof WM.migrateStaticToCloud === 'function';
+      btn.disabled = !online;
+      btn.style.opacity = online ? '' : '0.5';
+      btn.style.cursor = online ? '' : 'not-allowed';
+      if (!online && status) status.textContent = WM && WM.online === false
+        ? 'Offline — connect Supabase + sign in as admin to migrate.'
+        : 'Sign in as admin to migrate.';
+    }
+    setState();
+    window.addEventListener('wm:ready', setState);
+
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Migrating…';
+      try {
+        const res = await WM.migrateStaticToCloud((n, total, title) => {
+          if (status) status.textContent = n + ' / ' + total + ' · ' + (title || '');
+        });
+        if (status) status.textContent = '✓ ' + res.done + ' migrated' +
+          (res.failed ? (' · ' + res.failed + ' failed (see console)') : '') + '.';
+        btn.textContent = 'Done — re-run anytime';
+      } catch (e) {
+        if (status) status.textContent = '✗ ' + (e.message || 'migration failed');
+        btn.textContent = original;
+      } finally {
+        setTimeout(() => { btn.disabled = false; }, 600);
+      }
+    });
   })();
 </script>
 </body>
