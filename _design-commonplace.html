@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept C — COMMONPLACE (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500;1,600&family=Crimson+Pro:ital,wght@0,400;0,500;1,400;1,500;1,600&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE; --paper-cream:#F4EEDF; --paper-edge:#D9CDB1;
+    --ink:#3D2E22; --ink-soft:#6A5641; --ink-faint:#A3927C;
+    --scarlet:#A8362C; --scarlet-soft:#C66856;
+    --stamp:#4A6B7E;
+    --rule:#D9CDB1;
+    --font-display:"Crimson Pro",Georgia,serif;
+    --font-hand:"Cormorant Garamond",Georgia,serif;
+    --font-body:"Lora",Georgia,serif;
+    --font-mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);font-size:17px;line-height:1.78;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;position:relative}
+  /* paper noise */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.24  0 0 0 0 0.18  0 0 0 0 0.13  0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.7;z-index:1;mix-blend-mode:multiply}
+  .preview-banner{position:fixed;top:0;left:0;right:0;background:#3D2E22;color:#FAF6EE;text-align:center;padding:8px 0;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:100;border-bottom:1px solid var(--scarlet)}
+  .preview-banner em{font-style:italic;color:var(--scarlet-soft);font-family:var(--font-display);text-transform:none;letter-spacing:0.02em;font-size:14px}
+  .stage{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:48px 56px 80px;margin-top:34px}
+
+  /* Notebook ruled lines on the body */
+  .notebook{position:relative;padding:64px 56px 80px;background:linear-gradient(transparent 31px,rgba(168,54,44,0.08) 32px),var(--paper);background-size:100% 32px;background-position:0 16px;border:1px solid var(--rule);border-radius:2px;box-shadow:0 1px 0 var(--paper-edge),0 18px 32px -22px rgba(61,46,34,0.4)}
+  .notebook::before{content:"";position:absolute;left:96px;top:0;bottom:0;width:1px;background:rgba(168,54,44,0.35)}
+
+  /* Top: brand + date stamp */
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;padding-left:50px}
+  .brand-stamp{display:flex;align-items:center;gap:14px}
+  .brand-mark{width:42px;height:42px;border:1.5px solid var(--scarlet);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--scarlet);transform:rotate(-3deg)}
+  .brand-name{font-family:var(--font-display);font-style:italic;font-size:24px;color:var(--ink)}
+  .stamp{display:inline-block;padding:6px 14px;border:2px solid var(--stamp);color:var(--stamp);font-family:var(--font-mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;transform:rotate(2deg);opacity:0.78;background:rgba(74,107,126,0.04)}
+  nav.menu{display:flex;gap:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);padding-left:50px;margin-bottom:48px;padding-bottom:18px;border-bottom:1px dashed var(--rule)}
+  nav.menu a{color:inherit;text-decoration:none;transition:.2s}
+  nav.menu a:hover{color:var(--scarlet)}
+
+  /* HERO — italic handwritten phrase + coffee ring */
+  .hero{position:relative;padding:24px 0 56px 50px}
+  .coffee-ring{position:absolute;width:140px;height:140px;border:6px solid rgba(168,54,44,0.16);border-radius:50%;top:8px;right:24px;filter:blur(0.6px);pointer-events:none}
+  .hero-date{font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+  .hero h1{font-family:var(--font-display);font-weight:500;font-style:italic;font-size:clamp(48px,7vw,84px);line-height:1.04;letter-spacing:-0.01em;color:var(--ink);max-width:780px}
+  .hero h1 em{color:var(--scarlet);font-style:italic}
+  .hero h1 .strike{text-decoration:line-through;text-decoration-color:rgba(168,54,44,0.6);text-decoration-thickness:2px;color:var(--ink-faint)}
+  .hero-sub{margin-top:32px;font-family:var(--font-hand);font-style:italic;font-size:22px;line-height:1.6;color:var(--ink-soft);max-width:580px}
+  .margin-note{position:absolute;right:-12px;top:38%;width:200px;font-family:var(--font-hand);font-style:italic;font-size:15px;color:var(--scarlet);line-height:1.4;transform:rotate(3deg);padding-left:24px;border-left:1px solid var(--scarlet);opacity:0.85}
+
+  /* PINNED MANUSCRIPT CARDS */
+  .section-eyebrow{display:flex;align-items:center;gap:14px;margin:64px 0 24px 50px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-soft)}
+  .section-eyebrow::before{content:"※";color:var(--scarlet);font-size:14px}
+  .contents-title{font-family:var(--font-display);font-style:italic;font-size:40px;font-weight:500;margin:0 0 40px 50px;color:var(--ink)}
+  .contents-title em{color:var(--scarlet)}
+
+  .pinboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px 28px;padding:0 0 24px 50px}
+  .pin{position:relative;background:linear-gradient(180deg,#FFFCF3,var(--paper-cream));padding:24px 24px 22px;border:1px solid var(--rule);box-shadow:0 1px 0 rgba(217,205,177,0.6),0 16px 28px -22px rgba(61,46,34,0.35);transition:.3s;cursor:pointer}
+  .pin:hover{transform:translateY(-3px) rotate(0deg)!important;box-shadow:0 1px 0 rgba(217,205,177,0.6),0 22px 34px -22px rgba(61,46,34,0.45)}
+  .pin:nth-child(odd){transform:rotate(-0.9deg)}
+  .pin:nth-child(even){transform:rotate(0.6deg)}
+  .pin::before{content:"";position:absolute;top:-10px;left:50%;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--scarlet-soft),var(--scarlet) 60%,#7a261c);box-shadow:0 2px 4px rgba(0,0,0,0.25);transform:translateX(-50%)}
+  .pin .meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px;display:flex;justify-content:space-between}
+  .pin .meta .lang{color:var(--scarlet);border-bottom:1px solid var(--scarlet);padding-bottom:1px}
+  .pin h3{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:24px;line-height:1.2;color:var(--ink);margin-bottom:10px}
+  .pin p{font-family:var(--font-hand);font-style:italic;font-size:15.5px;line-height:1.55;color:var(--ink-soft)}
+  .pin .nibble{margin-top:14px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--scarlet)}
+
+  footer{margin-top:80px;padding:32px 0 0 50px;border-top:1px dashed var(--rule);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:18px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)}
+  footer em{font-family:var(--font-display);font-style:italic;font-size:20px;color:var(--ink);text-transform:none;letter-spacing:0.02em;display:block;margin-bottom:4px}
+  .signature{font-family:var(--font-display);font-style:italic;font-size:28px;color:var(--scarlet);transform:rotate(-3deg);text-transform:none;letter-spacing:0.02em}
+
+  @media (max-width:900px){
+    .stage{padding:36px 16px}
+    .notebook{padding:36px 20px 60px}
+    .notebook::before{display:none}
+    .head-row,nav.menu,.hero,.section-eyebrow,.contents-title,.pinboard,footer{padding-left:0;margin-left:0}
+    .margin-note,.coffee-ring{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="preview-banner">Concept C · <em>Commonplace</em> — Writer's Notebook</div>
+<div class="stage">
+  <div class="notebook">
+
+    <div class="head-row">
+      <div class="brand-stamp">
+        <span class="brand-mark">K</span>
+        <span class="brand-name">Kody Lâm</span>
+      </div>
+      <span class="stamp">Folio · MMXXVI · 七</span>
+    </div>
+
+    <nav class="menu">
+      <a href="#">The Library</a>
+      <a href="#">Motifs</a>
+      <a href="#">About</a>
+      <a href="#" style="margin-left:auto;color:var(--scarlet)">EN · VI</a>
+    </nav>
+
+    <section class="hero">
+      <div class="coffee-ring" aria-hidden="true"></div>
+      <span class="hero-date">— Entry · spring · 03:14</span>
+      <h1>Things I'm <span class="strike">trying to say</span> <em>almost saying.</em></h1>
+      <p class="hero-sub">Short fiction and tản văn — small lamps in small rooms, rain that never quite arrives, words I keep folding into the lining of the day.</p>
+      <p class="margin-note">— for the readers who linger past the second paragraph.</p>
+    </section>
+
+    <div class="section-eyebrow">Pinned · pages from the desk</div>
+    <h2 class="contents-title">A few <em>folios</em> open at once.</h2>
+
+    <div class="pinboard">
+      <article class="pin">
+        <div class="meta"><span>Folio I · Fiction</span><span class="lang">EN</span></div>
+        <h3>The City After Rain</h3>
+        <p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p>
+        <div class="nibble">5 min · Motif · Rain</div>
+      </article>
+      <article class="pin">
+        <div class="meta"><span>Folio III · Tản văn</span><span class="lang">EN</span></div>
+        <h3>In a Room of Small Lights</h3>
+        <p>"A room lit by small lamps asks for a different honesty than daylight does."</p>
+        <div class="nibble">4 min · Motif · Window</div>
+      </article>
+      <article class="pin">
+        <div class="meta"><span>Folio VII · Tản văn</span><span class="lang">VI</span></div>
+        <h3 lang="vi">Một Nửa Của Im Lặng</h3>
+        <p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p>
+        <div class="nibble">4 min · Motif · Silence</div>
+      </article>
+      <article class="pin">
+        <div class="meta"><span>Folio II · Short</span><span class="lang">EN</span></div>
+        <h3>Letters to the Reservoir</h3>
+        <p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p>
+        <div class="nibble">3 min · Motif · Water</div>
+      </article>
+    </div>
+
+    <footer>
+      <span><em>Kody Lâm</em>Bilingual literary commonplace · MMXXVI · slow writing, slower readings.</span>
+      <span class="signature">— K.L.</span>
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept A — VELLUM (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5EFE3; --paper-soft:#EDE5D3; --paper-rule:#D9CFB8;
+    --ink:#1A1611; --ink-soft:#5A4F46; --ink-faint:#A39685;
+    --persimmon:#C25535; --rule:#D9CFB8;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"Lora",Georgia,serif;
+    --font-mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);font-size:17px;line-height:1.75;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+  .preview-banner{position:fixed;top:0;left:0;right:0;background:#1A1611;color:#F5EFE3;text-align:center;padding:8px 0;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:100;border-bottom:1px solid var(--persimmon)}
+  .preview-banner em{font-style:italic;color:var(--persimmon);font-family:var(--font-display);text-transform:none;letter-spacing:0.02em;font-size:14px}
+  .stage{max-width:1280px;margin:0 auto;padding:64px 56px 80px;margin-top:34px}
+
+  /* Top frame: small caps masthead + thin rule */
+  .masthead{display:grid;grid-template-columns:auto 1fr auto;gap:32px;align-items:end;border-bottom:1px solid var(--ink);padding-bottom:18px;margin-bottom:48px}
+  .masthead .title{font-family:var(--font-display);font-style:italic;font-size:32px;letter-spacing:0.01em;line-height:1}
+  .masthead .title em{color:var(--persimmon)}
+  .masthead .issue{font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-soft)}
+  .masthead .nav{display:flex;gap:28px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-soft)}
+  .masthead .nav a{color:inherit;text-decoration:none;padding-bottom:2px;border-bottom:1px solid transparent;transition:.2s}
+  .masthead .nav a:hover{color:var(--ink);border-color:var(--persimmon)}
+
+  /* HERO — folio left rail + giant italic */
+  .hero{display:grid;grid-template-columns:96px 1fr 280px;gap:48px;padding:24px 0 80px;border-bottom:1px solid var(--rule)}
+  .folio-rail{font-family:var(--font-display);font-style:italic;color:var(--persimmon);font-size:13px;letter-spacing:0.24em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);align-self:start;padding-top:8px}
+  .hero h1{font-family:var(--font-display);font-weight:400;font-size:clamp(56px,8vw,108px);line-height:0.96;letter-spacing:-0.015em}
+  .hero h1 em{font-style:italic;color:var(--persimmon)}
+  .hero h1 .v{font-style:italic;color:var(--ink-soft);display:block;margin-top:6px;font-size:0.85em}
+  .hero-sub{margin-top:28px;font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.5;color:var(--ink-soft);max-width:560px}
+  .hero-aside{border-left:1px solid var(--rule);padding-left:28px;align-self:end;padding-bottom:8px}
+  .hero-aside .label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px}
+  .hero-aside p{font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--ink-soft);line-height:1.55}
+  .hero-aside .read{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--persimmon);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+
+  /* CONTENTS / FOLIO LIST */
+  .section-eyebrow{display:flex;align-items:center;gap:14px;margin:64px 0 32px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-soft)}
+  .section-eyebrow::before{content:"";width:48px;height:1px;background:var(--persimmon)}
+  .contents-title{font-family:var(--font-display);font-size:42px;font-weight:400;letter-spacing:-0.01em;margin-bottom:48px}
+  .contents-title em{font-style:italic;color:var(--persimmon)}
+
+  .folio{display:grid;grid-template-columns:68px 1.4fr 1fr 90px;gap:32px;padding:32px 0;border-top:1px solid var(--rule);align-items:baseline;cursor:pointer;transition:.3s;position:relative}
+  .folio:hover{background:linear-gradient(90deg,transparent,rgba(194,85,53,0.05),transparent)}
+  .folio:hover .f-num{color:var(--persimmon)}
+  .folio:last-child{border-bottom:1px solid var(--rule)}
+  .f-num{font-family:var(--font-display);font-style:italic;font-size:32px;color:var(--ink-faint);line-height:1;transition:.3s}
+  .f-title{font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15;letter-spacing:-0.01em}
+  .f-excerpt{font-family:var(--font-display);font-style:italic;font-size:16px;color:var(--ink-soft);line-height:1.55}
+  .f-meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.6}
+  .f-meta .lang{display:inline-block;margin-top:6px;color:var(--persimmon);border-bottom:1px solid var(--persimmon);padding-bottom:1px}
+
+  /* Pull quote band */
+  .pull-band{margin:96px -56px 64px;padding:80px 56px;background:var(--paper-soft);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);text-align:center;position:relative}
+  .pull-band::before,.pull-band::after{content:"";position:absolute;left:50%;width:24px;height:1px;background:var(--persimmon);transform:translateX(-50%)}
+  .pull-band::before{top:32px}
+  .pull-band::after{bottom:32px}
+  .pull-band q{font-family:var(--font-display);font-style:italic;font-size:clamp(28px,4vw,44px);line-height:1.35;color:var(--ink);max-width:880px;display:block;margin:0 auto;quotes:"" ""}
+  .pull-band .att{margin-top:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* Foot */
+  footer{margin-top:80px;padding:48px 0 0;border-top:1px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
+  footer .colophon{font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);max-width:480px}
+  footer .colophon em{font-family:var(--font-display);text-transform:none;letter-spacing:0.01em;font-size:16px;font-style:italic;color:var(--ink);display:block;margin-bottom:6px}
+  footer .marks{font-family:var(--font-display);font-style:italic;font-size:24px;color:var(--persimmon)}
+
+  @media (max-width:900px){
+    .stage{padding:48px 24px}
+    .hero{grid-template-columns:1fr;gap:24px}
+    .folio-rail{writing-mode:initial;transform:none}
+    .folio{grid-template-columns:48px 1fr;gap:16px}
+    .f-excerpt,.f-meta{grid-column:2}
+    .masthead{grid-template-columns:1fr;gap:8px}
+    .masthead .nav{flex-wrap:wrap;gap:14px}
+  }
+</style>
+</head>
+<body>
+<div class="preview-banner">Concept A · <em>Vellum</em> — Editorial Literary Magazine</div>
+<div class="stage">
+
+  <header class="masthead">
+    <div class="title"><em>K</em>ody Lâm</div>
+    <div class="issue">No. VIII — Spring · Folio of Rain &amp; Rooms</div>
+    <nav class="nav">
+      <a href="#">The Library</a>
+      <a href="#">Motifs</a>
+      <a href="#">About</a>
+      <a href="#">EN · VI</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="folio-rail">I · Atelier</div>
+    <div>
+      <h1>A small archive of <em>unsent</em> words.<span class="v">— những lá thư chưa kịp gửi.</span></h1>
+      <p class="hero-sub">Short fiction and tản văn in English and Vietnamese — built like a moody reading room, never a noisy blog.</p>
+    </div>
+    <aside class="hero-aside">
+      <div class="label">— Begin here</div>
+      <p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p>
+      <a href="#" class="read">Read folio I →</a>
+    </aside>
+  </section>
+
+  <div class="section-eyebrow">II · The Contents</div>
+  <h2 class="contents-title">Seven pieces, each marked by its <em>weather</em>.</h2>
+
+  <article class="folio">
+    <div class="f-num">I.</div>
+    <div class="f-title">The City After Rain</div>
+    <div class="f-excerpt">"After the rain, the city no longer looked like a city. It looked like something remembering itself."</div>
+    <div class="f-meta">Fiction<br>5 min<br><span class="lang">EN</span></div>
+  </article>
+  <article class="folio">
+    <div class="f-num">II.</div>
+    <div class="f-title">Letters to the Reservoir</div>
+    <div class="f-excerpt">"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</div>
+    <div class="f-meta">Short<br>3 min<br><span class="lang">EN</span></div>
+  </article>
+  <article class="folio">
+    <div class="f-num">VII.</div>
+    <div class="f-title" lang="vi">Một Nửa Của Im Lặng</div>
+    <div class="f-excerpt" lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</div>
+    <div class="f-meta">Tản văn<br>4 min<br><span class="lang">VI</span></div>
+  </article>
+
+  <div class="pull-band">
+    <q>A room lit by small lamps asks for a <em style="font-style:italic;color:var(--persimmon)">different honesty</em> than daylight does.</q>
+    <div class="att">— from folio III · in a room of small lights</div>
+  </div>
+
+  <footer>
+    <div class="colophon">
+      <em>Kody Lâm</em>
+      Set in Cormorant Garamond &amp; Lora · Printed in pixels · MMXXVI
+    </div>
+    <div class="marks">·  ·  ·</div>
+  </footer>
+
+</div>
+</body>
+</html>
