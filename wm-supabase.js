@@ -255,6 +255,15 @@
         motif: saved.motif || null,
         theme_variant: saved.themeVariant || 'velvet',
         author_id: WM.user.id,
+        // ④ — slug + SEO (Editor collects these in metaExtras)
+        slug:            saved.seoSlug || id,
+        seo_description: saved.seoDescription || null,
+        seo_keywords:    saved.seoKeywords || null,
+        seo_image:       saved.seoImage || null,
+        seo_canonical:   saved.seoCanonical || null,
+        seo_author:      saved.seoAuthor || 'Kody Lâm',
+        seo_focus:       saved.seoFocus || null,
+        seo_index:       (saved.seoIndex !== false),
         published_at: saved.status === 'published' ? new Date().toISOString() : null,
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' })
@@ -293,6 +302,56 @@
           .then(({ error }) => { if (error) console.error('[wm] bookmark remove', error.message); });
       }
       return nowSaved;
+    };
+  }
+
+  // ─── CHARACTERS: pull (public) + push hooks (author/admin) · ② ───
+  function mapServerChar(r) {
+    return {
+      id: r.id, name: r.name || '', aka: r.aka || '', initial: r.initial || (r.name || '·').charAt(0).toUpperCase(),
+      bio: r.bio || '', personality: r.personality || '', role: r.role || 'character',
+      color: r.color || '#C9A961', pieces: r.pieces || [],
+      updatedAt: r.updated_at ? new Date(r.updated_at).getTime() : Date.now()
+    };
+  }
+  try {
+    // Pull characters + their piece links (public read), merge into localStorage
+    const [{ data: chars }, { data: links }] = await Promise.all([
+      supabase.from('characters').select('*').order('updated_at', { ascending: false }),
+      supabase.from('piece_characters').select('character_id, piece_id')
+    ]);
+    if (chars) {
+      const byChar = {};
+      (links || []).forEach(l => { (byChar[l.character_id] = byChar[l.character_id] || []).push(l.piece_id); });
+      const mapped = chars.map(c => mapServerChar({ ...c, pieces: byChar[c.id] || [] }));
+      localStorage.setItem('wm.characters', JSON.stringify(mapped));
+      window.dispatchEvent(new CustomEvent('wm:characters'));
+    }
+  } catch (e) { console.warn('[wm] character pull skipped:', e.message); }
+
+  if (WM.user) {
+    // Upsert a character to the server (called by the Hub character editor)
+    WM.charactersSync = function (rec) {
+      supabase.from('characters').upsert({
+        id: rec.id, name: rec.name, aka: rec.aka || null, initial: rec.initial || null,
+        bio: rec.bio || null, personality: rec.personality || null, role: rec.role || null,
+        color: rec.color || null, author_id: WM.user.id, updated_at: new Date().toISOString()
+      }, { onConflict: 'id' })
+        .then(({ error }) => { if (error) console.warn('[wm] character push', error.message); });
+    };
+    WM.charactersSyncDelete = function (id) {
+      supabase.from('characters').delete().eq('id', id)
+        .then(({ error }) => { if (error) console.warn('[wm] character delete', error.message); });
+    };
+    // Link/unlink a character to a piece
+    WM.characterLink = function (pieceId, characterId, on) {
+      if (on) {
+        supabase.from('piece_characters').insert({ piece_id: pieceId, character_id: characterId })
+          .then(({ error }) => { if (error && error.code !== '23505') console.warn('[wm] char link', error.message); });
+      } else {
+        supabase.from('piece_characters').delete().eq('piece_id', pieceId).eq('character_id', characterId)
+          .then(({ error }) => { if (error) console.warn('[wm] char unlink', error.message); });
+      }
     };
   }
 

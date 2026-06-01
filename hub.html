@@ -2223,31 +2223,10 @@
       </div>
 
       <div class="sub-content" id="sub-chars" style="display: none;">
-        <div class="motif-grid">
-          <div class="character-card">
-            <div class="character-portrait">L</div>
-            <div class="character-body">
-              <div class="character-name">Lê Vân Hà</div>
-              <div class="character-role">RECURRING · MAIN</div>
-              <div class="character-stories">Mentioned in 2 pieces</div>
-            </div>
-          </div>
-          <div class="character-card">
-            <div class="character-portrait">M</div>
-            <div class="character-body">
-              <div class="character-name">Minh</div>
-              <div class="character-role">SUPPORTING</div>
-              <div class="character-stories">Mentioned in 1 piece</div>
-            </div>
-          </div>
-          <div class="add-card">
-            <div class="plus">+</div>
-            <span>New character</span>
-          </div>
-        </div>
-        <div class="empty-hint" style="margin-top: 24px;">
+        <div class="motif-grid" id="charGrid"><!-- rendered from WM.characters --></div>
+        <div class="empty-hint" id="charEmptyHint" style="margin-top: 24px;">
           <h4>Characters are for fiction with recurring people.</h4>
-          <p>If your writing is mostly tản văn/lyrical, you may never need this — it's here for when fiction with named characters joins the archive.</p>
+          <p>Add a name, a background (lai lịch), and a temperament (tính cách). On published pieces, readers can hover a character's name in the text to see this card. If your writing is mostly tản văn/lyrical, you may never need it.</p>
         </div>
       </div>
     </section>
@@ -2753,6 +2732,57 @@
     </section>
 
   </main>
+</div>
+
+<!-- ═══════════════════ CHARACTER MODAL ═══════════════════ -->
+<div class="wm-modal-backdrop" id="charModalBackdrop" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(20,17,14,0.5);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:24px;">
+  <div class="wm-modal" role="dialog" aria-modal="true" aria-labelledby="charModalTitle" style="background:var(--paper);border:1px solid var(--rule);border-radius:4px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 30px 60px -24px rgba(20,17,14,0.5);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--rule);">
+      <h3 id="charModalTitle" style="font-family:var(--font-display);font-style:italic;font-size:24px;font-weight:500;color:var(--ink);">New character</h3>
+      <button id="charModalClose" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink-faint);padding:4px;">×</button>
+    </div>
+    <div style="padding:22px 24px;">
+      <input type="hidden" id="char-id">
+      <div class="settings-field">
+        <label class="settings-label" for="char-name">Name <span style="color:var(--persimmon)">*</span></label>
+        <input type="text" id="char-name" placeholder="e.g. Lê Vân Hà">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="settings-field">
+          <label class="settings-label" for="char-aka">Also known as</label>
+          <input type="text" id="char-aka" placeholder="nicknames, optional">
+        </div>
+        <div class="settings-field">
+          <label class="settings-label" for="char-role">Role</label>
+          <select id="char-role" style="width:100%;background:var(--paper-warm);border:1px solid var(--rule);border-radius:2px;padding:11px 13px;font-family:var(--font-body);font-size:15px;color:var(--ink);outline:none;">
+            <option value="main">Main</option>
+            <option value="recurring">Recurring</option>
+            <option value="supporting">Supporting</option>
+            <option value="minor">Minor</option>
+          </select>
+        </div>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label" for="char-bio">Background — lai lịch</label>
+        <textarea id="char-bio" rows="3" placeholder="Where they come from, what shaped them…"></textarea>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label" for="char-personality">Temperament — tính cách</label>
+        <textarea id="char-personality" rows="2" placeholder="How they move through the world…"></textarea>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label" for="char-color">Accent colour</label>
+        <input type="color" id="char-color" value="#C9A961" style="width:54px;height:36px;padding:2px;border:1px solid var(--rule);border-radius:2px;background:var(--paper-warm);cursor:pointer;">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-top:1px solid var(--rule);">
+      <button id="charDeleteBtn" class="btn-ghost" style="color:var(--oxblood,#8A2B2E);display:none;">Delete</button>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button id="charCancelBtn" class="btn-ghost">Cancel</button>
+        <button id="charSaveBtn" class="btn-ink">Save character</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="wm-config.js?v=6"></script>
@@ -3620,6 +3650,107 @@
     document.querySelectorAll('.nav-item[data-target="inbox"]').forEach(b => {
       b.addEventListener('click', () => { refreshInbox(); refreshBadge(); });
     });
+  })();
+</script>
+
+<script>
+  // ═══════════════════ CHARACTERS (real CRUD · ②) ═══════════════════
+  (function () {
+    if (!(window.WM && WM.characters)) return;
+    const grid = document.getElementById('charGrid');
+    const hint = document.getElementById('charEmptyHint');
+    const backdrop = document.getElementById('charModalBackdrop');
+    if (!grid || !backdrop) return;
+
+    const $ = id => document.getElementById(id);
+    const fields = ['id', 'name', 'aka', 'role', 'bio', 'personality', 'color'];
+    const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+    function pieceCountFor(c) {
+      const n = (c.pieces || []).length;
+      return n === 0 ? 'Not yet linked to a piece' : ('In ' + n + ' piece' + (n > 1 ? 's' : ''));
+    }
+
+    function render() {
+      const list = WM.characters.all();
+      grid.innerHTML = list.map(c =>
+        '<div class="character-card" data-id="' + c.id + '" role="button" tabindex="0">' +
+          '<div class="character-portrait" style="color:' + (c.color || 'var(--ink-ghost)') + ';">' +
+            esc((c.initial || c.name || '·').trim().charAt(0).toUpperCase()) + '</div>' +
+          '<div class="character-body">' +
+            '<div class="character-name">' + esc(c.name) + '</div>' +
+            '<div class="character-role">' + esc((c.role || 'character').toUpperCase()) + '</div>' +
+            '<div class="character-stories">' + esc(pieceCountFor(c)) + '</div>' +
+          '</div>' +
+        '</div>'
+      ).join('') +
+      '<div class="add-card" id="charAddCard" role="button" tabindex="0"><div class="plus">+</div><span>New character</span></div>';
+
+      if (hint) hint.style.display = list.length ? 'none' : '';
+      // wire cards
+      grid.querySelectorAll('.character-card').forEach(card =>
+        card.addEventListener('click', () => openModal(WM.characters.get(card.dataset.id))));
+      $('charAddCard')?.addEventListener('click', () => openModal(null));
+
+      // keep the sidebar + panel counts honest
+      const c = WM.characters.count();
+      document.querySelectorAll('[data-sub="chars"]').forEach(t => t.textContent = 'Characters · ' + c);
+    }
+
+    function openModal(c) {
+      $('charModalTitle').textContent = c ? 'Edit character' : 'New character';
+      $('char-id').value = c?.id || '';
+      $('char-name').value = c?.name || '';
+      $('char-aka').value = c?.aka || '';
+      $('char-role').value = c?.role || 'main';
+      $('char-bio').value = c?.bio || '';
+      $('char-personality').value = c?.personality || '';
+      $('char-color').value = c?.color || '#C9A961';
+      $('charDeleteBtn').style.display = c ? '' : 'none';
+      backdrop.style.display = 'flex';
+      setTimeout(() => $('char-name').focus(), 40);
+    }
+    function closeModal() { backdrop.style.display = 'none'; }
+
+    function save() {
+      const name = $('char-name').value.trim();
+      if (!name) { $('char-name').focus(); $('char-name').style.borderColor = 'var(--persimmon)'; return; }
+      const data = {
+        name: name,
+        aka: $('char-aka').value.trim(),
+        role: $('char-role').value,
+        bio: $('char-bio').value.trim(),
+        personality: $('char-personality').value.trim(),
+        color: $('char-color').value,
+        initial: name.charAt(0).toUpperCase()
+      };
+      const id = $('char-id').value;
+      if (id) data.id = id;
+      const rec = WM.characters.save(data);
+      // sync to Supabase if the backend exposes a hook
+      try { if (WM.charactersSync) WM.charactersSync(rec); } catch (e) {}
+      closeModal();
+      render();
+    }
+
+    $('charSaveBtn').addEventListener('click', save);
+    $('charCancelBtn').addEventListener('click', closeModal);
+    $('charModalClose').addEventListener('click', closeModal);
+    $('charDeleteBtn').addEventListener('click', () => {
+      const id = $('char-id').value;
+      if (id && confirm('Delete this character? This cannot be undone.')) {
+        WM.characters.delete(id);
+        try { if (WM.charactersSyncDelete) WM.charactersSyncDelete(id); } catch (e) {}
+        closeModal(); render();
+      }
+    });
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && backdrop.style.display === 'flex') closeModal(); });
+
+    render();
+    // Re-render once Supabase has pulled server characters into localStorage
+    window.addEventListener('wm:ready', render);
+    window.addEventListener('wm:characters', render);
   })();
 </script>
 </body>

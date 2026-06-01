@@ -518,6 +518,60 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     }
   };
 
+  /* ─── CHARACTERS (localStorage; synced to Supabase when online) ─── */
+  const CHARS_KEY = 'wm.characters';
+  function uid() {
+    return 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+  }
+  const characters = {
+    all() {
+      try { return JSON.parse(localStorage.getItem(CHARS_KEY)) || []; }
+      catch { return []; }
+    },
+    get(id) { return this.all().find(c => c.id === id) || null; },
+    /* upsert: pass {id?} to update, omit id to create */
+    save(data) {
+      const list = this.all();
+      // self-sufficient defaults so any caller (UI, import, server pull) is safe
+      const norm = Object.assign({}, data);
+      if (!norm.initial && norm.name) norm.initial = norm.name.trim().charAt(0).toUpperCase();
+      if (!norm.color) norm.color = '#C9A961';
+      if (!norm.role) norm.role = 'character';
+      let rec;
+      if (norm.id && list.some(c => c.id === norm.id)) {
+        rec = Object.assign(list.find(c => c.id === norm.id), norm, { updatedAt: Date.now() });
+      } else {
+        rec = Object.assign({ id: norm.id || uid(), createdAt: Date.now() }, norm, { updatedAt: Date.now() });
+        list.push(rec);
+      }
+      localStorage.setItem(CHARS_KEY, JSON.stringify(list));
+      return rec;
+    },
+    delete(id) {
+      localStorage.setItem(CHARS_KEY, JSON.stringify(this.all().filter(c => c.id !== id)));
+    },
+    /* characters linked to a piece (ids stored on each character.pieces[]) */
+    forPiece(pieceId) { return this.all().filter(c => (c.pieces || []).includes(pieceId)); },
+    count() { return this.all().length; }
+  };
+
+  /* ─── CHAPTERS (localStorage; keyed by piece) ─────────── */
+  const CHAPTERS_KEY = 'wm.chapters';
+  const chapters = {
+    _all() { try { return JSON.parse(localStorage.getItem(CHAPTERS_KEY)) || {}; } catch { return {}; } },
+    _write(obj) { localStorage.setItem(CHAPTERS_KEY, JSON.stringify(obj)); },
+    forPiece(pieceId) {
+      return (this._all()[pieceId] || []).slice().sort((a, b) => (a.idx || 0) - (b.idx || 0));
+    },
+    setForPiece(pieceId, chaptersArr) {
+      const obj = this._all();
+      obj[pieceId] = (chaptersArr || []).map((c, i) => Object.assign({ id: c.id || uid() }, c, { idx: i }));
+      this._write(obj);
+      return obj[pieceId];
+    },
+    clearPiece(pieceId) { const obj = this._all(); delete obj[pieceId]; this._write(obj); }
+  };
+
   /* ─── READER PREFS (localStorage) ─────────────────────── */
   const READER_KEY = 'wm.reader.prefs';
   const READER_DEFAULT = { fontSize: 20, theme: 'night', width: 680 };
@@ -630,6 +684,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     getStory, getStoriesByMotif, getRelatedStories,
     getParam, renderMarkdown, escapeHtml,
     identity, site, drafts,
-    reader, marks, shelf, presence
+    reader, marks, shelf, presence,
+    characters, chapters
   };
 })();
