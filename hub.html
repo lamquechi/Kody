@@ -1690,11 +1690,11 @@
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6"/></svg>
       <span>View public site</span>
     </a>
-    <button class="icon-btn" aria-label="Inbox">
+    <button class="icon-btn" id="topInboxBtn" aria-label="Inbox" title="Reader marks">
       <svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
-      <span class="badge">7</span>
+      <span class="badge" id="topInboxBadge">7</span>
     </button>
-    <button class="icon-btn" aria-label="Notifications">
+    <button class="icon-btn" id="topNotifBtn" aria-label="Notifications" title="Notifications" style="position:relative;">
       <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
     </button>
     <div class="user-chip" title="Set your name in Settings → Identity">
@@ -2708,11 +2708,31 @@
         </div>
       </div>
 
-      <!-- PRESENCE (stub) -->
+      <!-- PRESENCE -->
       <div id="settings-presence" style="display: none;">
-        <div class="empty-hint">
-          <h4>Presence &amp; elsewhere.</h4>
-          <p>Newsletter URL, Instagram, selected work links — everything shown in the "Elsewhere" section of the public site.</p>
+        <div class="settings-form-section">
+          <div class="settings-section-label">Presence &amp; elsewhere</div>
+          <p style="margin-bottom: 18px; color: var(--ink-soft); font-size: 14px; line-height: 1.65;">
+            The links shown in the "Elsewhere" section of the public home page. Leave a field blank to hide that card. Saved to this browser.
+          </p>
+          <div class="settings-field">
+            <label class="settings-label" for="presence-newsletter">Newsletter URL</label>
+            <input type="url" id="presence-newsletter" class="settings-input" placeholder="https://buttondown.email/yourname">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="presence-instagram">Instagram URL</label>
+            <input type="url" id="presence-instagram" class="settings-input" placeholder="https://instagram.com/yourname">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="presence-selected">Selected work URL</label>
+            <input type="url" id="presence-selected" class="settings-input" placeholder="https://… a journal, anthology, or hosted piece">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="presence-email">Contact email</label>
+            <input type="email" id="presence-email" class="settings-input" placeholder="hello@example.com">
+          </div>
+          <button class="btn-ink" id="presenceSaveBtn" style="margin-top: 8px;">Save changes</button>
+          <span id="presenceSaved" style="margin-left: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--status-published); opacity: 0; transition: opacity 0.3s;">Saved ✓</span>
         </div>
       </div>
 
@@ -2816,22 +2836,65 @@
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebarBackdrop');
 
+  // Activate a panel by name (shared by sidebar nav + topbar icons)
+  function activatePanel(target) {
+    if (!target) return;
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.target === target));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.panel === target));
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('show');
+    const main = document.querySelector('.hub-main');
+    if (main) main.scrollTop = 0;
+  }
+  window.__hubActivatePanel = activatePanel;
+
   navItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const target = item.dataset.target;
-      if (!target) return;
-      navItems.forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-      panels.forEach(p => p.classList.toggle('active', p.dataset.panel === target));
-
-      // Close mobile drawer
-      sidebar.classList.remove('open');
-      backdrop.classList.remove('show');
-
-      // Scroll main to top
-      document.querySelector('.hub-main').scrollTop = 0;
-    });
+    item.addEventListener('click', () => activatePanel(item.dataset.target));
   });
+
+  // ───── TOPBAR ICON BUTTONS (Inbox · Notifications) ─────
+  const topInboxBtn = document.getElementById('topInboxBtn');
+  if (topInboxBtn) topInboxBtn.addEventListener('click', () => activatePanel('inbox'));
+
+  const topNotifBtn = document.getElementById('topNotifBtn');
+  if (topNotifBtn) {
+    let notifMenu = null;
+    function closeNotif() {
+      if (notifMenu) { notifMenu.remove(); notifMenu = null; document.removeEventListener('click', onDocClick, true); }
+    }
+    function onDocClick(e) {
+      if (notifMenu && !notifMenu.contains(e.target) && e.target !== topNotifBtn && !topNotifBtn.contains(e.target)) closeNotif();
+    }
+    function buildNotifications() {
+      // Real signal: unread reader marks. Fall back gracefully when offline.
+      let unread = [];
+      try { unread = (WM.marks.all() || []).filter(m => !m.read).slice(0, 6); } catch (e) {}
+      const rows = unread.length
+        ? unread.map(m =>
+            '<button class="notif-row" data-go="inbox" style="display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);padding:12px 16px;cursor:pointer;font-family:var(--font-body);">' +
+            '<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--persimmon);margin-bottom:4px;">New mark · ' + (m.storyTitle || 'a piece') + '</div>' +
+            '<div style="font-size:14px;color:var(--ink-soft);font-style:italic;line-height:1.4;">"' + (m.text || '').slice(0, 80) + ((m.text || '').length > 80 ? '…' : '') + '"</div>' +
+            '</button>'
+          ).join('')
+        : '<div style="padding:24px 16px;text-align:center;font-family:var(--font-display);font-style:italic;color:var(--ink-faint);">No new notifications.<br><span style="font-size:13px;">The room is quiet.</span></div>';
+      return rows;
+    }
+    topNotifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (notifMenu) { closeNotif(); return; }
+      notifMenu = document.createElement('div');
+      notifMenu.className = 'notif-menu';
+      notifMenu.style.cssText = 'position:absolute;top:48px;right:0;width:300px;max-height:380px;overflow-y:auto;background:var(--paper);border:1px solid var(--rule);border-radius:3px;box-shadow:0 18px 40px -18px rgba(20,17,14,0.4);z-index:200;';
+      notifMenu.innerHTML =
+        '<div style="padding:12px 16px;border-bottom:1px solid var(--rule);font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);">Notifications</div>' +
+        buildNotifications() +
+        '<button data-go="inbox" style="display:block;width:100%;text-align:center;background:none;border:none;padding:12px;cursor:pointer;font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--persimmon);">Open inbox →</button>';
+      topNotifBtn.appendChild(notifMenu);
+      notifMenu.querySelectorAll('[data-go]').forEach(b =>
+        b.addEventListener('click', () => { closeNotif(); activatePanel(b.dataset.go); }));
+      setTimeout(() => document.addEventListener('click', onDocClick, true), 0);
+    });
+  }
 
   // ───── MOBILE DRAWER ─────
   const hamburger = document.getElementById('hamburger');
@@ -3110,6 +3173,27 @@
         sync();
       })();
 
+      // ── Presence: pre-fill from store + save ──
+      (function initPresenceFields() {
+        if (!(window.WM && WM.presence)) return;
+        const p = WM.presence.get();
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+        setVal('presence-newsletter', p.newsletter);
+        setVal('presence-instagram', p.instagram);
+        setVal('presence-selected', p.selectedWork);
+        setVal('presence-email', p.email);
+        document.getElementById('presenceSaveBtn')?.addEventListener('click', () => {
+          WM.presence.set({
+            newsletter:   document.getElementById('presence-newsletter')?.value.trim() || '',
+            instagram:    document.getElementById('presence-instagram')?.value.trim() || '',
+            selectedWork: document.getElementById('presence-selected')?.value.trim() || '',
+            email:        document.getElementById('presence-email')?.value.trim() || ''
+          });
+          const ok = document.getElementById('presenceSaved');
+          if (ok) { ok.style.opacity = '1'; setTimeout(() => { ok.style.opacity = '0'; }, 1800); }
+        });
+      })();
+
       // Backup export
       document.getElementById('exportBtn')?.addEventListener('click', () => {
         const id = get();
@@ -3223,6 +3307,10 @@
       set('statMarks', unread);
       set('statMarksDelta', unread === 0 ? 'all read' : 'from your readers');
       set('statReads', totalReads >= 1000 ? (totalReads / 1000).toFixed(1) + 'K' : String(totalReads));
+
+      // Topbar inbox badge mirrors the unread count (hide at zero)
+      const badge = document.getElementById('topInboxBadge');
+      if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? '' : 'none'; }
 
       // Greeting subtitle, composed from real counts
       const sub = document.getElementById('greetingSub');

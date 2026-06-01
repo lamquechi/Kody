@@ -492,6 +492,32 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     }
   };
 
+  /* ─── PRESENCE / ELSEWHERE LINKS (localStorage) ───────── */
+  const PRESENCE_KEY = 'wm.presence';
+  const PRESENCE_DEFAULT = { newsletter: '', instagram: '', selectedWork: '', email: '' };
+  const presence = {
+    get() {
+      try { return { ...PRESENCE_DEFAULT, ...(JSON.parse(localStorage.getItem(PRESENCE_KEY)) || {}) }; }
+      catch { return { ...PRESENCE_DEFAULT }; }
+    },
+    set(data) {
+      const merged = { ...this.get(), ...data };
+      localStorage.setItem(PRESENCE_KEY, JSON.stringify(merged));
+      this.apply();
+      return merged;
+    },
+    clear() { localStorage.removeItem(PRESENCE_KEY); },
+    apply() {
+      // Public site hooks: [data-presence="newsletter|instagram|selectedWork|email"]
+      const p = this.get();
+      document.querySelectorAll('[data-presence]').forEach(el => {
+        const key = el.dataset.presence;
+        const val = p[key];
+        if (val) { el.setAttribute('href', key === 'email' ? 'mailto:' + val : val); }
+      });
+    }
+  };
+
   /* ─── READER PREFS (localStorage) ─────────────────────── */
   const READER_KEY = 'wm.reader.prefs';
   const READER_DEFAULT = { fontSize: 20, theme: 'night', width: 680 };
@@ -590,6 +616,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   function autoApply() {
     identity.apply();
     site.apply();
+    presence.apply();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', autoApply);
@@ -603,6 +630,6 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     getStory, getStoriesByMotif, getRelatedStories,
     getParam, renderMarkdown, escapeHtml,
     identity, site, drafts,
-    reader, marks, shelf
+    reader, marks, shelf, presence
   };
 })();
