@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kody Lâm · Concept C×D×F — THE COMMONPLACE (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ════ PALETTE — light (the day desk) ════ */
+  :root{
+    --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#9C8E79;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --rule:#DCD2BD; --rule-soft:#E8E0CF;
+    --grain-op:0.5; --grain-blend:multiply;
+    --lamp:transparent;
+    --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  }
+  /* ════ PALETTE — dark (the night desk) ════ */
+  html.night{
+    --paper:#100D08; --paper-2:#17130C; --paper-3:#1F1A11;
+    --ink:#ECE3D2; --ink-soft:#AC9F88; --ink-faint:#6E6452;
+    --scarlet:#DC6A48; --green:#74A48F; --blue:#7CA7BD;
+    --rule:#2A2316; --rule-soft:#221C12;
+    --grain-op:0.10; --grain-blend:screen;
+    --lamp:radial-gradient(60vw 50vh at 14% -6%, rgba(220,106,72,0.10), transparent 60%);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:18px;line-height:1.78;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
+  /* paper grain + lamp glow */
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--lamp)}
+
+  .pv{position:fixed;top:0;left:0;right:0;background:var(--ink);color:var(--paper);text-align:center;padding:8px;font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;z-index:300;border-bottom:1px solid var(--scarlet)}
+  .pv em{font-style:italic;color:var(--scarlet);font-family:var(--disp);text-transform:none;letter-spacing:0.02em;font-size:14px}
+  .pv .tg{cursor:pointer;margin-left:14px;border:1px solid var(--scarlet);border-radius:100px;padding:2px 12px;color:var(--paper);background:transparent;font-family:var(--mono);font-size:10px;letter-spacing:0.16em}
+
+  /* ════ LEFT SPINE (from D) ════ */
+  .spine{position:fixed;left:0;top:0;bottom:0;width:62px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:44px 0 26px;z-index:60;background:var(--paper)}
+  .spine .mk{font-family:var(--disp);font-style:italic;font-weight:500;font-size:27px;color:var(--scarlet)}
+  .spine .vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:0.34em;text-transform:uppercase;color:var(--ink-faint)}
+  .spine .stamp{width:26px;height:26px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:12px;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:.85}
+
+  .wrap{margin-left:62px;position:relative;z-index:2}
+  .inner{max-width:1200px;margin:0 auto;padding:0 56px}
+
+  /* top bar */
+  .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)}
+  .top a{color:inherit;text-decoration:none;transition:.2s}.top a:hover{color:var(--scarlet)}
+  .top .lang b{color:var(--ink)}
+  .moon{cursor:pointer;width:30px;height:30px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);background:none;transition:.2s}
+  .moon:hover{border-color:var(--scarlet);color:var(--scarlet)}
+
+  /* ════ HERO (D type + C diary stamp + F note) ════ */
+  .hero{position:relative;padding:54px 0 64px}
+  .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--scarlet);margin-bottom:26px}
+  .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(58px,12.5vw,180px);line-height:0.86;letter-spacing:-0.03em;font-optical-sizing:auto}
+  .hero h1 .a{display:block}
+  .hero h1 .b{display:block;padding-left:16vw;font-style:italic;font-weight:400;color:var(--scarlet)}
+  .hero h1 .c{display:block;text-align:right;font-weight:400}
+  .hero .lede{margin:34px 0 0 auto;max-width:560px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:21px;line-height:1.55;color:var(--ink-soft)}
+  .hero .ring{position:absolute;right:6%;top:18%;width:120px;height:120px;border:5px solid var(--scarlet);border-radius:50%;opacity:.12;filter:blur(.4px);pointer-events:none}
+  .hero .scribble{position:absolute;left:2%;bottom:6%;max-width:190px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.45;color:var(--green);padding-left:16px;border-left:1px solid var(--green);transform:rotate(-2deg)}
+
+  /* ════ MOTIF RIBBON (D marquee, torn-paper) ════ */
+  .ribbon{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:16px 0;white-space:nowrap}
+  .ribbon .run{display:inline-block;animation:slide 40s linear infinite;font-family:var(--disp);font-style:italic;font-size:23px;color:var(--ink-faint)}
+  .ribbon .run span{margin:0 26px}
+  .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.ribbon .run{animation:none}}
+
+  /* ════ INDEX + LIVING MARGIN (F) ════ */
+  .body-grid{display:grid;grid-template-columns:1fr 286px;gap:0}
+  .col-main{padding:64px 56px 64px 0;border-right:1px solid var(--rule)}
+  .col-margin{padding:64px 0 64px 34px;position:relative}
+
+  .sec-k{font-family:var(--mono);font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--green);margin-bottom:18px;display:flex;align-items:center;gap:14px}
+  .sec-k::after{content:"";flex:1;height:1px;background:var(--rule)}
+  .sec-h{font-family:var(--disp);font-weight:400;font-size:clamp(30px,4vw,48px);line-height:1.04;letter-spacing:-0.01em;margin-bottom:40px}
+  .sec-h em{font-style:italic;color:var(--scarlet)}
+
+  .entry-row{display:grid;grid-template-columns:54px 1fr auto;gap:28px;align-items:baseline;padding:26px 0;border-top:1px solid var(--rule);cursor:pointer;position:relative;transition:padding-left .35s var(--ease,ease)}
+  .entry-row:last-of-type{border-bottom:1px solid var(--rule)}
+  .entry-row:hover{padding-left:14px}
+  .entry-row .ln{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:0.04em}
+  .entry-row h3{font-family:var(--disp);font-weight:500;font-size:clamp(25px,2.9vw,38px);line-height:1.06;letter-spacing:-0.01em;transition:color .3s}
+  .entry-row:hover h3{color:var(--scarlet)}
+  .entry-row p{margin-top:8px;font-family:var(--disp);font-style:italic;font-size:16px;line-height:1.55;color:var(--ink-soft);max-width:540px}
+  .entry-row .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.8}
+  .entry-row .meta .lang{color:var(--scarlet)}
+  .entry-row.vi .meta .lang{color:var(--blue)}
+  .entry-row.vi:hover h3{color:var(--blue)}
+
+  /* margin notes (F) — author's living margin */
+  .col-margin .mnote{font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--green);padding-left:16px;border-left:1px solid var(--green);margin-bottom:28px}
+  .col-margin .mnote .ref{display:block;font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+  .col-margin .mnote.warm{color:var(--scarlet);border-color:var(--scarlet)}
+  .col-margin .stamp-begin{margin-top:8px;display:inline-block;border:1.5px solid var(--scarlet);color:var(--scarlet);font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;padding:7px 13px;transform:rotate(-2deg);opacity:.85}
+
+  footer{padding:64px 56px 60px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;align-items:flex-end;border-top:1px solid var(--ink);margin-top:8px}
+  footer .big{font-family:var(--disp);font-style:italic;font-size:34px;color:var(--ink)}
+  footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
+  footer .sig{font-family:var(--disp);font-style:italic;font-size:26px;color:var(--scarlet);transform:rotate(-3deg)}
+
+  @media(max-width:900px){
+    .spine{display:none}.wrap{margin-left:0}.inner,.top{padding-left:20px;padding-right:20px}
+    .body-grid{grid-template-columns:1fr}
+    .col-main{padding:40px 0;border-right:none}
+    .col-margin{padding:0 0 28px;border-top:1px solid var(--rule)}
+    .entry-row{grid-template-columns:40px 1fr}.entry-row .meta{grid-column:2;text-align:left;margin-top:6px}
+    .hero h1 .b{padding-left:4vw}.hero .scribble,.hero .ring{display:none}
+    .col-main,.col-margin,footer{padding-left:0;padding-right:0}
+  }
+</style>
+</head>
+<body>
+<div class="pv">Concept C×D×F · <em>The Commonplace</em> — editorial + margin + diary
+  <button class="tg" id="modeToggle">☾ Try dark</button>
+</div>
+
+<aside class="spine">
+  <div class="mk">K</div>
+  <div class="vert">Kody Lâm · Commonplace</div>
+  <div class="stamp">立</div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <a href="#">Library</a><a href="#">Motifs</a><a href="#">About</a>
+    <span class="lang"><b>EN</b> · VI</span>
+    <button class="moon" id="modeToggle2" title="Light / Dark">☾</button>
+  </div>
+
+  <div class="inner">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="ring" aria-hidden="true"></div>
+      <div class="entry">— Entry · a bilingual commonplace · MMXXVI</div>
+      <h1>
+        <span class="a">A small archive</span>
+        <span class="b">of unsent</span>
+        <span class="c">words.</span>
+      </h1>
+      <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+      <p class="scribble">— for the readers who linger past the second paragraph.</p>
+    </section>
+  </div>
+
+  <!-- MOTIF RIBBON -->
+  <div class="ribbon">
+    <div class="run">
+      <span>Rain</span><b>·</b><span>Silence</span><b>·</b><span>Rooms</span><b>·</b><span>Reservoirs</span><b>·</b><span>Mirrors</span><b>·</b><span>Saigon after eleven</span><b>·</b><span>Unfinished things</span><b>·</b>
+      <span>Rain</span><b>·</b><span>Silence</span><b>·</b><span>Rooms</span><b>·</b><span>Reservoirs</span><b>·</b><span>Mirrors</span><b>·</b><span>Saigon after eleven</span><b>·</b><span>Unfinished things</span><b>·</b>
+    </div>
+  </div>
+
+  <!-- INDEX + MARGIN -->
+  <div class="inner">
+    <div class="body-grid">
+      <div class="col-main">
+        <div class="sec-k">The index · seven pieces</div>
+        <h2 class="sec-h">Each one a kind of <em>weather</em> — choose the room that matches tonight.</h2>
+
+        <article class="entry-row">
+          <div class="ln">001</div>
+          <div><h3>The City After Rain</h3><p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p></div>
+          <div class="meta">Fiction<br>5 min<br><span class="lang">EN</span></div>
+        </article>
+        <article class="entry-row">
+          <div class="ln">002</div>
+          <div><h3>Letters to the Reservoir</h3><p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p></div>
+          <div class="meta">Short<br>3 min<br><span class="lang">EN</span></div>
+        </article>
+        <article class="entry-row">
+          <div class="ln">003</div>
+          <div><h3>In a Room of Small Lights</h3><p>"A room lit by small lamps asks for a different honesty than daylight does."</p></div>
+          <div class="meta">Tản văn<br>4 min<br><span class="lang">EN</span></div>
+        </article>
+        <article class="entry-row vi">
+          <div class="ln">007</div>
+          <div><h3 lang="vi">Một Nửa Của Im Lặng</h3><p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p></div>
+          <div class="meta">Tản văn<br>4 min<br><span class="lang">VI</span></div>
+        </article>
+      </div>
+
+      <aside class="col-margin">
+        <div class="mnote"><span class="ref">on · tản văn</span>A Vietnamese lyric-essay form — prose that behaves like a held breath.</div>
+        <div class="mnote"><span class="ref">on · the room</span>Every piece here is a room. Some are lit; some keep their lamps off on purpose.</div>
+        <div class="mnote"><span class="ref">note to the reader · gửi bạn đọc</span>Read slowly. The margin is yours to write in too.</div>
+        <div class="mnote warm"><span class="ref">⁂ begin</span>Folio I is the doorway.<span class="stamp-begin">Start here →</span></div>
+      </aside>
+    </div>
+
+    <footer>
+      <div>
+        <div class="big">Kody Lâm</div>
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">Rain · rooms · unsent words</div>
+      </div>
+      <div class="col">Set in Fraunces &amp; Spectral<br>A bilingual commonplace · MMXXVI</div>
+      <div class="sig">— K.L.</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+  (function(){
+    function setLabel(){
+      var night = document.documentElement.classList.contains('night');
+      var t = document.getElementById('modeToggle'); if(t) t.textContent = night ? '☀ Try light' : '☾ Try dark';
+      var m = document.getElementById('modeToggle2'); if(m) m.textContent = night ? '☀' : '☾';
+    }
+    function toggle(){ document.documentElement.classList.toggle('night'); setLabel(); }
+    ['modeToggle','modeToggle2'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('click',toggle); });
+    setLabel();
+  })();
+</script>
+</body>
+</html>
