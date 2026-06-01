@@ -858,10 +858,10 @@
       <span id="readTime">0 / 5 min</span>
     </div>
     <div class="chrome-actions">
-      <button class="chrome-btn" id="modeBtn" title="Sáng / Tối" aria-label="Toggle light or dark">
+      <button class="chrome-btn" id="modeBtn" title="Light / Dark" aria-label="Toggle light or dark">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>
       </button>
-      <button class="chrome-btn" id="soundBtn" title="Âm thanh nền (mood)" aria-label="Toggle ambient sound">
+      <button class="chrome-btn" id="soundBtn" title="Ambient sound" aria-label="Toggle ambient sound">
         <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
       </button>
       <button class="chrome-btn" id="bookmarkBtn" title="Bookmark">
@@ -902,10 +902,10 @@
     </div>
   </div>
   <div class="settings-group">
-    <label class="settings-label">Âm thanh nền (mood)</label>
+    <label class="settings-label">Ambient sound</label>
     <div class="settings-options" id="soundToggleOpts">
-      <button data-sound="off" class="active" style="font-size: 13px;">Tắt</button>
-      <button data-sound="on" style="font-size: 13px;">Bật</button>
+      <button data-sound="off" class="active" style="font-size: 13px;">Off</button>
+      <button data-sound="on" style="font-size: 13px;">On</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
       <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="opacity:0.6;flex:0 0 auto;"><path d="M11 5L6 9H2v6h4l5 4V5z"/></svg>
@@ -1000,7 +1000,7 @@
       <p>"After eleven, the city did not sleep. It only lowered its voice."</p>
     </a>
     <a href="#" class="cont-card vi reveal">
-      <span class="cont-tag">TẢN VĂN · IM LẶNG</span>
+      <span class="cont-tag">TẢN VĂN · SILENCE</span>
       <h4 lang="vi">Một Nửa Của Im Lặng</h4>
       <p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p>
     </a>
@@ -1144,9 +1144,9 @@
     // Document title
     document.title = story.title + ' — Kody Lâm';
 
-    // Chrome bar
+    // Chrome bar — write English defaults; wm-i18n.js translates to VI on demand
     const _cf = document.getElementById('chromeForm');
-    if (_cf) _cf.textContent = story.form === 'tan-van' ? 'TẢN VĂN' : (story.form || 'piece').toUpperCase();
+    if (_cf) _cf.textContent = story.form === 'tan-van' ? 'Tản văn' : (story.form || 'piece').replace(/\b\w/g, c => c.toUpperCase());
     const _cfo = document.getElementById('chromeFolio');
     if (_cfo) _cfo.textContent = (story.folio || '') + '.';
 
@@ -1355,7 +1355,7 @@
       const rmotif = WM.motifs[r.motif] || {};
       const isVi = r.lang === 'vi';
       const langAttr = isVi ? ' lang="vi"' : '';
-      const tagText = (r.form === 'tan-van' ? 'TẢN VĂN' : r.form.toUpperCase()) + ' · ' + (rmotif.name || r.motif).toUpperCase();
+      const tagText = (r.form === 'tan-van' ? 'Tản văn' : r.form.replace(/\b\w/g, c => c.toUpperCase())) + ' · ' + (rmotif.name || r.motif);
       return '<a href="reader.html?id=' + r.id + '" class="cont-card reveal' + (isVi ? ' vi' : '') + '">' +
         '<span class="cont-tag">' + tagText + '</span>' +
         '<h4' + langAttr + '>' + r.title + '</h4>' +
@@ -1375,6 +1375,10 @@
 
     // Override updateProgress to use this story's read time
     window.__totalReadMin = totalMin;
+
+    // Re-apply i18n to the dynamically-built chrome / meta / continue-reading grid,
+    // so VI mode users see VI labels on freshly-rendered nodes too.
+    try { if (window.WM && WM.i18n) WM.i18n.apply(WM.i18n.lang || localStorage.getItem('wm.lang') || 'en'); } catch (e) {}
 
     // Count this read (only when backend is connected)
     function doCount() { if (WM.online && WM.countRead) WM.countRead(story.id); }
