@@ -148,11 +148,14 @@
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* hidden measuring page (mirrors a real .pg) */
-  var measure=document.createElement('div'); measure.className='leaf pg measure';
-  measure.innerHTML='<div class="head"><span>x</span><span>x</span></div><div class="copy" id="mcopy"></div><div class="num">— 0 —</div>';
-  document.body.appendChild(measure);
-  var mcopy=measure.querySelector('#mcopy');
+  /* hidden measuring page — a real .leaf.right placed INSIDE the book so it
+     inherits the exact page geometry (width / height / padding) in either the
+     1-page or 2-page layout. This makes the height measurement reliable. */
+  var gauge=document.createElement('div'); gauge.className='leaf right pg';
+  gauge.style.cssText='visibility:hidden;pointer-events:none;z-index:-2';
+  gauge.innerHTML='<div class="head"><span>The City After Rain</span><span>I</span></div><div class="copy" id="mcopy"></div><div class="num">— 0 —</div>';
+  book.appendChild(gauge);
+  var mcopy=gauge.querySelector('#mcopy');
 
   /* split an HTML string into word-tokens, keeping inline tags intact */
   function tokenize(html){
@@ -167,9 +170,9 @@
     var cs=getComputedStyle(mcopy);
     var lh=parseFloat(cs.lineHeight); if(!lh) lh=(parseFloat(cs.fontSize)||19)*1.78;
     mcopy.innerHTML='';
-    var availH = mcopy.clientHeight;               // bounded available height (min-height:0)
-    if(availH<60) return [BODY.join('</p><p>')];   // layout not ready
-    var SAFE = availH - lh;                         // keep ~1 full line of slack → never clips
+    var availH = mcopy.clientHeight;                        // exact available height (gauge = a real page)
+    if(!availH || availH < 120) availH = Math.max(220, (book.clientHeight||600) - 170); // fallback: never explode into 1-word pages
+    var SAFE = Math.max(availH - lh, availH * 0.6);         // ~1 line of slack, but never less than 60% of the page
     var pages=[], cur='';
     function fits(html){ mcopy.innerHTML=html; return mcopy.scrollHeight<=SAFE; }
     BODY.forEach(function(par){
@@ -206,11 +209,7 @@
   var spreads,i=0,two,busy=false,total=0;
   function build(keep){
     two=matchMedia('(min-width:860px)').matches;
-    book.classList.toggle('one',!two);
-    // size the measure page to a real single page
-    var pageW = two ? (book.clientWidth/2) : book.clientWidth;
-    measure.style.width=pageW+'px'; measure.style.height=book.clientHeight+'px';
-    measure.classList.toggle('one',!two);
+    book.classList.toggle('one',!two);   // gauge lives inside .book → auto-sizes to a real page
     bodyPages = paginate();
     total = 1 + bodyPages.length;                 // title + body pages
     if(two){ spreads=[[null,0]]; for(var k=1;k<total;k+=2) spreads.push([k, k+1<total?k+1:null]); }
