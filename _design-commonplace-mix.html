@@ -17,6 +17,10 @@
     --grain-op:0.5; --grain-blend:multiply;
     --lamp:transparent;
     --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    /* cinematic easing system */
+    --cine:cubic-bezier(.16,1,.3,1);      /* smooth settle (reveals, wipes) */
+    --focus:cubic-bezier(.33,0,.16,1);    /* slow focus-pull (blur → sharp) */
+    --silk:cubic-bezier(.4,0,.1,1);       /* hover / micro */
   }
   /* ════ PALETTE — dark (the night desk) ════ */
   html.night{
@@ -142,13 +146,13 @@
 
   @media (prefers-reduced-motion: no-preference){
     /* scroll reveal — fade + rise + a soft focus-pull (cinematic) */
-    .reveal{opacity:0;transform:translateY(26px);filter:blur(6px);transition:opacity 1.1s var(--ease,cubic-bezier(.2,.7,.3,1)),transform 1.1s var(--ease,cubic-bezier(.2,.7,.3,1)),filter 1.1s var(--ease,cubic-bezier(.2,.7,.3,1))}
+    .reveal{opacity:0;transform:translateY(30px);filter:blur(9px);transition:opacity 1.3s var(--cine),transform 1.3s var(--cine),filter 1.5s var(--focus)}
     .reveal.in{opacity:1;transform:none;filter:blur(0)}
     /* hero entrance — plays only once the overture has lifted (body.revealed) */
     .hero h1 .a,.hero h1 .b,.hero h1 .c{opacity:0;transform:translateY(48px)}
     .hero .entry,.hero .lede,.hero .scribble{opacity:0}
-    body.revealed .hero h1 .a,body.revealed .hero h1 .b,body.revealed .hero h1 .c{animation:wmLineRise 1.25s cubic-bezier(.2,.75,.2,1) forwards}
-    body.revealed .hero h1 .a{animation-delay:.05s}body.revealed .hero h1 .b{animation-delay:.24s}body.revealed .hero h1 .c{animation-delay:.43s}
+    body.revealed .hero h1 .a,body.revealed .hero h1 .b,body.revealed .hero h1 .c{animation:wmLineRise 1.5s var(--cine) forwards}
+    body.revealed .hero h1 .a{animation-delay:.1s}body.revealed .hero h1 .b{animation-delay:.32s}body.revealed .hero h1 .c{animation-delay:.54s}
     @keyframes wmLineRise{to{opacity:1;transform:none}}
     body.revealed .hero .entry,body.revealed .hero .lede,body.revealed .hero .scribble{animation:wmFadeUp 1.1s ease forwards}
     body.revealed .hero .entry{animation-delay:0s}body.revealed .hero .lede{animation-delay:.6s}body.revealed .hero .scribble{animation-delay:.95s}
@@ -158,22 +162,24 @@
     @keyframes wmDrift{from{transform:translate(0,0)}to{transform:translate(3vw,2vh)}}
   }
 
-  /* ════ SIGNATURE OVERTURE (cinematic open) ════ */
-  .overture{position:fixed;inset:0;z-index:500;background:#0E0B07;color:#ECE3D2;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px;overflow:hidden}
-  .overture::after{content:"";position:absolute;inset:0;background:radial-gradient(60vw 50vh at 50% 32%,rgba(220,106,72,0.12),transparent 65%);pointer-events:none}
-  .overture.lift{animation:ovLift 1.15s cubic-bezier(.76,0,.24,1) forwards}
-  @keyframes ovLift{to{clip-path:inset(0 0 100% 0);opacity:0}}
-  .ov-inner{position:relative;max-width:860px}
-  .ov-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:#B8472E;opacity:0;animation:ovFade 1s ease .25s forwards}
-  .ov-quote{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(26px,4.6vw,54px);line-height:1.26;margin:28px 0;opacity:0;filter:blur(10px);animation:ovFocus 1.6s cubic-bezier(.2,.7,.2,1) .55s forwards}
+  /* ════ SIGNATURE OVERTURE (slow, cinematic open) ════ */
+  .overture{position:fixed;inset:0;z-index:500;background:#0C0A06;color:#ECE3D2;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;overflow:hidden;will-change:transform}
+  .overture::after{content:"";position:absolute;inset:0;background:radial-gradient(58vw 52vh at 50% 40%,rgba(220,106,72,0.11),transparent 66%);opacity:0;animation:ovFade 3.2s ease .3s forwards;pointer-events:none}
+  .overture.lift{animation:ovLift 1.6s var(--cine) forwards}
+  @keyframes ovLift{to{transform:translateY(-101%)}}
+  .ov-inner{position:relative;max-width:920px}
+  .ov-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.42em;text-transform:uppercase;color:#B8472E;opacity:0;animation:ovFade 1.6s ease .5s forwards}
+  .ov-quote{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(28px,4.9vw,58px);line-height:1.24;margin:34px auto 0;max-width:17ch;color:#F0E8D8;opacity:0;filter:blur(20px);transform:scale(1.045);animation:ovFocus 3.4s var(--focus) 1.1s forwards}
   .ov-quote em{color:#DC6A48;font-style:italic}
-  .ov-line{width:0;height:1px;background:#B8472E;margin:0 auto;animation:ovLine 1.1s ease 1.35s forwards}
-  .ov-cite{font-family:var(--mono);font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:#7A6E58;margin-top:22px;opacity:0;animation:ovFade 1s ease 1.7s forwards}
-  .ov-skip{position:absolute;bottom:26px;right:28px;background:none;border:1px solid #36302360;border-radius:100px;color:#8A7E6A;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:7px 15px;cursor:pointer;opacity:0;animation:ovFade .8s ease 2s forwards;transition:border-color .2s,color .2s}
+  .ov-echo{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(15px,1.8vw,20px);color:#8A7E66;margin-top:20px;opacity:0;filter:blur(10px);animation:ovFocus 2.6s var(--focus) 2.7s forwards}
+  .ov-echo span{color:#9C8E6E}
+  .ov-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#B8472E 50%,transparent);margin:30px auto 0;animation:ovLine 1.8s var(--cine) 3.4s forwards}
+  .ov-cite{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#6E6452;margin-top:24px;opacity:0;animation:ovFade 1.6s ease 4s forwards}
+  .ov-skip{position:absolute;bottom:28px;right:30px;background:none;border:1px solid #38312360;border-radius:100px;color:#8A7E6A;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 16px;cursor:pointer;opacity:0;animation:ovFade 1.2s ease 1.8s forwards;transition:border-color .3s var(--silk),color .3s var(--silk)}
   .ov-skip:hover{border-color:#DC6A48;color:#DC6A48}
   @keyframes ovFade{to{opacity:1}}
-  @keyframes ovFocus{to{opacity:1;filter:blur(0)}}
-  @keyframes ovLine{to{width:150px}}
+  @keyframes ovFocus{to{opacity:1;filter:blur(0);transform:none}}
+  @keyframes ovLine{to{width:210px}}
   @media (prefers-reduced-motion: reduce){ .overture{display:none} }
 </style>
 </head>
@@ -184,6 +190,7 @@
   <div class="ov-inner">
     <div class="ov-eyebrow">Kody Lâm · a bilingual commonplace</div>
     <blockquote class="ov-quote">"After the rain, the city no longer looked like a city —<br>it looked like something <em>remembering itself</em>."</blockquote>
+    <div class="ov-echo" lang="vi">— thành phố, khi mưa tạnh, <span>bắt đầu nhớ lại chính mình.</span></div>
     <div class="ov-line"></div>
     <div class="ov-cite">— Folio I · The City After Rain</div>
   </div>
@@ -303,7 +310,7 @@
       reveal();                                   // hero begins assembling as the veil wipes up
       setTimeout(function(){ ov.remove(); }, 1200);
     }
-    var t = setTimeout(lift, 3000);               // auto-lift after the quote lands
+    var t = setTimeout(lift, 5400);               // auto-lift after the quote settles + echo
     var skip = document.getElementById('ovSkip');
     if (skip) skip.addEventListener('click', function(){ clearTimeout(t); lift(); });
     ov.addEventListener('click', function(e){ if (e.target === ov){ clearTimeout(t); lift(); } });
@@ -343,8 +350,9 @@
         if (ticking) return; ticking = true;
         requestAnimationFrame(function(){
           var y = window.scrollY || 0;
-          hero.style.transform = 'translateY(' + (y * 0.12).toFixed(1) + 'px)';
-          hero.style.opacity = Math.max(0, 1 - y / 680).toFixed(3);
+          var k = Math.min(1, y / 640);
+          hero.style.transform = 'translateY(' + (y * 0.14).toFixed(1) + 'px) scale(' + (1 - k * 0.045).toFixed(4) + ')';
+          hero.style.opacity = Math.max(0, 1 - y / 700).toFixed(3);
           ticking = false;
         });
       }, { passive: true });
@@ -356,7 +364,7 @@
       ring.className = 'cursor-ring';
       document.body.appendChild(ring);
       var rx = innerWidth/2, ry = innerHeight/2, cx = rx, cy = ry, raf;
-      function loop(){ cx += (rx-cx)*0.18; cy += (ry-cy)*0.18; ring.style.left=cx+'px'; ring.style.top=cy+'px'; raf=requestAnimationFrame(loop); }
+      function loop(){ cx += (rx-cx)*0.14; cy += (ry-cy)*0.14; ring.style.left=cx+'px'; ring.style.top=cy+'px'; raf=requestAnimationFrame(loop); }
       addEventListener('mousemove', function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity = document.documentElement.classList.contains('night') ? '0.6' : '0.45'; if(!raf) loop(); }, { passive:true });
       addEventListener('mouseleave', function(){ ring.style.opacity='0'; });
       var hot = 'a,button,.entry-row,.moon,.tg,.spine .mk';
