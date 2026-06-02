@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock · Cinematic — Kody Lâm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5EFE4; --paper-2:#EDE5D5; --ink:#19140E; --ink-soft:#564B3E; --ink-faint:#978975;
+    --scarlet:#B0432B; --blue:#3C5E72; --teal:#37685A; --gold:#9A7434; --plum:#7A4E63;
+    --rule:#D9CFB9;
+    --disp:"Newsreader",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --cine:cubic-bezier(.16,1,.3,1); --expo:cubic-bezier(.7,0,.2,1); --silk:cubic-bezier(.4,0,.1,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:19px;line-height:1.74;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* ════ INK & LIGHT canvas ════ */
+  .ink-canvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none}
+  .ink-canvas g{transform-origin:center;will-change:transform,opacity}
+  .light{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .8s ease;background:
+    radial-gradient(62vw 54vh at 82% -8%,rgba(214,150,90,.22),transparent 60%),
+    radial-gradient(52vw 52vh at 2% 104%,rgba(60,94,114,.16),transparent 60%)}
+  /* scroll-graded night wash (centre stays clear) */
+  .night{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;
+    background:radial-gradient(150vw 110vh at 50% 120%,rgba(12,12,30,.6),transparent 60%),
+      radial-gradient(60vw 50vh at 6% -4%,rgba(36,38,72,.5),transparent 58%),
+      linear-gradient(180deg,rgba(8,8,20,.25),transparent 24%,transparent 72%,rgba(6,6,16,.4))}
+  .grain{position:fixed;inset:0;z-index:42;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--scarlet);z-index:120;opacity:.85}
+
+  .tag{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);background:color-mix(in srgb,var(--paper) 80%,transparent);backdrop-filter:blur(6px);padding:6px 14px;border:1px solid var(--rule);border-radius:100px}
+
+  .wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 44px}
+
+  /* ════ HERO ════ */
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative}
+  .hero-inner{will-change:transform,opacity}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--scarlet);margin-bottom:30px;opacity:0}
+  body.go .eyebrow{animation:fade 1.3s ease .2s forwards}
+  h1{font-family:var(--disp);font-weight:400;font-optical-sizing:auto;font-size:clamp(44px,7vw,104px);line-height:1.0;letter-spacing:-0.02em;max-width:14ch}
+  h1 .l{display:block;overflow:hidden}
+  /* ink wipe: each line revealed L→R behind a feathered edge */
+  h1 .l > span{display:inline-block;clip-path:inset(0 100% 0 0);transition:clip-path 1.5s var(--expo)}
+  body.go h1 .l:nth-child(1) > span{transition-delay:.35s;clip-path:inset(0 0 0 0)}
+  body.go h1 .l:nth-child(2) > span{transition-delay:.62s;clip-path:inset(0 0 0 0)}
+  h1 em{font-style:italic;color:var(--scarlet)}
+  .ink-underline{display:block;width:min(440px,62%);height:28px;margin-top:6px}
+  .ink-underline path{fill:none;stroke:var(--scarlet);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+  body.go .ink-underline path{animation:draw 1.8s var(--cine) 1.15s forwards}
+  .lede{margin-top:34px;max-width:520px;font-style:italic;font-weight:300;font-size:21px;line-height:1.6;color:var(--ink-soft);opacity:0}
+  body.go .lede{animation:fade 1.5s ease 1.05s forwards}
+  .scroll-cue{position:absolute;bottom:38px;left:0;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);opacity:0}
+  body.go .scroll-cue{animation:fade 1.5s ease 1.7s forwards}
+  .scroll-cue .l{width:50px;height:1px;background:var(--ink-faint);position:relative;overflow:hidden}
+  .scroll-cue .l::after{content:"";position:absolute;inset:0;background:var(--scarlet);transform:translateX(-100%);animation:sweep 2.8s var(--cine) infinite}
+
+  /* ════ INTERLUDE — iris/ink-blot reveal ════ */
+  .interlude{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative}
+  .interlude .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:0;font-family:var(--disp);font-weight:300;font-style:italic;font-size:46vh;line-height:1;color:var(--ink);opacity:.05;pointer-events:none;will-change:transform}
+  .interlude .q{position:relative;z-index:1;clip-path:circle(0% at 50% 55%);transition:clip-path 1.7s var(--expo)}
+  .interlude .q.in{clip-path:circle(150% at 50% 55%)}
+  .interlude blockquote{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(30px,5vw,68px);line-height:1.2;max-width:18ch;color:var(--ink)}
+  .interlude blockquote em{color:var(--scarlet)}
+  .interlude .cite{margin-top:28px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-faint);opacity:0;transition:opacity 1.2s ease .5s}
+  .interlude .q.in + .cite{opacity:1}
+
+  /* ════ INDEX — pinned chapter + motif rows ════ */
+  .index-scene{position:relative;display:grid;grid-template-columns:300px 1fr;gap:48px;padding:90px 0}
+  .pin{position:sticky;top:24vh;align-self:start;height:max-content}
+  .pin .kchip{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--scarlet);display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .pin .kchip::before{content:"";width:46px;height:1px;background:var(--scarlet)}
+  .pin h2{font-family:var(--disp);font-weight:400;font-size:clamp(30px,3.6vw,50px);line-height:1.05;letter-spacing:-0.02em}
+  .pin h2 em{font-style:italic;color:var(--scarlet)}
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;grid-template-columns:64px 1fr auto;gap:24px;align-items:baseline;padding:30px 18px 30px 0;border-top:1px solid var(--rule);position:relative;overflow:hidden;cursor:pointer;transition:padding-left .5s var(--cine);opacity:0;transform:translateY(28px)}
+  .row.in{opacity:1;transform:none;transition:opacity 1s var(--cine),transform 1s var(--cine),padding-left .5s var(--cine)}
+  .row:last-child{border-bottom:1px solid var(--rule)}
+  .row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:color-mix(in srgb,var(--motif) 12%,transparent);transition:width .55s var(--cine);z-index:0}
+  .row:hover{padding-left:16px}
+  .row:hover::before{width:100%}
+  .row>*{position:relative;z-index:1}
+  .row .n{font-family:var(--disp);font-style:italic;font-weight:300;font-size:38px;color:var(--ink-faint);transition:color .35s,transform .5s var(--cine)}
+  .row:hover .n{color:var(--motif);transform:translateX(4px)}
+  .row h3{font-family:var(--disp);font-weight:500;font-size:clamp(22px,2.6vw,34px);line-height:1.05;transition:color .35s}
+  .row:hover h3{color:var(--motif)}
+  .row p{margin-top:8px;font-style:italic;font-weight:300;font-size:16px;color:var(--ink-soft);max-width:520px}
+  .row .meta{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
+  .row .meta b{color:var(--motif);font-weight:400}
+
+  .end{min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  .end .o{font-family:var(--disp);font-style:italic;color:var(--scarlet);letter-spacing:.4em;font-size:18px}
+
+  /* ════ SCENE-CUT WIPE (film cut between scenes) ════ */
+  .cut{position:fixed;inset:0;z-index:110;pointer-events:none;transform:translateX(-101%);background:
+    linear-gradient(90deg, transparent, rgba(176,67,43,.0) 0),
+    var(--ink)}
+  .cut.run{animation:cutAcross 1.05s var(--expo)}
+  @keyframes cutAcross{0%{transform:translateX(-101%)}45%{transform:translateX(0)}55%{transform:translateX(0)}100%{transform:translateX(101%)}}
+
+  /* ════ OVERTURE ════ */
+  .ov{position:fixed;inset:0;z-index:200;background:#0B0805;color:#EFE7D6;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;overflow:hidden}
+  .ov svg.ovink{position:absolute;inset:0;width:100%;height:100%;opacity:0;animation:fade 2.6s ease .3s forwards}
+  .ov-in{position:relative;z-index:2;max-width:900px}
+  .ov-eye{font-family:var(--mono);font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:#C25A3C;opacity:0;animation:fade 1.6s ease .5s forwards}
+  .ov-q{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(30px,5.2vw,64px);line-height:1.22;margin:34px auto 0;max-width:17ch;color:#F2EAD9;clip-path:circle(0% at 50% 50%);animation:iris 2.2s var(--expo) 1.1s forwards}
+  .ov-q em{color:#D9714D}
+  .ov-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#C25A3C 50%,transparent);margin:32px auto 0;animation:line 1.8s var(--cine) 3.1s forwards}
+  .ov-cite{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#7E7257;margin-top:24px;opacity:0;animation:fade 1.6s ease 3.6s forwards}
+  .ov-skip{position:absolute;bottom:28px;right:30px;background:none;border:1px solid rgba(126,114,87,.4);border-radius:100px;color:#9A8E6E;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:9px 18px;cursor:pointer;opacity:0;animation:fade 1.2s ease 2s forwards}
+  .ov-skip:hover{border-color:#D9714D;color:#D9714D}
+  .ov.lift{animation:ovLift 1.5s var(--expo) forwards}
+  @keyframes ovLift{to{transform:translateY(-101%)}}
+
+  @keyframes fade{to{opacity:1}}
+  @keyframes iris{to{clip-path:circle(150% at 50% 50%)}}
+  @keyframes line{to{width:220px}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes sweep{0%{transform:translateX(-100%)}55%{transform:translateX(100%)}100%{transform:translateX(100%)}}
+
+  @media(max-width:760px){
+    .wrap{padding:0 22px}.index-scene{grid-template-columns:1fr;gap:24px}.pin{position:static}
+    .row{grid-template-columns:44px 1fr}.row .meta{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important}
+    h1 .l>span{clip-path:none}.ink-underline path{stroke-dashoffset:0}
+    .eyebrow,.lede,.scroll-cue,.ov-eye,.ov-cite{opacity:1}
+    .interlude .q{clip-path:none}.interlude .cite{opacity:1}
+    .row{opacity:1;transform:none}.ov{display:none}.ov-q{clip-path:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- OVERTURE -->
+<div class="ov" id="ov">
+  <svg class="ovink" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="ovwc" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.009 0.012" numOctaves="3" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="80"/>
+        <feGaussianBlur stdDeviation="8"/>
+      </filter>
+      <radialGradient id="ovb"><stop offset="0%" stop-color="#D9714D" stop-opacity="0.4"/><stop offset="100%" stop-color="#D9714D" stop-opacity="0"/></radialGradient>
+    </defs>
+    <ellipse cx="720" cy="430" rx="420" ry="320" fill="url(#ovb)" filter="url(#ovwc)"/>
+  </svg>
+  <div class="ov-in">
+    <div class="ov-eye">Kody Lâm · a bilingual commonplace</div>
+    <blockquote class="ov-q">"After the rain, the city no longer looked like a city — it looked like something <em>remembering itself</em>."</blockquote>
+    <div class="ov-line"></div>
+    <div class="ov-cite">Folio I · The City After Rain</div>
+  </div>
+  <button class="ov-skip" id="ovSkip">Enter ↵</button>
+</div>
+
+<!-- INK & LIGHT -->
+<svg class="ink-canvas" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <filter id="wc" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.012" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="86" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <radialGradient id="bs"><stop offset="0%" stop-color="#B0432B" stop-opacity="0.26"/><stop offset="100%" stop-color="#B0432B" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bb"><stop offset="0%" stop-color="#3C5E72" stop-opacity="0.24"/><stop offset="100%" stop-color="#3C5E72" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bg"><stop offset="0%" stop-color="#9A7434" stop-opacity="0.20"/><stop offset="100%" stop-color="#9A7434" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g id="bloom1" filter="url(#wc)"><ellipse cx="1130" cy="220" rx="380" ry="320" fill="url(#bs)"/></g>
+  <g id="bloom2" filter="url(#wc)"><ellipse cx="230" cy="740" rx="400" ry="340" fill="url(#bb)"/></g>
+  <g id="bloom3" filter="url(#wc)"><ellipse cx="780" cy="470" rx="320" ry="280" fill="url(#bg)"/></g>
+</svg>
+<div class="light" id="light"></div>
+<div class="night" id="night"></div>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
+<div class="cut" id="cut"></div>
+<div class="tag">Mock · cinematic — Newsreader + Spectral · ink &amp; light</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="hero-inner" id="heroInner">
+      <p class="eyebrow">A bilingual commonplace · MMXXVI</p>
+      <h1>
+        <span class="l"><span>A small archive of</span></span>
+        <span class="l"><span><em>unsent</em> words.</span></span>
+      </h1>
+      <svg class="ink-underline" viewBox="0 0 440 28" preserveAspectRatio="none" aria-hidden="true">
+        <path pathLength="1" d="M6,18 C96,7 190,22 264,13 S398,8 434,17"/>
+      </svg>
+      <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+      <div class="scroll-cue"><span class="l"></span> Scroll — the room opens</div>
+    </div>
+  </section>
+
+  <section class="interlude" data-cut>
+    <div class="num" data-parallax="0.16">I</div>
+    <div class="q" data-iris>
+      <blockquote>"Some memories do not vanish. They <em>settle</em>, like water held behind concrete."</blockquote>
+    </div>
+    <div class="cite">Folio II · Letters to the Reservoir</div>
+  </section>
+
+  <section class="index-scene" data-cut>
+    <div class="pin">
+      <div class="kchip">The index · seven rooms</div>
+      <h2>Each one a kind of <em>weather</em>.</h2>
+    </div>
+    <div class="rows">
+      <div class="row" data-row style="--motif:var(--blue)">
+        <div class="n">I</div>
+        <div><h3>The City After Rain</h3><p>"It looked like something remembering itself."</p></div>
+        <div class="meta">Fiction<br><b>Rain</b><br>5 min</div>
+      </div>
+      <div class="row" data-row style="--motif:var(--teal)">
+        <div class="n">II</div>
+        <div><h3>Letters to the Reservoir</h3><p>"Water held behind concrete, waiting for weather."</p></div>
+        <div class="meta">Short<br><b>Water</b><br>3 min</div>
+      </div>
+      <div class="row" data-row style="--motif:var(--gold)">
+        <div class="n">III</div>
+        <div><h3>In a Room of Small Lights</h3><p>"A different honesty than daylight asks for."</p></div>
+        <div class="meta">Tản văn<br><b>Window</b><br>4 min</div>
+      </div>
+      <div class="row" data-row style="--motif:var(--plum)">
+        <div class="n">IV</div>
+        <div><h3 lang="vi">Một Nửa Của Im Lặng</h3><p lang="vi">"Im lặng — không vì hết điều để nói."</p></div>
+        <div class="meta">Tản văn<br><b>Silence</b><br>4 min</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="interlude" data-cut>
+    <div class="num" data-parallax="0.16">VI</div>
+    <div class="q" data-iris>
+      <blockquote>"After eleven, the city did not sleep. It only <em>lowered its voice</em>."</blockquote>
+    </div>
+    <div class="cite">Folio VI · Saigon After Eleven</div>
+  </section>
+
+  <section class="end"><div class="o">· ⁂ ·</div></section>
+
+</div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* OVERTURE */
+  (function(){
+    var ov=document.getElementById('ov');
+    function go(){ document.body.classList.add('go'); }
+    if(reduce||!ov){ if(ov) ov.remove(); go(); return; }
+    var done=false;
+    function lift(){ if(done)return; done=true; ov.classList.add('lift'); go(); setTimeout(function(){ov.remove();},1500); }
+    var t=setTimeout(lift,5600);
+    document.getElementById('ovSkip').addEventListener('click',function(){clearTimeout(t);lift();});
+    ov.addEventListener('click',function(e){if(e.target===ov){clearTimeout(t);lift();}});
+  })();
+
+  /* SCROLL ENGINE: progress + night grade + parallax + hero dolly + bloom intensity */
+  var progress=document.getElementById('progress'), night=document.getElementById('night'),
+      light=document.getElementById('light'), heroInner=document.getElementById('heroInner');
+  var bloom1=document.getElementById('bloom1'),bloom2=document.getElementById('bloom2'),bloom3=document.getElementById('bloom3');
+  var px=[].slice.call(document.querySelectorAll('[data-parallax]')).map(function(el){return{el:el,sp:parseFloat(el.getAttribute('data-parallax'))||0,a:0};});
+  function measure(){ px.forEach(function(p){p.el.style.transform='none';}); var y=scrollY; px.forEach(function(p){var r=p.el.getBoundingClientRect();p.a=r.top+y+r.height/2;}); }
+  var tick=false;
+  function frame(){
+    var y=scrollY, vh=innerHeight, docH=document.documentElement.scrollHeight-vh;
+    var p=docH>0?Math.min(1,Math.max(0,y/docH)):0;
+    if(progress) progress.style.width=(p*100).toFixed(2)+'%';
+    if(!reduce){
+      if(night) night.style.opacity=(p*p).toFixed(3);
+      if(light) light.style.opacity=(1-p*0.7).toFixed(3);
+      /* hero dolly: scale + fade as it leaves */
+      if(heroInner){ var hp=Math.min(1,Math.max(0,y/vh)); heroInner.style.transform='translateY('+(hp*60).toFixed(1)+'px) scale('+(1-hp*0.06).toFixed(4)+')'; heroInner.style.opacity=(1-hp*0.85).toFixed(3); }
+      /* blooms drift + breathe with scroll */
+      if(bloom1) bloom1.style.transform='translate('+(-y*0.04).toFixed(1)+'px,'+(y*0.05).toFixed(1)+'px) scale('+(1+Math.sin(p*3.14)*0.12).toFixed(3)+')';
+      if(bloom2) bloom2.style.transform='translate('+(y*0.03).toFixed(1)+'px,'+(-y*0.04).toFixed(1)+'px) scale('+(1+p*0.18).toFixed(3)+')';
+      if(bloom3) bloom3.style.transform='translateY('+(-y*0.03).toFixed(1)+'px) scale('+(1+Math.cos(p*3.14)*0.1).toFixed(3)+')';
+      for(var i=0;i<px.length;i++){var it=px[i];var off=(it.a-y)-vh/2;it.el.style.transform='translateY('+(-off*it.sp).toFixed(1)+'px)';}
+    }
+    tick=false;
+  }
+  function onScroll(){ if(!tick){tick=true;requestAnimationFrame(frame);} }
+  if(!reduce) measure();
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){if(!reduce)measure();onScroll();},{passive:true});
+  addEventListener('load',function(){if(!reduce){measure();onScroll();}});
+  frame();
+
+  /* IO: iris reveals, row stagger, scene-cut wipe */
+  if(!reduce && 'IntersectionObserver' in window){
+    var cut=document.getElementById('cut'), cutting=false;
+    cut.addEventListener('animationend',function(){cut.classList.remove('run');cutting=false;});
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var t=e.target;
+        if(t.hasAttribute('data-iris')) t.classList.add('in');
+        if(t.hasAttribute('data-row')){ var sib=[].indexOf.call(t.parentElement.children,t); t.style.transitionDelay=(sib*90)+'ms'; t.classList.add('in'); }
+        io.unobserve(t);
+      });
+    },{threshold:.3, rootMargin:'0px 0px -10% 0px'});
+    document.querySelectorAll('[data-iris],[data-row]').forEach(function(el){io.observe(el);});
+    /* scene-cut: fire a wipe when a [data-cut] scene's top crosses mid-screen */
+    var cio=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting && !cutting && e.boundingClientRect.top>0){ cutting=true; cut.classList.add('run'); }
+      });
+    },{threshold:0, rootMargin:'-45% 0px -45% 0px'});
+    document.querySelectorAll('[data-cut]').forEach(function(el){cio.observe(el);});
+  } else {
+    document.querySelectorAll('[data-iris],[data-row]').forEach(function(el){el.classList.add('in');});
+  }
+})();
+</script>
+</body>
+</html>
