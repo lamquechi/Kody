@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
-<title>Mock · Reader (page-flip, responsive spread) — Kody Lâm</title>
+<title>Mock · Reader (auto-paginated, page-flip) — Kody Lâm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -13,14 +13,13 @@
   body.night{ --desk:#0C0910; --page:#17140D; --page2:#1C180F; --text:#E9DEC8; --muted:#9A8E78; --faint:#6A6050; --accent:#D9714D; --edge:#241E14; --spine:rgba(0,0,0,.55); }
 
   :root{ --disp:"Newsreader",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
-    --cine:cubic-bezier(.16,1,.3,1); --turn:cubic-bezier(.42,0,.2,1); --fs:19px; }
+    --cine:cubic-bezier(.16,1,.3,1); --turn:cubic-bezier(.42,0,.2,1); --fs:19px; --lh:1.78; }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{font-family:var(--body);background:var(--desk);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden;
     transition:background .5s ease,color .5s ease;
     background-image:radial-gradient(120vw 90vh at 50% 50%, transparent 40%, rgba(0,0,0,.18))}
 
-  /* chrome */
   .chrome{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
   .chrome a,.chrome button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:none;transition:color .2s}
   .chrome a:hover,.chrome button:hover{color:var(--accent)}
@@ -30,24 +29,19 @@
   .tools .seg button{padding:6px 11px;color:var(--muted)}
   .tools .seg button.on{background:var(--accent);color:var(--page)}
 
-  /* stage + book */
   .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:62px 18px 84px;perspective:2400px}
   .book{position:relative;width:min(940px,95vw);height:min(74vh,820px);transform-style:preserve-3d}
   .book.one{width:min(560px,94vw)}
   .book::after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:30px;background:radial-gradient(60% 100% at 50% 0,rgba(0,0,0,.30),transparent 72%);z-index:0}
 
-  /* a page surface */
   .pg{background:var(--page);color:var(--text);overflow:hidden;display:flex;flex-direction:column;
     padding:clamp(28px,3.6vw,52px) clamp(24px,3.4vw,48px)}
   .leaf{position:absolute;top:0;height:100%;width:50%}
-  .leaf.left{left:0;border-radius:5px 0 0 5px;box-shadow:inset -14px 0 26px -18px rgba(0,0,0,.5), 0 16px 40px -24px rgba(0,0,0,.5);
-    background-image:linear-gradient(270deg, var(--spine), transparent 9%)}
-  .leaf.right{right:0;border-radius:0 5px 5px 0;box-shadow:inset 14px 0 26px -18px var(--spine), 0 16px 40px -24px rgba(0,0,0,.5);
-    background-image:linear-gradient(90deg, var(--spine), transparent 9%)}
+  .leaf.left{left:0;border-radius:5px 0 0 5px;box-shadow:inset -14px 0 26px -18px rgba(0,0,0,.5), 0 16px 40px -24px rgba(0,0,0,.5);background-image:linear-gradient(270deg, var(--spine), transparent 9%)}
+  .leaf.right{right:0;border-radius:0 5px 5px 0;box-shadow:inset 14px 0 26px -18px var(--spine), 0 16px 40px -24px rgba(0,0,0,.5);background-image:linear-gradient(90deg, var(--spine), transparent 9%)}
   .book.one .leaf.left{display:none}
   .book.one .leaf.right{width:100%;border-radius:5px;box-shadow:0 18px 44px -22px rgba(0,0,0,.55)}
 
-  /* the single flipping leaf */
   .flip{position:absolute;top:0;right:0;width:50%;height:100%;z-index:9;transform-origin:left center;transform-style:preserve-3d;display:none}
   .book.one .flip{width:100%}
   .flip.show{display:block}
@@ -57,13 +51,12 @@
   .flip .back{transform:rotateY(180deg);border-radius:5px 0 0 5px;background-image:linear-gradient(270deg, var(--spine), transparent 9%)}
   .flipping .flip{transition:transform .8s var(--turn)}
 
-  /* page content */
-  .head{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between;margin-bottom:clamp(18px,3vw,34px)}
-  .num{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint)}
-  .copy{font-size:var(--fs);line-height:1.78;flex:1;overflow:hidden}
+  .head{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between;margin-bottom:clamp(16px,2.6vw,30px);flex:0 0 auto}
+  .num{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint);flex:0 0 auto;padding-top:12px}
+  .copy{font-size:var(--fs);line-height:var(--lh);flex:1 1 auto;overflow:hidden}
   .copy p{margin-bottom:1.02em}.copy p:last-child{margin-bottom:0}.copy em{font-style:italic}
-  .drop::first-letter{font-family:var(--disp);float:left;font-size:3.3em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
-  .opening{justify-content:center;text-align:center}
+  .copy.drop > p:first-child::first-letter{font-family:var(--disp);float:left;font-size:3.3em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
+  .opening{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;text-align:center}
   .opening .folio{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
   .opening h1{font-family:var(--disp);font-weight:400;font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-0.02em;margin-bottom:20px}
   .opening h1 em{font-style:italic;color:var(--accent)}
@@ -72,7 +65,6 @@
   .opening .meta{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:20px}
   .blank{background:var(--page2)}
 
-  /* turn zones + bar + progress + toc (same as before) */
   .zone{position:fixed;top:62px;bottom:84px;width:22%;z-index:20;cursor:pointer}
   .zone.prev{left:0}.zone.next{right:0}
   .zone::after{content:"";position:absolute;top:50%;width:30px;height:30px;border-top:1px solid var(--faint);border-right:1px solid var(--faint);opacity:0;transition:opacity .25s}
@@ -86,11 +78,14 @@
   .progress{position:fixed;left:0;bottom:0;height:2px;background:var(--accent);width:0;z-index:31;transition:width .45s var(--cine)}
   .toc{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px}
   .toc.open{display:flex}
-  .toc-card{background:var(--page);color:var(--text);max-width:420px;width:100%;padding:28px 28px 20px;border-radius:4px;box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+  .toc-card{background:var(--page);color:var(--text);max-width:440px;width:100%;padding:28px 28px 20px;border-radius:4px;box-shadow:0 30px 70px -30px rgba(0,0,0,.7);max-height:80vh;overflow:auto}
   .toc-card h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
   .toc-card button{display:block;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--edge);padding:13px 2px;font-family:var(--disp);font-size:18px;color:var(--text);cursor:pointer;transition:color .2s}
   .toc-card button:hover{color:var(--accent)}
   .toc-card .x{float:right;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  /* hidden measuring page (off-screen) */
+  .measure{position:fixed!important;left:-99999px!important;top:0!important;visibility:hidden!important;pointer-events:none!important}
 
   @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:10px} }
   @media (prefers-reduced-motion: reduce){ .flipping .flip{transition:none} .progress{transition:none} }
@@ -126,45 +121,100 @@
 </div>
 <div class="progress" id="prog"></div>
 
-<div class="toc" id="toc">
-  <div class="toc-card">
-    <h4>Contents <span class="x" id="tocX">close ✕</span></h4>
-    <div id="tocList"></div>
-  </div>
-</div>
+<div class="toc" id="toc"><div class="toc-card"><h4>Contents <span class="x" id="tocX">close ✕</span></h4><div id="tocList"></div></div></div>
 
 <script>
 (function(){
-  /* ── content: flat page list ── */
-  var PAGES=[
-    {title:true, html:'<div class="folio">Folio I · Fiction · 5 min</div><h1>The City <em>After Rain</em></h1><div class="rule"></div><div class="by">Kody Lâm</div><div class="meta">Motif · Rain &nbsp;·&nbsp; turn with the edges, arrows, or a swipe</div>'},
-    {n:1, drop:true, html:'<p>After the rain, the city no longer looked like a city. It looked like something remembering itself — every window a small held breath, every street a sentence the evening had not finished saying.</p><p>She stood under the awning longer than she needed to. The bus had gone; another would come. There was no reason to hurry toward a room that would be exactly as cold as she had left it.</p><p>The neon across the road bled into the wet asphalt, red becoming a softer red — the way a feeling loses its edges if you hold it long enough.</p>'},
-    {n:2, html:'<p>She thought about the message she had not sent. It sat in her chest like a stone smoothed by the same patience that smooths stones: slowly, without anyone watching, until one day it simply fits the hand.</p><p><em>Going home,</em> she thought, <em>is less a return than a kind of surrender.</em> You give yourself back to the rooms that know you, and let them decide who you are tonight.</p><p>A man passed with an umbrella he had forgotten to close, though the rain had stopped. She liked him for it. We all keep carrying the weather a little after it leaves.</p>'},
-    {n:3, html:'<p>When she finally moved, the city moved with her — not following, exactly, but accompanying, the way a held note accompanies the silence it will become.</p><p>At the corner the lights changed. She did not cross. She let the green become red again, and told herself this was patience and not fear, and for once almost believed it.</p><p>Somewhere a kettle; somewhere a television; somewhere two people deciding whether to speak. The ordinary orchestra of a city lowering its voice.</p>'},
-    {n:4, html:'<p>She crossed on the next green. The room would be cold; she would warm it. The message would keep, or it would not. Either way the rain had given her this — a few extra minutes in which she belonged to no one, and to the whole wet, glittering street at once.</p><p>Behind her the awning dripped its last, keeping a slower time.</p><p style="margin-top:1.6em;text-align:center;font-style:italic;color:var(--muted)">— end —</p>'}
+  /* ── story source: title + a flat list of paragraph blocks (authored once) ── */
+  var TITLE = '<div class="copy opening"><div class="folio">Folio I · Fiction · 5 min</div><h1>The City <em>After Rain</em></h1><div class="rule"></div><div class="by">Kody Lâm</div><div class="meta">Motif · Rain &nbsp;·&nbsp; turn with the edges, arrows, or a swipe</div></div>';
+  var BODY = [
+    'After the rain, the city no longer looked like a city. It looked like something remembering itself — every window a small held breath, every street a sentence the evening had not finished saying.',
+    'She stood under the awning longer than she needed to. The bus had gone; another would come. There was no reason to hurry toward a room that would be exactly as cold as she had left it.',
+    'The neon across the road bled into the wet asphalt, red becoming a softer red — the way a feeling loses its edges if you hold it long enough.',
+    'She thought about the message she had not sent. It sat in her chest like a stone smoothed by the same patience that smooths stones: slowly, without anyone watching, until one day it simply fits the hand.',
+    '<em>Going home,</em> she thought, <em>is less a return than a kind of surrender.</em> You give yourself back to the rooms that know you, and let them decide who you are tonight.',
+    'A man passed with an umbrella he had forgotten to close, though the rain had stopped. She liked him for it. We all keep carrying the weather a little after it leaves.',
+    'When she finally moved, the city moved with her — not following, exactly, but accompanying, the way a held note accompanies the silence it will become.',
+    'At the corner the lights changed. She did not cross. She let the green become red again, and told herself this was patience and not fear, and for once almost believed it.',
+    'Somewhere a kettle; somewhere a television; somewhere two people deciding whether to speak. The ordinary orchestra of a city lowering its voice.',
+    'She crossed on the next green. The room would be cold; she would warm it. The message would keep, or it would not. Either way the rain had given her this — a few extra minutes in which she belonged to no one, and to the whole wet, glittering street at once.',
+    'Behind her the awning dripped its last, keeping a slower time.'
   ];
-  function pageHTML(idx){
-    if(idx==null||idx<0||idx>=PAGES.length) return '<div class="blank"></div>';
-    var p=PAGES[idx];
-    if(p.title) return '<div class="copy opening" style="display:flex;flex-direction:column;justify-content:center">'+p.html+'</div>';
-    return '<div class="head"><span>The City After Rain</span><span>I</span></div><div class="copy'+(p.drop?' drop':'')+'">'+p.html+'</div><div class="num">— '+p.n+' —</div>';
-  }
 
+  /* ── elements ── */
   var book=document.getElementById('book'),pL=document.getElementById('pL'),pR=document.getElementById('pR'),
       flip=document.getElementById('flip'),ff=document.getElementById('ff'),fb=document.getElementById('fb'),
       countEl=document.getElementById('count'),prog=document.getElementById('prog'),
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var spreads,i,two,busy=false;
-  function build(){
+  /* hidden measuring page (mirrors a real .pg) */
+  var measure=document.createElement('div'); measure.className='leaf pg measure';
+  measure.innerHTML='<div class="head"><span>x</span><span>x</span></div><div class="copy" id="mcopy"></div><div class="num">— 0 —</div>';
+  document.body.appendChild(measure);
+  var mcopy=measure.querySelector('#mcopy');
+
+  /* split an HTML string into word-tokens, keeping inline tags intact */
+  function tokenize(html){
+    var t=[],buf='',depth=0;
+    for(var i=0;i<html.length;i++){var c=html[i];
+      if(c==='<')depth++; if(c==='>'){depth--;buf+=c;continue;}
+      if(c===' '&&depth===0){ if(buf)t.push(buf); buf=''; } else buf+=c; }
+    if(buf)t.push(buf); return t;
+  }
+  /* auto-paginate BODY into pages that FIT the measured page; never clips text */
+  function paginate(){
+    var availH = mcopy.clientHeight;               // real content height of a page
+    if(availH<60) return [BODY.join('</p><p>')];   // safety (layout not ready)
+    var SAFE = availH - 4;
+    var pages=[], cur='';
+    function fits(html){ mcopy.innerHTML=html; return mcopy.scrollHeight<=SAFE; }
+    BODY.forEach(function(par){
+      var whole='<p>'+par+'</p>';
+      if(fits(cur+whole)){ cur+=whole; return; }
+      if(cur){ pages.push(cur); cur=''; }
+      if(fits(whole)){ cur=whole; return; }
+      // paragraph too tall alone → split by words across pages
+      var toks=tokenize(par), line=[];
+      toks.forEach(function(tk){
+        var trial=line.concat([tk]);
+        if(fits(cur+'<p>'+trial.join(' ')+'</p>')){ line=trial; return; }
+        if(line.length){ pages.push(cur+'<p>'+line.join(' ')+'</p>'); cur=''; line=[tk]; }
+        else { pages.push('<p>'+tk+'</p>'); cur=''; line=[]; }   // single huge word
+      });
+      if(line.length) cur='<p>'+line.join(' ')+'</p>';
+    });
+    if(cur) pages.push(cur);
+    mcopy.innerHTML='';
+    return pages;
+  }
+
+  /* render one page index → HTML (0 = title) */
+  var bodyPages=[];
+  function pageHTML(idx){
+    if(idx==null||idx<0) return '<div class="blank"></div>';
+    if(idx===0) return TITLE;
+    var b=idx-1; if(b>=bodyPages.length) return '<div class="blank"></div>';
+    return '<div class="head"><span>The City After Rain</span><span>I</span></div>'
+         + '<div class="copy'+(b===0?' drop':'')+'">'+bodyPages[b]+'</div>'
+         + '<div class="num">— '+(b+1)+' —</div>';
+  }
+
+  var spreads,i=0,two,busy=false,total=0;
+  function build(keep){
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);
-    if(two){ spreads=[[null,0]]; for(var k=1;k<PAGES.length;k+=2) spreads.push([k, k+1<PAGES.length?k+1:null]); }
-    else   { spreads=PAGES.map(function(_,k){return [null,k];}); }
-    if(i==null) i=0; if(i>=spreads.length) i=spreads.length-1;
-    render();
-    buildTOC();
+    // size the measure page to a real single page
+    var pageW = two ? (book.clientWidth/2) : book.clientWidth;
+    measure.style.width=pageW+'px'; measure.style.height=book.clientHeight+'px';
+    measure.classList.toggle('one',!two);
+    bodyPages = paginate();
+    total = 1 + bodyPages.length;                 // title + body pages
+    if(two){ spreads=[[null,0]]; for(var k=1;k<total;k+=2) spreads.push([k, k+1<total?k+1:null]); }
+    else   { spreads=[]; for(var k2=0;k2<total;k2++) spreads.push([null,k2]); }
+    if(!keep||i==null) i=0;
+    if(i>=spreads.length) i=spreads.length-1;
+    render(); buildTOC();
   }
   function render(){
     pL.innerHTML=pageHTML(spreads[i][0]);
@@ -173,24 +223,20 @@
     prog.style.width=(spreads.length>1?i/(spreads.length-1)*100:0)+'%';
     prevB.disabled=(i===0); nextB.disabled=(i===spreads.length-1);
   }
-
-  function turn(dir){           // dir +1 next, -1 prev
-    if(busy) return;
-    var j=i+dir; if(j<0||j>=spreads.length) return;
+  function turn(dir){
+    if(busy)return; var j=i+dir; if(j<0||j>=spreads.length)return;
     if(reduce){ i=j; render(); return; }
     busy=true;
     if(dir>0){ ff.innerHTML=pageHTML(spreads[i][1]); fb.innerHTML=pageHTML(spreads[j][0]); pR.innerHTML=pageHTML(spreads[j][1]); }
     else     { ff.innerHTML=pageHTML(spreads[j][1]); fb.innerHTML=pageHTML(spreads[i][0]); pL.innerHTML=pageHTML(spreads[j][0]); }
-    flip.classList.add('show');
-    flip.style.transition='none';
-    flip.style.transform = dir>0 ? 'rotateY(0deg)' : 'rotateY(-180deg)';
-    void flip.offsetWidth;                                  // reflow
+    flip.classList.add('show'); flip.style.transition='none';
+    flip.style.transform = dir>0?'rotateY(0deg)':'rotateY(-180deg)';
+    void flip.offsetWidth;
     book.classList.add('flipping');
-    flip.style.transform = dir>0 ? 'rotateY(-180deg)' : 'rotateY(0deg)';
+    flip.style.transform = dir>0?'rotateY(-180deg)':'rotateY(0deg)';
     var end=function(){ flip.removeEventListener('transitionend',end);
       i=j; render(); book.classList.remove('flipping'); flip.classList.remove('show'); flip.style.transition=''; busy=false; };
-    flip.addEventListener('transitionend',end);
-    setTimeout(end,900);                                    // safety
+    flip.addEventListener('transitionend',end); setTimeout(end,900);
   }
   var next=function(){turn(1);}, prev=function(){turn(-1);};
 
@@ -202,26 +248,26 @@
   addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
   addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>46)dx<0?next():prev(); x0=null; },{passive:true});
 
-  /* tools */
   var sizes=['17px','19px','22px'];
-  document.querySelectorAll('#size button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#size button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.documentElement.style.setProperty('--fs',sizes[+b.dataset.s]); }); });
+  document.querySelectorAll('#size button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#size button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.documentElement.style.setProperty('--fs',sizes[+b.dataset.s]); build(true); }); });
   document.querySelectorAll('#theme button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#theme button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.body.className=b.dataset.t; }); });
   var toc=document.getElementById('toc');
   document.getElementById('tocBtn').addEventListener('click',function(){toc.classList.add('open');});
   document.getElementById('tocX').addEventListener('click',function(){toc.classList.remove('open');});
   toc.addEventListener('click',function(e){if(e.target===toc)toc.classList.remove('open');});
+  function gotoPage(pi){ for(var s=0;s<spreads.length;s++){ if(spreads[s][0]===pi||spreads[s][1]===pi){ i=s; render(); break; } } toc.classList.remove('open'); }
   function buildTOC(){
-    var labels=['Title — The City After Rain','Page 1 · the awning','Page 2 · the unsent message','Page 3 · the orchestra','Page 4 · the crossing'];
     var list=document.getElementById('tocList'); list.innerHTML='';
-    labels.forEach(function(lab,pageIdx){
-      var b=document.createElement('button'); b.textContent=lab;
-      b.addEventListener('click',function(){ for(var s=0;s<spreads.length;s++){ if(spreads[s][0]===pageIdx||spreads[s][1]===pageIdx){ i=s; render(); break; } } toc.classList.remove('open'); });
-      list.appendChild(b);
-    });
+    var add=function(lab,pi){ var b=document.createElement('button'); b.textContent=lab; b.addEventListener('click',function(){gotoPage(pi);}); list.appendChild(b); };
+    add('Title page',0);
+    for(var p=1;p<total;p++) add('Page '+p,p);
   }
 
-  var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(build,200); },{passive:true});
+  var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){build(true);},180); },{passive:true});
   build();
+  // re-paginate once webfonts load (metrics change) so nothing overflows
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){build(true);});
+  addEventListener('load',function(){build(true);});
 })();
 </script>
 </body>
