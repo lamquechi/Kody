@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock A · EB Garamond — Kody Lâm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F1E7; --paper-2:#EFE8D8; --ink:#1C1710; --ink-soft:#5C5145; --ink-faint:#9A8C77;
+    --scarlet:#B0432B; --blue:#3C5E72; --teal:#37685A; --gold:#9A7434;
+    --rule:#DBD1BC;
+    --disp:"EB Garamond",Georgia,serif; --body:"EB Garamond",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --cine:cubic-bezier(.2,.7,.2,1); --silk:cubic-bezier(.4,0,.1,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:19px;line-height:1.7;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* ── ink & light canvas (SVG watercolor blooms) ── */
+  .ink-canvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none}
+  .ink-canvas .blooms{animation:drift 60s ease-in-out infinite alternate;transform-origin:center}
+  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(2%,-2%) scale(1.06)}}
+  .light{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+    radial-gradient(60vw 50vh at 80% -5%,rgba(214,150,90,.18),transparent 60%),
+    radial-gradient(50vw 50vh at 5% 100%,rgba(60,94,114,.12),transparent 60%)}
+  .grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .tag{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);background:color-mix(in srgb,var(--paper) 80%,transparent);backdrop-filter:blur(6px);padding:6px 14px;border:1px solid var(--rule);border-radius:100px}
+
+  .wrap{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 40px}
+
+  /* ── hero ── */
+  .hero{min-height:96vh;display:flex;flex-direction:column;justify-content:center;position:relative}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--scarlet);margin-bottom:30px;opacity:0;animation:fade 1.2s ease .2s forwards}
+  h1{font-family:var(--disp);font-weight:500;font-size:clamp(40px,6.4vw,88px);line-height:1.04;letter-spacing:-0.012em;max-width:15ch}
+  h1 .l{display:block;opacity:0;transform:translateY(22px);animation:rise 1.2s var(--cine) forwards}
+  h1 .l:nth-child(1){animation-delay:.35s}
+  h1 .l:nth-child(2){animation-delay:.55s}
+  h1 em{font-style:italic;color:var(--scarlet);position:relative}
+  .ink-underline{display:block;width:min(420px,60%);height:26px;margin-top:6px}
+  .ink-underline path{fill:none;stroke:var(--scarlet);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.7s var(--cine) 1.1s forwards}
+  .lede{margin-top:34px;max-width:520px;font-style:italic;font-size:21px;line-height:1.6;color:var(--ink-soft);opacity:0;animation:fade 1.4s ease 1s forwards}
+  .scroll-cue{position:absolute;bottom:40px;left:0;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);opacity:0;animation:fade 1.4s ease 1.6s forwards}
+  .scroll-cue .l{width:48px;height:1px;background:var(--ink-faint);position:relative;overflow:hidden}
+  .scroll-cue .l::after{content:"";position:absolute;inset:0;background:var(--scarlet);transform:translateX(-100%);animation:sweep 2.8s var(--cine) infinite}
+
+  /* ── interlude (pull-quote) ── */
+  .interlude{min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative}
+  .interlude blockquote{font-family:var(--disp);font-weight:400;font-style:italic;font-size:clamp(26px,3.8vw,50px);line-height:1.28;max-width:20ch;color:var(--ink)}
+  .interlude blockquote em{color:var(--scarlet)}
+  .interlude .cite{margin-top:26px;font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint)}
+  .interlude .brush{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(680px,86%);height:auto;z-index:-1;opacity:.5}
+
+  /* ── index rows ── */
+  .scene{padding:80px 0 90px}
+  .kicker{display:flex;align-items:center;gap:18px;font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--scarlet);margin-bottom:18px}
+  .kicker::before{content:"";width:54px;height:1px;background:var(--scarlet)}
+  .scene h2{font-family:var(--disp);font-weight:500;font-size:clamp(26px,3.6vw,42px);line-height:1.1;margin-bottom:42px;max-width:18ch}
+  .scene h2 em{font-style:italic;color:var(--scarlet)}
+  .row{display:grid;grid-template-columns:60px 1fr auto;gap:26px;align-items:baseline;padding:26px 0;border-top:1px solid var(--rule);transition:padding-left .4s var(--cine)}
+  .row:last-child{border-bottom:1px solid var(--rule)}
+  .row:hover{padding-left:12px}
+  .row .n{font-family:var(--disp);font-style:italic;font-size:30px;color:var(--ink-faint);transition:color .3s}
+  .row:hover .n{color:var(--motif,var(--scarlet))}
+  .row h3{font-family:var(--disp);font-weight:500;font-size:clamp(20px,2.3vw,28px);line-height:1.1;transition:color .3s}
+  .row:hover h3{color:var(--motif,var(--scarlet))}
+  .row p{margin-top:7px;font-style:italic;font-size:16px;color:var(--ink-soft);max-width:540px}
+  .row .meta{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
+  .row .meta b{color:var(--motif,var(--scarlet));font-weight:400}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 1.1s var(--cine),transform 1.1s var(--cine)}
+  .reveal.in{opacity:1;transform:none}
+
+  @keyframes fade{to{opacity:1}}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes sweep{0%{transform:translateX(-100%)}55%{transform:translateX(100%)}100%{transform:translateX(100%)}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}.reveal{opacity:1;transform:none}.ink-underline path{stroke-dashoffset:0}}
+  @media(max-width:640px){.wrap{padding:0 22px}.row{grid-template-columns:40px 1fr}.row .meta{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ink & light -->
+<svg class="ink-canvas" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <filter id="wc" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.010 0.013" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <radialGradient id="bs" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#B0432B" stop-opacity="0.20"/><stop offset="100%" stop-color="#B0432B" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bb" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3C5E72" stop-opacity="0.18"/><stop offset="100%" stop-color="#3C5E72" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#9A7434" stop-opacity="0.16"/><stop offset="100%" stop-color="#9A7434" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g class="blooms" filter="url(#wc)">
+    <ellipse cx="1120" cy="200" rx="360" ry="300" fill="url(#bs)"/>
+    <ellipse cx="220" cy="760" rx="380" ry="320" fill="url(#bb)"/>
+    <ellipse cx="760" cy="480" rx="300" ry="260" fill="url(#bg)"/>
+  </g>
+</svg>
+<div class="light"></div>
+<div class="grain"></div>
+<div class="tag">Mock A · EB Garamond · ink &amp; light</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">A bilingual commonplace · MMXXVI</p>
+    <h1>
+      <span class="l">A small archive of</span>
+      <span class="l"><em>unsent</em> words.</span>
+    </h1>
+    <svg class="ink-underline" viewBox="0 0 420 26" preserveAspectRatio="none" aria-hidden="true">
+      <path pathLength="1" d="M6,17 C90,7 180,21 250,13 S380,8 414,16"/>
+    </svg>
+    <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+    <div class="scroll-cue"><span class="l"></span> Scroll — the room opens</div>
+  </section>
+
+  <section class="interlude">
+    <svg class="brush" viewBox="0 0 680 200" preserveAspectRatio="none" aria-hidden="true">
+      <ellipse cx="340" cy="100" rx="320" ry="80" fill="url(#bs)" filter="url(#wc)"/>
+    </svg>
+    <div>
+      <blockquote class="reveal">"After the rain, the city no longer looked like a city — it looked like something <em>remembering itself</em>."</blockquote>
+      <div class="cite reveal">Folio I · The City After Rain</div>
+    </div>
+  </section>
+
+  <section class="scene">
+    <div class="kicker reveal">The index · seven rooms</div>
+    <h2 class="reveal">Each one a kind of <em>weather</em> — choose the room that matches tonight.</h2>
+
+    <div class="row reveal" style="--motif:var(--blue)">
+      <div class="n">I</div>
+      <div><h3>The City After Rain</h3><p>"It looked like something remembering itself."</p></div>
+      <div class="meta">Fiction<br><b>Rain</b><br>5 min</div>
+    </div>
+    <div class="row reveal" style="--motif:var(--teal)">
+      <div class="n">II</div>
+      <div><h3>Letters to the Reservoir</h3><p>"Memories settle, like water held behind concrete."</p></div>
+      <div class="meta">Short<br><b>Water</b><br>3 min</div>
+    </div>
+    <div class="row reveal" style="--motif:var(--gold)">
+      <div class="n">III</div>
+      <div><h3>In a Room of Small Lights</h3><p>"A different honesty than daylight asks for."</p></div>
+      <div class="meta">Tản văn<br><b>Window</b><br>4 min</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches){ document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in')); return; }
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {threshold:.18, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+  })();
+</script>
+</body>
+</html>
