@@ -117,6 +117,40 @@
     .hero h1 .b{padding-left:4vw}.hero .scribble,.hero .ring{display:none}
     .col-main,.col-margin,footer{padding-left:0;padding-right:0}
   }
+
+  /* ════════════ MOTION ════════════ */
+  .top a{position:relative}
+  .top a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--scarlet);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease,cubic-bezier(.2,.7,.3,1))}
+  .top a:hover::after{transform:scaleX(1)}
+  .ribbon:hover .run{animation-play-state:paused}
+  .entry-row .ln{transition:color .3s, transform .35s}
+  .entry-row:hover .ln{color:var(--scarlet);transform:translateX(3px)}
+  .entry-row::after{content:"✦";position:absolute;left:-3px;top:28px;color:var(--scarlet);font-size:12px;opacity:0;transform:translateX(-8px);transition:opacity .35s,transform .35s}
+  .entry-row:hover::after{opacity:1;transform:translateX(0)}
+  .spine .mk{transition:transform .4s var(--ease,ease)}
+  .spine:hover .mk{transform:translateY(-3px) rotate(-4deg)}
+  .col-margin .stamp-begin{transition:transform .3s var(--ease,ease)}
+  .mnote.warm:hover .stamp-begin{transform:rotate(0deg) scale(1.04)}
+
+  /* soft ink cursor ring (desktop, fine pointer only) */
+  .cursor-ring{position:fixed;top:0;left:0;width:24px;height:24px;border:1px solid var(--scarlet);border-radius:50%;pointer-events:none;z-index:400;transform:translate(-50%,-50%);opacity:0;transition:width .22s var(--ease,ease),height .22s,opacity .35s,background .22s}
+  .cursor-ring.big{width:52px;height:52px;background:rgba(184,71,46,0.05)}
+
+  @media (prefers-reduced-motion: no-preference){
+    /* scroll reveal */
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity 1s var(--ease,cubic-bezier(.2,.7,.3,1)),transform 1s var(--ease,cubic-bezier(.2,.7,.3,1))}
+    .reveal.in{opacity:1;transform:none}
+    /* hero entrance */
+    .hero h1 .a,.hero h1 .b,.hero h1 .c{opacity:0;transform:translateY(46px);animation:wmLineRise 1.15s cubic-bezier(.2,.75,.2,1) forwards}
+    .hero h1 .a{animation-delay:.18s}.hero h1 .b{animation-delay:.36s}.hero h1 .c{animation-delay:.54s}
+    @keyframes wmLineRise{to{opacity:1;transform:none}}
+    .hero .entry,.hero .lede,.hero .scribble{opacity:0;animation:wmFadeUp 1s ease forwards}
+    .hero .entry{animation-delay:.06s}.hero .lede{animation-delay:.72s}.hero .scribble{animation-delay:1.02s}
+    @keyframes wmFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    /* gentle lamp drift in dark */
+    html.night body::after{animation:wmDrift 26s ease-in-out infinite alternate}
+    @keyframes wmDrift{from{transform:translate(0,0)}to{transform:translate(3vw,2vh)}}
+  }
 </style>
 </head>
 <body>
@@ -164,25 +198,25 @@
   <div class="inner">
     <div class="body-grid">
       <div class="col-main">
-        <div class="sec-k">The index · seven pieces</div>
-        <h2 class="sec-h">Each one a kind of <em>weather</em> — choose the room that matches tonight.</h2>
+        <div class="sec-k reveal">The index · seven pieces</div>
+        <h2 class="sec-h reveal">Each one a kind of <em>weather</em> — choose the room that matches tonight.</h2>
 
-        <article class="entry-row">
+        <article class="entry-row reveal">
           <div class="ln">001</div>
           <div><h3>The City After Rain</h3><p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p></div>
           <div class="meta">Fiction<br>5 min<br><span class="lang">EN</span></div>
         </article>
-        <article class="entry-row">
+        <article class="entry-row reveal">
           <div class="ln">002</div>
           <div><h3>Letters to the Reservoir</h3><p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p></div>
           <div class="meta">Short<br>3 min<br><span class="lang">EN</span></div>
         </article>
-        <article class="entry-row">
+        <article class="entry-row reveal">
           <div class="ln">003</div>
           <div><h3>In a Room of Small Lights</h3><p>"A room lit by small lamps asks for a different honesty than daylight does."</p></div>
           <div class="meta">Tản văn<br>4 min<br><span class="lang">EN</span></div>
         </article>
-        <article class="entry-row vi">
+        <article class="entry-row vi reveal">
           <div class="ln">007</div>
           <div><h3 lang="vi">Một Nửa Của Im Lặng</h3><p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p></div>
           <div class="meta">Tản văn<br>4 min<br><span class="lang">VI</span></div>
@@ -190,14 +224,14 @@
       </div>
 
       <aside class="col-margin">
-        <div class="mnote"><span class="ref">on · tản văn</span>A Vietnamese lyric-essay form — prose that behaves like a held breath.</div>
-        <div class="mnote"><span class="ref">on · the room</span>Every piece here is a room. Some are lit; some keep their lamps off on purpose.</div>
-        <div class="mnote"><span class="ref">note to the reader · gửi bạn đọc</span>Read slowly. The margin is yours to write in too.</div>
-        <div class="mnote warm"><span class="ref">⁂ begin</span>Folio I is the doorway.<span class="stamp-begin">Start here →</span></div>
+        <div class="mnote reveal"><span class="ref">on · tản văn</span>A Vietnamese lyric-essay form — prose that behaves like a held breath.</div>
+        <div class="mnote reveal"><span class="ref">on · the room</span>Every piece here is a room. Some are lit; some keep their lamps off on purpose.</div>
+        <div class="mnote reveal"><span class="ref">note to the reader · gửi bạn đọc</span>Read slowly. The margin is yours to write in too.</div>
+        <div class="mnote warm reveal"><span class="ref">⁂ begin</span>Folio I is the doorway.<span class="stamp-begin">Start here →</span></div>
       </aside>
     </div>
 
-    <footer>
+    <footer class="reveal">
       <div>
         <div class="big">Kody Lâm</div>
         <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">Rain · rooms · unsent words</div>
@@ -209,6 +243,7 @@
 </div>
 
 <script>
+  /* ── light / dark toggle ── */
   (function(){
     function setLabel(){
       var night = document.documentElement.classList.contains('night');
@@ -218,6 +253,62 @@
     function toggle(){ document.documentElement.classList.toggle('night'); setLabel(); }
     ['modeToggle','modeToggle2'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('click',toggle); });
     setLabel();
+  })();
+
+  /* ── motion ── */
+  (function(){
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* scroll-reveal with a gentle stagger for sibling rows */
+    var reveals = document.querySelectorAll('.reveal');
+    if (reduce) {
+      reveals.forEach(function(el){ el.classList.add('in'); });
+    } else if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting){
+            var sib = e.target.parentElement ? Array.prototype.indexOf.call(e.target.parentElement.children, e.target) : 0;
+            e.target.style.transitionDelay = Math.min(sib, 5) * 70 + 'ms';
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+      reveals.forEach(function(el){ io.observe(el); });
+    } else {
+      reveals.forEach(function(el){ el.classList.add('in'); });
+    }
+
+    if (reduce) return;
+
+    /* hero parallax + fade as you scroll past it */
+    var hero = document.querySelector('.hero h1');
+    if (hero) {
+      var ticking = false;
+      addEventListener('scroll', function(){
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(function(){
+          var y = window.scrollY || 0;
+          hero.style.transform = 'translateY(' + (y * 0.12).toFixed(1) + 'px)';
+          hero.style.opacity = Math.max(0, 1 - y / 680).toFixed(3);
+          ticking = false;
+        });
+      }, { passive: true });
+    }
+
+    /* soft ink cursor ring — desktop / fine pointer only */
+    if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      var ring = document.createElement('div');
+      ring.className = 'cursor-ring';
+      document.body.appendChild(ring);
+      var rx = innerWidth/2, ry = innerHeight/2, cx = rx, cy = ry, raf;
+      function loop(){ cx += (rx-cx)*0.18; cy += (ry-cy)*0.18; ring.style.left=cx+'px'; ring.style.top=cy+'px'; raf=requestAnimationFrame(loop); }
+      addEventListener('mousemove', function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity = document.documentElement.classList.contains('night') ? '0.6' : '0.45'; if(!raf) loop(); }, { passive:true });
+      addEventListener('mouseleave', function(){ ring.style.opacity='0'; });
+      var hot = 'a,button,.entry-row,.moon,.tg,.spine .mk';
+      document.addEventListener('mouseover', function(e){ if (e.target.closest && e.target.closest(hot)) ring.classList.add('big'); });
+      document.addEventListener('mouseout',  function(e){ if (e.target.closest && e.target.closest(hot)) ring.classList.remove('big'); });
+    }
   })();
 </script>
 </body>
