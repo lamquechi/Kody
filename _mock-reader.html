@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>Mock · Reader (page-flip) — Kody Lâm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ───────── themes (just CSS vars; switch via body class) ───────── */
+  body.day  { --desk:#E7DECB; --page:#F7F2E8; --page2:#F1EADB; --text:#1B160F; --muted:#6B5F4C; --faint:#A89A82; --accent:#B0432B; --edge:#E2D7C1; --spine:rgba(0,0,0,.10); }
+  body.sepia{ --desk:#241D12; --page:#ECDFC0; --page2:#E5D7B4; --text:#2A2317; --muted:#6E5F44; --faint:#9A8A66; --accent:#9A5A2E; --edge:#D8C8A2; --spine:rgba(0,0,0,.14); }
+  body.night{ --desk:#0C0910; --page:#17140D; --page2:#1C180F; --text:#E9DEC8; --muted:#9A8E78; --faint:#6A6050; --accent:#D9714D; --edge:#241E14; --spine:rgba(0,0,0,.5); }
+
+  :root{ --disp:"Newsreader",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --cine:cubic-bezier(.16,1,.3,1); --turn:cubic-bezier(.42,0,.2,1); --fs:19px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--body);background:var(--desk);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden;
+    transition:background .5s ease,color .5s ease;
+    /* faint vignette desk — static */
+    background-image:radial-gradient(120vw 90vh at 50% 50%, transparent 40%, rgba(0,0,0,.16));}
+
+  /* ───────── chrome ───────── */
+  .chrome{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .chrome a,.chrome button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:none;transition:color .2s}
+  .chrome a:hover,.chrome button:hover{color:var(--accent)}
+  .chrome .mid{font-family:var(--disp);font-style:italic;text-transform:none;letter-spacing:.01em;font-size:15px;color:var(--text)}
+  .tools{display:flex;align-items:center;gap:14px}
+  .tools .seg{display:inline-flex;border:1px solid var(--edge);border-radius:100px;overflow:hidden}
+  .tools .seg button{padding:6px 11px;color:var(--muted)}
+  .tools .seg button.on{background:var(--accent);color:var(--page)}
+
+  /* ───────── the book ───────── */
+  .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:64px 18px 86px;perspective:2200px}
+  .book{position:relative;width:min(640px,94vw);height:min(76vh,840px);transform-style:preserve-3d}
+  .book::after{content:"";position:absolute;left:-3%;right:-3%;bottom:-3%;height:34px;background:radial-gradient(60% 100% at 50% 0,rgba(0,0,0,.28),transparent 70%);filter:none;z-index:0}
+
+  .page{position:absolute;inset:0;background:var(--page);color:var(--text);
+    border-radius:3px 6px 6px 3px;
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.5);
+    transform-origin:left center;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    transition:transform .82s var(--turn),box-shadow .82s ease;
+    overflow:hidden;display:flex;flex-direction:column;
+    padding:clamp(30px,5vw,56px) clamp(26px,5vw,52px);
+    /* binding shadow on the spine (left) edge + faint paper tone to the right */
+    background-image:linear-gradient(90deg, var(--spine), transparent 9%),
+                     linear-gradient(270deg, var(--page2), var(--page) 30%);}
+  .page.turned{transform:rotateY(-179deg);pointer-events:none;box-shadow:0 18px 50px -18px rgba(0,0,0,.6)}
+  .page .head{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between;margin-bottom:clamp(20px,4vw,40px)}
+  .page .num{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint)}
+  .page .body{font-size:var(--fs);line-height:1.78;flex:1;overflow:hidden}
+  .page .body p{margin-bottom:1.05em}
+  .page .body p:last-child{margin-bottom:0}
+  .page .body em{font-style:italic}
+  /* opening page (chapter) */
+  .page.opening{justify-content:center;text-align:center}
+  .page.opening .folio{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+  .page.opening h1{font-family:var(--disp);font-weight:400;font-size:clamp(34px,6vw,56px);line-height:1.04;letter-spacing:-0.02em;margin-bottom:22px}
+  .page.opening h1 em{font-style:italic;color:var(--accent)}
+  .page.opening .by{font-family:var(--disp);font-style:italic;font-size:18px;color:var(--muted)}
+  .page.opening .rule{width:64px;height:1px;background:var(--accent);margin:26px auto}
+  .page.opening .meta{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+  .page .drop::first-letter{font-family:var(--disp);float:left;font-size:3.4em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
+
+  /* click zones for turning */
+  .zone{position:fixed;top:64px;bottom:86px;width:24%;z-index:20;cursor:pointer}
+  .zone.prev{left:0}.zone.next{right:0}
+  .zone::after{content:"";position:absolute;top:50%;width:34px;height:34px;border-top:1px solid var(--faint);border-right:1px solid var(--faint);opacity:0;transition:opacity .25s}
+  .zone.next::after{right:22px;transform:translateY(-50%) rotate(45deg)}
+  .zone.prev::after{left:22px;transform:translateY(-50%) rotate(-135deg)}
+  .zone:hover::after{opacity:.5}
+
+  /* footer bar: prev / page x of N / next + progress */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:center;gap:24px;padding:16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .bar button{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;transition:color .2s}
+  .bar button:hover{color:var(--accent)}
+  .bar button[disabled]{opacity:.3;cursor:default}
+  .bar .count{min-width:78px;text-align:center;color:var(--text)}
+  .progress{position:fixed;left:0;bottom:0;height:2px;background:var(--accent);width:0;z-index:31;transition:width .4s var(--cine)}
+
+  /* contents drawer */
+  .toc{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px}
+  .toc.open{display:flex}
+  .toc-card{background:var(--page);color:var(--text);max-width:420px;width:100%;padding:30px 30px 22px;border-radius:4px;box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+  .toc-card h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+  .toc-card button{display:block;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--edge);padding:14px 2px;font-family:var(--disp);font-size:19px;color:var(--text);cursor:pointer;transition:color .2s}
+  .toc-card button:hover{color:var(--accent)}
+  .toc-card .x{float:right;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:10px} }
+  @media (prefers-reduced-motion: reduce){ .page{transition:none} .progress{transition:none} }
+</style>
+</head>
+<body class="day">
+
+<div class="chrome">
+  <a href="#" title="Back">← Library</a>
+  <div class="mid">The City After Rain</div>
+  <div class="tools">
+    <span class="seg" id="size"><button data-s="0">A−</button><button data-s="1" class="on">A</button><button data-s="2">A+</button></span>
+    <span class="seg" id="theme"><button data-t="day" class="on">Day</button><button data-t="sepia">Sepia</button><button data-t="night">Night</button></span>
+    <button id="tocBtn">☰ Contents</button>
+  </div>
+</div>
+
+<div class="zone prev" id="zPrev" aria-label="Previous page"></div>
+<div class="zone next" id="zNext" aria-label="Next page"></div>
+
+<div class="stage">
+  <div class="book" id="book">
+
+    <!-- pages: DOM order top→bottom; JS turns them left -->
+    <div class="page opening">
+      <div class="folio">Folio I · Fiction · 5 min</div>
+      <h1>The City <em>After Rain</em></h1>
+      <div class="rule"></div>
+      <div class="by">Kody Lâm</div>
+      <div class="meta" style="margin-top:24px">Motif · Rain &nbsp;·&nbsp; Tap the right edge to turn</div>
+    </div>
+
+    <div class="page">
+      <div class="head"><span>The City After Rain</span><span>I</span></div>
+      <div class="body drop">
+        <p>After the rain, the city no longer looked like a city. It looked like something remembering itself — every window a small held breath, every street a sentence the evening had not finished saying.</p>
+        <p>She stood under the awning longer than she needed to. The bus had gone; another would come. There was no reason to hurry toward a room that would be exactly as cold as she had left it.</p>
+        <p>The neon across the road bled into the wet asphalt, red becoming a softer red, the way a feeling loses its edges if you hold it long enough.</p>
+      </div>
+      <div class="num">— 1 —</div>
+    </div>
+
+    <div class="page">
+      <div class="head"><span>The City After Rain</span><span>I</span></div>
+      <div class="body">
+        <p>She thought about the message she had not sent. It sat in her chest like a stone smoothed by the same patience that smooths stones — slowly, without anyone watching, until one day it simply fit the hand.</p>
+        <p><em>Going home,</em> she thought, <em>is less a return than a kind of surrender.</em> You give yourself back to the rooms that know you. You let them decide who you are tonight.</p>
+        <p>A man passed with an umbrella he had forgotten to close, though the rain had stopped. She liked him for it. We all keep carrying the weather a little after it leaves.</p>
+      </div>
+      <div class="num">— 2 —</div>
+    </div>
+
+    <div class="page">
+      <div class="head"><span>The City After Rain</span><span>I</span></div>
+      <div class="body">
+        <p>When she finally moved, the city moved with her — not following, exactly, but accompanying, the way a held note accompanies the silence it will become.</p>
+        <p>At the corner the lights changed. She did not cross. She stood and let the green become red again, and told herself this was patience and not fear, and for once almost believed it.</p>
+        <p>Somewhere a kettle, somewhere a television, somewhere two people deciding whether to speak. The ordinary orchestra of a city lowering its voice.</p>
+      </div>
+      <div class="num">— 3 —</div>
+    </div>
+
+    <div class="page">
+      <div class="head"><span>The City After Rain</span><span>I</span></div>
+      <div class="body">
+        <p>She crossed on the next green. The room would be cold; she would warm it. The message would keep, or it would not. Either way the rain had given her this — a few extra minutes in which she belonged to no one and to the whole wet, glittering street at once.</p>
+        <p>Behind her the awning dripped its last, keeping a slower time.</p>
+        <p style="margin-top:2em;text-align:center;font-style:italic;color:var(--muted)">— end —</p>
+      </div>
+      <div class="num">— 4 —</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="bar">
+  <button id="prev">‹ Prev</button>
+  <span class="count" id="count">1 / 5</span>
+  <button id="next">Next ›</button>
+</div>
+<div class="progress" id="prog"></div>
+
+<div class="toc" id="toc">
+  <div class="toc-card">
+    <h4>Contents <span class="x" id="tocX">close ✕</span></h4>
+    <button data-go="0">Title — The City After Rain</button>
+    <button data-go="1">Page 1 · the awning</button>
+    <button data-go="2">Page 2 · the unsent message</button>
+    <button data-go="3">Page 3 · the orchestra</button>
+    <button data-go="4">Page 4 · the crossing</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var book=document.getElementById('book');
+  var pages=[].slice.call(book.querySelectorAll('.page'));
+  var N=pages.length;
+  // page i sits above page i+1
+  pages.forEach(function(p,i){ p.style.zIndex=(N-i); });
+  var cur=0;
+  var count=document.getElementById('count'), prog=document.getElementById('prog');
+  var prev=document.getElementById('prev'), next=document.getElementById('next');
+
+  function render(){
+    for(var i=0;i<N;i++){ pages[i].classList.toggle('turned', i<cur); }
+    count.textContent=(cur+1)+' / '+N;
+    prog.style.width=(N>1?(cur/(N-1)*100):0)+'%';
+    prev.disabled=(cur===0); next.disabled=(cur===N-1);
+  }
+  function go(i){ cur=Math.max(0,Math.min(N-1,i)); render(); }
+  function turnNext(){ if(cur<N-1) go(cur+1); }
+  function turnPrev(){ if(cur>0) go(cur-1); }
+
+  next.addEventListener('click',turnNext);
+  prev.addEventListener('click',turnPrev);
+  document.getElementById('zNext').addEventListener('click',turnNext);
+  document.getElementById('zPrev').addEventListener('click',turnPrev);
+  addEventListener('keydown',function(e){ if(e.key==='ArrowRight'||e.key===' ')turnNext(); else if(e.key==='ArrowLeft')turnPrev(); });
+
+  // swipe
+  var x0=null;
+  addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
+  addEventListener('touchend',function(e){ if(x0==null)return; var dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>46){ dx<0?turnNext():turnPrev(); } x0=null; },{passive:true});
+
+  // font size
+  var sizes=['17px','19px','22px'];
+  document.querySelectorAll('#size button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#size button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); document.documentElement.style.setProperty('--fs',sizes[+b.dataset.s]);
+    });
+  });
+  // theme
+  document.querySelectorAll('#theme button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#theme button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); document.body.className=b.dataset.t;
+    });
+  });
+  // contents
+  var toc=document.getElementById('toc');
+  document.getElementById('tocBtn').addEventListener('click',function(){toc.classList.add('open');});
+  document.getElementById('tocX').addEventListener('click',function(){toc.classList.remove('open');});
+  toc.addEventListener('click',function(e){ if(e.target===toc) toc.classList.remove('open'); });
+  document.querySelectorAll('#toc [data-go]').forEach(function(b){
+    b.addEventListener('click',function(){ go(+b.dataset.go); toc.classList.remove('open'); });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
