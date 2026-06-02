@@ -53,7 +53,7 @@
 
   .head{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between;margin-bottom:clamp(16px,2.6vw,30px);flex:0 0 auto}
   .num{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint);flex:0 0 auto;padding-top:12px}
-  .copy{font-size:var(--fs);line-height:var(--lh);flex:1 1 auto;overflow:hidden}
+  .copy{font-size:var(--fs);line-height:var(--lh);flex:1 1 auto;min-height:0;overflow:hidden}
   .copy p{margin-bottom:1.02em}.copy p:last-child{margin-bottom:0}.copy em{font-style:italic}
   .copy.drop > p:first-child::first-letter{font-family:var(--disp);float:left;font-size:3.3em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
   .opening{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;text-align:center}
@@ -164,9 +164,12 @@
   }
   /* auto-paginate BODY into pages that FIT the measured page; never clips text */
   function paginate(){
-    var availH = mcopy.clientHeight;               // real content height of a page
-    if(availH<60) return [BODY.join('</p><p>')];   // safety (layout not ready)
-    var SAFE = availH - 4;
+    var cs=getComputedStyle(mcopy);
+    var lh=parseFloat(cs.lineHeight); if(!lh) lh=(parseFloat(cs.fontSize)||19)*1.78;
+    mcopy.innerHTML='';
+    var availH = mcopy.clientHeight;               // bounded available height (min-height:0)
+    if(availH<60) return [BODY.join('</p><p>')];   // layout not ready
+    var SAFE = availH - lh;                         // keep ~1 full line of slack → never clips
     var pages=[], cur='';
     function fits(html){ mcopy.innerHTML=html; return mcopy.scrollHeight<=SAFE; }
     BODY.forEach(function(par){
