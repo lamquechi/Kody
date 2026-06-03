@@ -70,15 +70,27 @@
   body.dark .theme-icon-moon{display:inline}
 
   /* ════ HERO ════ */
-  .hero{position:relative;padding:54px 0 64px}
+  .hero{position:relative;min-height:84vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+  .hero .entry,.hero h1,.hero .lede{position:relative;z-index:2}
+  /* portrait plate on the right — empty background blends left under the text;
+     ADD YOUR PHOTO: set  --portrait:url('me.jpg')  on .hero-photo and remove the
+     "is-empty" class (compose the photo with you on the right, plain bg on the left). */
+  .hero-photo{position:absolute;top:6%;bottom:6%;right:0;width:min(560px,48%);z-index:0;border-radius:2px;overflow:hidden;
+    background:var(--portrait, transparent) right center/cover no-repeat}
+  .hero-photo::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(90deg, var(--paper) 0%, transparent 50%), linear-gradient(0deg, var(--paper), transparent 16%), linear-gradient(180deg, var(--paper), transparent 12%)}
+  .hero-photo.is-empty{background:linear-gradient(155deg, var(--paper-2), var(--paper-3));border:1px dashed var(--rule)}
+  .hero-photo .ph-cap{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:20px;z-index:1;font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-faint);line-height:1.9}
+  .hero-photo.is-empty .ph-cap{display:flex}
+  .hero-photo .ph-cap .frame{font-family:var(--disp);font-style:italic;font-size:30px;color:var(--ink-faint);opacity:.6}
   .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--scarlet);margin-bottom:26px}
   .hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:1.02;letter-spacing:-0.025em;font-optical-sizing:auto;max-width:15ch}
   .hero h1 .l{display:block}
   .hero h1 .ink{position:relative;font-style:italic;font-weight:400;color:var(--scarlet);white-space:nowrap}
   .hero h1 .ink .uline{position:absolute;left:-2%;right:-2%;bottom:-0.16em;width:104%;height:0.3em;overflow:visible;pointer-events:none}
   .hero h1 .ink .uline path{fill:none;stroke:var(--scarlet);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
-  .hero .lede{margin:34px 0 0 auto;max-width:560px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:21px;line-height:1.55;color:var(--ink-soft)}
-  .hero .scribble{position:absolute;left:2%;bottom:6%;max-width:190px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.45;color:var(--green);padding-left:16px;border-left:1px solid var(--green);transform:rotate(-2deg)}
+  .hero .lede{margin:30px 0 0;max-width:480px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:21px;line-height:1.55;color:var(--ink-soft)}
+  .hero .scribble{position:absolute;left:0;bottom:4%;max-width:190px;z-index:2;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.45;color:var(--green);padding-left:16px;border-left:1px solid var(--green);transform:rotate(-2deg)}
 
   /* ════ MOTIF RIBBON ════ */
   .ribbon{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:20px 0;white-space:nowrap;position:relative;transition:background .5s,border-color .5s}
@@ -142,7 +154,9 @@
     .col-main{padding:40px 0;border-right:none}
     .col-margin{padding:0 0 28px;border-top:1px solid var(--rule)}
     .entry-row{grid-template-columns:40px 1fr}.entry-row .meta{grid-column:2;text-align:left;margin-top:6px}
+    .hero{min-height:auto;padding:36px 0 48px}
     .hero .scribble{display:none}
+    .hero-photo{position:relative;width:100%;height:280px;top:0;bottom:0;margin:30px 0 0}
     .col-main,.col-margin,footer{padding-left:0;padding-right:0}
   }
 
@@ -163,7 +177,8 @@
     .reveal.in{opacity:1;transform:none;filter:blur(0)}
     .hero h1 .l{opacity:0;transform:translateY(42px)}
     .hero h1 .ink .uline path{stroke-dashoffset:1}
-    .hero .entry,.hero .lede,.hero .scribble{opacity:0}
+    .hero .entry,.hero .lede,.hero .scribble,.hero-photo{opacity:0}
+    body.revealed .hero-photo{animation:wmFadeUp 1.5s ease .35s forwards}
     body.revealed .hero h1 .l{animation:wmLineRise 1.3s cubic-bezier(.2,.75,.2,1) forwards}
     body.revealed .hero h1 .l:nth-child(1){animation-delay:.1s}body.revealed .hero h1 .l:nth-child(2){animation-delay:.3s}
     @keyframes wmLineRise{to{opacity:1;transform:none}}
@@ -212,7 +227,7 @@
 <aside class="spine">
   <a href="index.html" class="mk" title="Home">K</a>
   <div class="vert">Kody Lâm · Commonplace</div>
-  <div class="stamp">立</div>
+  <div class="stamp">✦</div>
 </aside>
 
 <div class="wrap">
@@ -225,6 +240,10 @@
   <div class="inner">
     <!-- HERO -->
     <section class="hero">
+      <!-- Portrait plate (right). Add your photo: set --portrait:url('me.jpg') and drop the "is-empty" class. -->
+      <div class="hero-photo is-empty" id="heroPhoto" aria-hidden="true">
+        <span class="ph-cap"><span class="frame">⌑</span>Portrait<br>your photo here</span>
+      </div>
       <div class="entry">— Entry · a bilingual commonplace · MMXXVI</div>
       <h1>
         <span class="l">A small archive of</span>
