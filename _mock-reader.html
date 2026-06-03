@@ -148,14 +148,7 @@
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* hidden measuring page — a real .leaf.right placed INSIDE the book so it
-     inherits the exact page geometry (width / height / padding) in either the
-     1-page or 2-page layout. This makes the height measurement reliable. */
-  var gauge=document.createElement('div'); gauge.className='leaf right pg';
-  gauge.style.cssText='visibility:hidden;pointer-events:none;z-index:-2';
-  gauge.innerHTML='<div class="head"><span>The City After Rain</span><span>I</span></div><div class="copy" id="mcopy"></div><div class="num">— 0 —</div>';
-  book.appendChild(gauge);
-  var mcopy=gauge.querySelector('#mcopy');
+  /* (pagination measures inside the REAL right page pR — see paginate()) */
 
   /* split an HTML string into word-tokens, keeping inline tags intact */
   function tokenize(html){
@@ -165,16 +158,21 @@
       if(c===' '&&depth===0){ if(buf)t.push(buf); buf=''; } else buf+=c; }
     if(buf)t.push(buf); return t;
   }
-  /* auto-paginate BODY into pages that FIT the measured page; never clips text */
+  /* auto-paginate BODY into pages that FIT the page; never clips text.
+     We measure INSIDE the real right page (pR) — the element that actually
+     renders — so its width/height/padding are guaranteed correct for the
+     current 1- or 2-page layout. */
   function paginate(){
-    var cs=getComputedStyle(mcopy);
-    var lh=parseFloat(cs.lineHeight); if(!lh) lh=(parseFloat(cs.fontSize)||19)*1.78;
-    mcopy.innerHTML='';
-    var availH = mcopy.clientHeight;                        // exact available height (gauge = a real page)
-    if(!availH || availH < 120) availH = Math.max(220, (book.clientHeight||600) - 170); // fallback: never explode into 1-word pages
-    var SAFE = Math.max(availH - lh, availH * 0.6);         // ~1 line of slack, but never less than 60% of the page
+    var keep = pR.innerHTML;
+    pR.innerHTML = '<div class="head"><span>The City After Rain</span><span>I</span></div><div class="copy" id="__gauge"></div><div class="num">— 0 —</div>';
+    var mc = pR.querySelector('#__gauge');
+    var cs = getComputedStyle(mc);
+    var lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize)||19)*1.78;
+    var availH = mc.clientHeight;
+    if(!availH || availH < 120){ pR.innerHTML = keep; return [BODY.join('</p><p>')]; }
+    var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
     var pages=[], cur='';
-    function fits(html){ mcopy.innerHTML=html; return mcopy.scrollHeight<=SAFE; }
+    function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
     BODY.forEach(function(par){
       var whole='<p>'+par+'</p>';
       if(fits(cur+whole)){ cur+=whole; return; }
@@ -191,7 +189,7 @@
       if(line.length) cur='<p>'+line.join(' ')+'</p>';
     });
     if(cur) pages.push(cur);
-    mcopy.innerHTML='';
+    pR.innerHTML = keep;
     return pages;
   }
 
