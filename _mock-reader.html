@@ -147,6 +147,7 @@
       countEl=document.getElementById('count'),prog=document.getElementById('prog'),
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var BUILD='ARITH-7';   /* shown in the footer so we can confirm the cache is fresh */
 
   /* (pagination measures inside the REAL right page pR — see paginate()) */
 
@@ -177,6 +178,7 @@
     if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
     mc.style.flex='none'; mc.style.height=availH+'px'; mc.style.overflow='hidden';  // bound the box exactly
     var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
+    lastAvail = Math.round(availH); lastLH = Math.round(lh);   // (debug readout)
     var pages=[], cur='';
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
     BODY.forEach(function(par){
@@ -210,7 +212,7 @@
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
-  var spreads,i=0,two,busy=false,total=0;
+  var spreads,i=0,two,busy=false,total=0,lastAvail=0,lastLH=0;
   function build(keep){
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);   // gauge lives inside .book → auto-sizes to a real page
@@ -225,7 +227,7 @@
   function render(){
     pL.innerHTML=pageHTML(spreads[i][0]);
     pR.innerHTML=pageHTML(spreads[i][1]);
-    countEl.textContent=(i+1)+' / '+spreads.length;
+    countEl.textContent=(i+1)+' / '+spreads.length+'  ·  measured h='+lastAvail+'px lh='+lastLH+' (build '+BUILD+')';
     prog.style.width=(spreads.length>1?i/(spreads.length-1)*100:0)+'%';
     prevB.disabled=(i===0); nextB.disabled=(i===spreads.length-1);
   }
