@@ -165,11 +165,17 @@
   function paginate(){
     var keep = pR.innerHTML;
     pR.innerHTML = '<div class="head"><span>The City After Rain</span><span>I</span></div><div class="copy" id="__gauge"></div><div class="num">— 0 —</div>';
-    var mc = pR.querySelector('#__gauge');
-    var cs = getComputedStyle(mc);
-    var lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize)||19)*1.78;
-    var availH = mc.clientHeight;
-    if(!availH || availH < 120){ pR.innerHTML = keep; return [BODY.join('</p><p>')]; }
+    var mc = pR.querySelector('#__gauge'), headEl = pR.querySelector('.head'), numEl = pR.querySelector('.num');
+    var csPg = getComputedStyle(pR), csMc = getComputedStyle(mc);
+    var lh = parseFloat(csMc.lineHeight) || (parseFloat(csMc.fontSize)||19)*1.78;
+    // available copy height = page content box − running head − page number,
+    // computed arithmetically (does NOT rely on the flex item resolving its height)
+    var contentH = pR.clientHeight - (parseFloat(csPg.paddingTop)||0) - (parseFloat(csPg.paddingBottom)||0);
+    var headH = headEl.offsetHeight + (parseFloat(getComputedStyle(headEl).marginBottom)||0);
+    var numH  = numEl.offsetHeight;
+    var availH = contentH - headH - numH;
+    if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
+    mc.style.flex='none'; mc.style.height=availH+'px'; mc.style.overflow='hidden';  // bound the box exactly
     var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
     var pages=[], cur='';
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
