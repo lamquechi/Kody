@@ -80,8 +80,13 @@
   .toc.open{display:flex}
   .toc-card{background:var(--page);color:var(--text);max-width:440px;width:100%;padding:28px 28px 20px;border-radius:4px;box-shadow:0 30px 70px -30px rgba(0,0,0,.7);max-height:80vh;overflow:auto}
   .toc-card h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-  .toc-card button{display:block;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--edge);padding:13px 2px;font-family:var(--disp);font-size:18px;color:var(--text);cursor:pointer;transition:color .2s}
-  .toc-card button:hover{color:var(--accent)}
+  .toc-card .lead{font-family:var(--disp);font-style:italic;font-size:14px;color:var(--muted);margin-bottom:6px}
+  .toc-card button{display:flex;justify-content:space-between;align-items:baseline;gap:14px;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--edge);padding:13px 2px;cursor:pointer;transition:color .2s}
+  .toc-card button .t{font-family:var(--disp);font-size:18px;color:var(--text);transition:color .2s}
+  .toc-card button .m{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+  .toc-card button:hover .t{color:var(--accent)}
+  .toc-card button.cur .t{color:var(--accent);font-style:italic}
+  .toc-card button.cur .m{color:var(--accent)}
   .toc-card .x{float:right;font-family:var(--mono);font-size:11px;color:var(--muted)}
 
   /* hidden measuring page (off-screen) */
@@ -264,11 +269,31 @@
   document.getElementById('tocX').addEventListener('click',function(){toc.classList.remove('open');});
   toc.addEventListener('click',function(e){if(e.target===toc)toc.classList.remove('open');});
   function gotoPage(pi){ for(var s=0;s<spreads.length;s++){ if(spreads[s][0]===pi||spreads[s][1]===pi){ i=s; render(); break; } } toc.classList.remove('open'); }
+  /* Contents = the collection's table of contents (jump between pieces).
+     The piece you're reading is marked; the others would open in the reader. */
+  var PIECES=[
+    {id:'the-city-after-rain',               t:'The City After Rain',               m:'Fiction · 5 min', cur:true},
+    {id:'letters-to-the-reservoir',          t:'Letters to the Reservoir',          m:'Short · 3 min'},
+    {id:'in-a-room-of-small-lights',         t:'In a Room of Small Lights',         m:'Tản văn · 4 min'},
+    {id:'mirror-city-notes',                 t:'Mirror City Notes',                 m:'Tản văn · 4 min'},
+    {id:'the-language-of-unfinished-things', t:'The Language of Unfinished Things', m:'Short · 3 min'},
+    {id:'saigon-after-eleven',               t:'Saigon After Eleven',               m:'Fiction · 5 min'},
+    {id:'mot-nua-cua-im-lang',               t:'Một Nửa Của Im Lặng',               m:'Tản văn · 4 min'}
+  ];
   function buildTOC(){
     var list=document.getElementById('tocList'); list.innerHTML='';
-    var add=function(lab,pi){ var b=document.createElement('button'); b.textContent=lab; b.addEventListener('click',function(){gotoPage(pi);}); list.appendChild(b); };
-    add('Title page',0);
-    for(var p=1;p<total;p++) add('Page '+p,p);
+    var lead=document.createElement('div'); lead.className='lead'; lead.textContent='Seven pieces · a bilingual commonplace';
+    list.appendChild(lead);
+    PIECES.forEach(function(p,idx){
+      var b=document.createElement('button');
+      b.innerHTML='<span class="t">'+(idx+1)+'.&nbsp; '+p.t+'</span><span class="m">'+p.m+(p.cur?' · reading':'')+'</span>';
+      if(p.cur) b.className='cur';
+      b.addEventListener('click',function(){
+        if(p.cur){ gotoPage(0); }                                  // jump to this piece's title page
+        else { window.location.href='reader.html?id='+p.id; }      // open another piece in the reader
+      });
+      list.appendChild(b);
+    });
   }
 
   var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){build(true);},180); },{passive:true});
