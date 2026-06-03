@@ -147,7 +147,7 @@
       countEl=document.getElementById('count'),prog=document.getElementById('prog'),
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var BUILD='PROBE-8';   /* shown in the footer so we can confirm the cache is fresh */
+  var BUILD='FIX-9';   /* shown in the footer so we can confirm the cache is fresh */
 
   /* (pagination measures inside the REAL right page pR — see paginate()) */
 
@@ -176,7 +176,7 @@
     var numH  = numEl.offsetHeight;
     var availH = contentH - headH - numH;
     if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
-    mc.style.flex='none'; mc.style.height=availH+'px'; mc.style.overflow='hidden';  // bound the box exactly
+    mc.style.flex='none'; mc.style.height='auto'; mc.style.minHeight='0'; mc.style.overflow='visible';  // grow to content so scrollHeight == real text height (NOT floored at the box height)
     var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
     var pages=[], cur='';
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
