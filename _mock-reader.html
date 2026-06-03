@@ -147,7 +147,6 @@
       countEl=document.getElementById('count'),prog=document.getElementById('prog'),
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var BUILD='FIX-9';   /* shown in the footer so we can confirm the cache is fresh */
 
   /* (pagination measures inside the REAL right page pR — see paginate()) */
 
@@ -177,27 +176,25 @@
     var availH = contentH - headH - numH;
     if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
     mc.style.flex='none'; mc.style.height='auto'; mc.style.minHeight='0'; mc.style.overflow='visible';  // grow to content so scrollHeight == real text height (NOT floored at the box height)
-    var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
+    var SAFE = availH - 4;                                  // fill the page; tiny rounding margin
     var pages=[], cur='';
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
-    /* ---- debug probe: what does the browser actually measure? ---- */
-    mc.innerHTML='<p>test</p>'; var _w=mc.clientWidth, _ch=mc.clientHeight, _sh1=mc.scrollHeight;
-    mc.innerHTML='<p>'+BODY[0]+'</p>'; var _shP=mc.scrollHeight; mc.innerHTML='';
-    DBG='w'+_w+' ch'+_ch+' lh'+Math.round(lh)+' SAFE'+Math.round(SAFE)+' shWord'+_sh1+' shPara'+_shP;
+    function frag(w,a,b){ return '<p>'+w.slice(a,b+1).join(' ')+'</p>'; }
+    /* continuous flow (real book): fill each page edge-to-edge, splitting a
+       paragraph across the page break when it doesn't fully fit */
     BODY.forEach(function(par){
-      var whole='<p>'+par+'</p>';
-      if(fits(cur+whole)){ cur+=whole; return; }
-      if(cur){ pages.push(cur); cur=''; }
-      if(fits(whole)){ cur=whole; return; }
-      // paragraph too tall alone → split by words across pages
-      var toks=tokenize(par), line=[];
-      toks.forEach(function(tk){
-        var trial=line.concat([tk]);
-        if(fits(cur+'<p>'+trial.join(' ')+'</p>')){ line=trial; return; }
-        if(line.length){ pages.push(cur+'<p>'+line.join(' ')+'</p>'); cur=''; line=[tk]; }
-        else { pages.push('<p>'+tk+'</p>'); cur=''; line=[]; }   // single huge word
-      });
-      if(line.length) cur='<p>'+line.join(' ')+'</p>';
+      var w = tokenize(par), start = 0;
+      while(start < w.length){
+        if(!fits(cur + frag(w,start,start))){              // not even one more word fits here
+          if(cur){ pages.push(cur); cur=''; continue; }    // → flush this page, retry on a fresh one
+          pages.push(frag(w,start,start)); start++; continue;  // (degenerate: 1 word taller than a page)
+        }
+        var lo=start, hi=w.length-1, ans=start;            // binary-search the most words that fit
+        while(lo<=hi){ var mid=(lo+hi)>>1; if(fits(cur+frag(w,start,mid))){ ans=mid; lo=mid+1; } else hi=mid-1; }
+        cur += frag(w,start,ans);
+        start = ans+1;
+        if(start < w.length){ pages.push(cur); cur=''; }   // page is full; the paragraph continues overleaf
+      }
     });
     if(cur) pages.push(cur);
     pR.innerHTML = keep;
@@ -215,7 +212,7 @@
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
-  var spreads,i=0,two,busy=false,total=0,DBG='';
+  var spreads,i=0,two,busy=false,total=0;
   function build(keep){
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);   // gauge lives inside .book → auto-sizes to a real page
@@ -230,7 +227,7 @@
   function render(){
     pL.innerHTML=pageHTML(spreads[i][0]);
     pR.innerHTML=pageHTML(spreads[i][1]);
-    countEl.textContent=(i+1)+'/'+spreads.length+' · '+DBG+' · '+BUILD;
+    countEl.textContent=(i+1)+' / '+spreads.length;
     prog.style.width=(spreads.length>1?i/(spreads.length-1)*100:0)+'%';
     prevB.disabled=(i===0); nextB.disabled=(i===spreads.length-1);
   }
