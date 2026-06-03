@@ -55,7 +55,11 @@
   .num{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint);flex:0 0 auto;padding-top:12px}
   .copy{font-size:var(--fs);line-height:var(--lh);flex:1 1 auto;min-height:0;overflow:hidden}
   .copy p{margin-bottom:1.02em}.copy p:last-child{margin-bottom:0}.copy em{font-style:italic}
-  .copy.drop > p:first-child::first-letter{font-family:var(--disp);float:left;font-size:3.3em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
+  /* chapter opener (only on a chapter's first page) + its drop-cap */
+  .copy .chap{margin-bottom:clamp(18px,2.6vw,30px)}
+  .copy .chap .cnum{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .copy .chap .ctitle{font-family:var(--disp);font-weight:400;font-size:clamp(21px,2.5vw,28px);line-height:1.08;color:var(--text)}
+  .copy .chap + p::first-letter{font-family:var(--disp);float:left;font-size:3.2em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
   .opening{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;text-align:center}
   .opening .folio{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
   .opening h1{font-family:var(--disp);font-weight:400;font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-0.02em;margin-bottom:20px}
@@ -130,20 +134,26 @@
 
 <script>
 (function(){
-  /* ── story source: title + a flat list of paragraph blocks (authored once) ── */
+  /* ── story source: a title page + the story's CHAPTERS (each = paragraphs) ── */
   var TITLE = '<div class="copy opening"><div class="folio">Folio I · Fiction · 5 min</div><h1>The City <em>After Rain</em></h1><div class="rule"></div><div class="by">Kody Lâm</div><div class="meta">Motif · Rain &nbsp;·&nbsp; turn with the edges, arrows, or a swipe</div></div>';
-  var BODY = [
-    'After the rain, the city no longer looked like a city. It looked like something remembering itself — every window a small held breath, every street a sentence the evening had not finished saying.',
-    'She stood under the awning longer than she needed to. The bus had gone; another would come. There was no reason to hurry toward a room that would be exactly as cold as she had left it.',
-    'The neon across the road bled into the wet asphalt, red becoming a softer red — the way a feeling loses its edges if you hold it long enough.',
-    'She thought about the message she had not sent. It sat in her chest like a stone smoothed by the same patience that smooths stones: slowly, without anyone watching, until one day it simply fits the hand.',
-    '<em>Going home,</em> she thought, <em>is less a return than a kind of surrender.</em> You give yourself back to the rooms that know you, and let them decide who you are tonight.',
-    'A man passed with an umbrella he had forgotten to close, though the rain had stopped. She liked him for it. We all keep carrying the weather a little after it leaves.',
-    'When she finally moved, the city moved with her — not following, exactly, but accompanying, the way a held note accompanies the silence it will become.',
-    'At the corner the lights changed. She did not cross. She let the green become red again, and told herself this was patience and not fear, and for once almost believed it.',
-    'Somewhere a kettle; somewhere a television; somewhere two people deciding whether to speak. The ordinary orchestra of a city lowering its voice.',
-    'She crossed on the next green. The room would be cold; she would warm it. The message would keep, or it would not. Either way the rain had given her this — a few extra minutes in which she belonged to no one, and to the whole wet, glittering street at once.',
-    'Behind her the awning dripped its last, keeping a slower time.'
+  var CHAPTERS = [
+    { num:'I', title:'The Awning', paras:[
+      'After the rain, the city no longer looked like a city. It looked like something remembering itself — every window a small held breath, every street a sentence the evening had not finished saying.',
+      'She stood under the awning longer than she needed to. The bus had gone; another would come. There was no reason to hurry toward a room that would be exactly as cold as she had left it.',
+      'The neon across the road bled into the wet asphalt, red becoming a softer red — the way a feeling loses its edges if you hold it long enough.'
+    ]},
+    { num:'II', title:'The Unsent Message', paras:[
+      'She thought about the message she had not sent. It sat in her chest like a stone smoothed by the same patience that smooths stones: slowly, without anyone watching, until one day it simply fits the hand.',
+      '<em>Going home,</em> she thought, <em>is less a return than a kind of surrender.</em> You give yourself back to the rooms that know you, and let them decide who you are tonight.',
+      'A man passed with an umbrella he had forgotten to close, though the rain had stopped. She liked him for it. We all keep carrying the weather a little after it leaves.'
+    ]},
+    { num:'III', title:'The Crossing', paras:[
+      'When she finally moved, the city moved with her — not following, exactly, but accompanying, the way a held note accompanies the silence it will become.',
+      'At the corner the lights changed. She did not cross. She let the green become red again, and told herself this was patience and not fear, and for once almost believed it.',
+      'Somewhere a kettle; somewhere a television; somewhere two people deciding whether to speak. The ordinary orchestra of a city lowering its voice.',
+      'She crossed on the next green. The room would be cold; she would warm it. The message would keep, or it would not. Either way the rain had given her this — a few extra minutes in which she belonged to no one, and to the whole wet, glittering street at once.',
+      'Behind her the awning dripped its last, keeping a slower time.'
+    ]}
   ];
 
   /* ── elements ── */
@@ -163,7 +173,7 @@
       if(c===' '&&depth===0){ if(buf)t.push(buf); buf=''; } else buf+=c; }
     if(buf)t.push(buf); return t;
   }
-  /* auto-paginate BODY into pages that FIT the page; never clips text.
+  /* auto-paginate the story into pages that FIT the page; never clips text.
      We measure INSIDE the real right page (pR) — the element that actually
      renders — so its width/height/padding are guaranteed correct for the
      current 1- or 2-page layout. */
@@ -182,38 +192,45 @@
     if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
     mc.style.flex='none'; mc.style.height='auto'; mc.style.minHeight='0'; mc.style.overflow='visible';  // grow to content so scrollHeight == real text height (NOT floored at the box height)
     var SAFE = availH - 4;                                  // fill the page; tiny rounding margin
-    var pages=[], cur='';
+    var pages=[], cur='', marks=[];
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
     function frag(w,a,b){ return '<p>'+w.slice(a,b+1).join(' ')+'</p>'; }
-    /* continuous flow (real book): fill each page edge-to-edge, splitting a
-       paragraph across the page break when it doesn't fully fit */
-    BODY.forEach(function(par){
-      var w = tokenize(par), start = 0;
-      while(start < w.length){
-        if(!fits(cur + frag(w,start,start))){              // not even one more word fits here
-          if(cur){ pages.push(cur); cur=''; continue; }    // → flush this page, retry on a fresh one
-          pages.push(frag(w,start,start)); start++; continue;  // (degenerate: 1 word taller than a page)
+    /* Each chapter starts on a fresh page; remember the page it begins on.
+       Within a chapter, text flows and fills each page edge-to-edge,
+       splitting a paragraph across the page break when it doesn't fully fit. */
+    CHAPTERS.forEach(function(ch){
+      if(cur){ pages.push(cur); cur=''; }                         // chapter → new page
+      marks.push({ num:ch.num, title:ch.title, page: pages.length+1 });   // 1-based body page it starts on
+      cur += '<div class="chap"><span class="cnum">Chapter '+ch.num+'</span><span class="ctitle">'+ch.title+'</span></div>';
+      ch.paras.forEach(function(par){
+        var w = tokenize(par), start = 0;
+        while(start < w.length){
+          if(!fits(cur + frag(w,start,start))){
+            if(cur){ pages.push(cur); cur=''; continue; }
+            pages.push(frag(w,start,start)); start++; continue;
+          }
+          var lo=start, hi=w.length-1, ans=start;
+          while(lo<=hi){ var mid=(lo+hi)>>1; if(fits(cur+frag(w,start,mid))){ ans=mid; lo=mid+1; } else hi=mid-1; }
+          cur += frag(w,start,ans);
+          start = ans+1;
+          if(start < w.length){ pages.push(cur); cur=''; }
         }
-        var lo=start, hi=w.length-1, ans=start;            // binary-search the most words that fit
-        while(lo<=hi){ var mid=(lo+hi)>>1; if(fits(cur+frag(w,start,mid))){ ans=mid; lo=mid+1; } else hi=mid-1; }
-        cur += frag(w,start,ans);
-        start = ans+1;
-        if(start < w.length){ pages.push(cur); cur=''; }   // page is full; the paragraph continues overleaf
-      }
+      });
     });
     if(cur) pages.push(cur);
+    bodyChapters = marks;                                          // expose for the Contents panel
     pR.innerHTML = keep;
     return pages;
   }
 
   /* render one page index → HTML (0 = title) */
-  var bodyPages=[];
+  var bodyPages=[], bodyChapters=[];
   function pageHTML(idx){
     if(idx==null||idx<0) return '<div class="blank"></div>';
     if(idx===0) return TITLE;
     var b=idx-1; if(b>=bodyPages.length) return '<div class="blank"></div>';
     return '<div class="head"><span>The City After Rain</span><span>I</span></div>'
-         + '<div class="copy'+(b===0?' drop':'')+'">'+bodyPages[b]+'</div>'
+         + '<div class="copy">'+bodyPages[b]+'</div>'
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
@@ -265,33 +282,22 @@
   document.querySelectorAll('#size button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#size button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.documentElement.style.setProperty('--fs',sizes[+b.dataset.s]); build(true); }); });
   document.querySelectorAll('#theme button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('#theme button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.body.className=b.dataset.t; }); });
   var toc=document.getElementById('toc');
-  document.getElementById('tocBtn').addEventListener('click',function(){toc.classList.add('open');});
+  document.getElementById('tocBtn').addEventListener('click',function(){ buildTOC(); toc.classList.add('open'); });
   document.getElementById('tocX').addEventListener('click',function(){toc.classList.remove('open');});
   toc.addEventListener('click',function(e){if(e.target===toc)toc.classList.remove('open');});
   function gotoPage(pi){ for(var s=0;s<spreads.length;s++){ if(spreads[s][0]===pi||spreads[s][1]===pi){ i=s; render(); break; } } toc.classList.remove('open'); }
-  /* Contents = the collection's table of contents (jump between pieces).
-     The piece you're reading is marked; the others would open in the reader. */
-  var PIECES=[
-    {id:'the-city-after-rain',               t:'The City After Rain',               m:'Fiction · 5 min', cur:true},
-    {id:'letters-to-the-reservoir',          t:'Letters to the Reservoir',          m:'Short · 3 min'},
-    {id:'in-a-room-of-small-lights',         t:'In a Room of Small Lights',         m:'Tản văn · 4 min'},
-    {id:'mirror-city-notes',                 t:'Mirror City Notes',                 m:'Tản văn · 4 min'},
-    {id:'the-language-of-unfinished-things', t:'The Language of Unfinished Things', m:'Short · 3 min'},
-    {id:'saigon-after-eleven',               t:'Saigon After Eleven',               m:'Fiction · 5 min'},
-    {id:'mot-nua-cua-im-lang',               t:'Một Nửa Của Im Lặng',               m:'Tản văn · 4 min'}
-  ];
+  /* Contents = THIS story's chapters, each with the page it begins on */
   function buildTOC(){
     var list=document.getElementById('tocList'); list.innerHTML='';
-    var lead=document.createElement('div'); lead.className='lead'; lead.textContent='Seven pieces · a bilingual commonplace';
+    var lead=document.createElement('div'); lead.className='lead'; lead.textContent='The City After Rain';
     list.appendChild(lead);
-    PIECES.forEach(function(p,idx){
+    var curPage = (spreads[i][1]!=null ? spreads[i][1] : spreads[i][0]);   // page on screen
+    var curIdx = 0; bodyChapters.forEach(function(ch,idx){ if(ch.page<=curPage) curIdx=idx; });
+    bodyChapters.forEach(function(ch,idx){
       var b=document.createElement('button');
-      b.innerHTML='<span class="t">'+(idx+1)+'.&nbsp; '+p.t+'</span><span class="m">'+p.m+(p.cur?' · reading':'')+'</span>';
-      if(p.cur) b.className='cur';
-      b.addEventListener('click',function(){
-        if(p.cur){ gotoPage(0); }                                  // jump to this piece's title page
-        else { window.location.href='reader.html?id='+p.id; }      // open another piece in the reader
-      });
+      b.innerHTML='<span class="t">Chapter '+ch.num+' · '+ch.title+'</span><span class="m">p.'+ch.page+'</span>';
+      if(idx===curIdx) b.className='cur';
+      b.addEventListener('click',function(){ gotoPage(ch.page); });
       list.appendChild(b);
     });
   }
