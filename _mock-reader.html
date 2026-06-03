@@ -147,7 +147,7 @@
       countEl=document.getElementById('count'),prog=document.getElementById('prog'),
       prevB=document.getElementById('prev'),nextB=document.getElementById('next');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var BUILD='ARITH-7';   /* shown in the footer so we can confirm the cache is fresh */
+  var BUILD='PROBE-8';   /* shown in the footer so we can confirm the cache is fresh */
 
   /* (pagination measures inside the REAL right page pR — see paginate()) */
 
@@ -178,9 +178,12 @@
     if(!availH || availH < 80) availH = Math.max(160, (pR.clientHeight||520) * 0.66);
     mc.style.flex='none'; mc.style.height=availH+'px'; mc.style.overflow='hidden';  // bound the box exactly
     var SAFE = availH - lh;                                 // ~1 full line of slack → never clips
-    lastAvail = Math.round(availH); lastLH = Math.round(lh);   // (debug readout)
     var pages=[], cur='';
     function fits(html){ mc.innerHTML=html; return mc.scrollHeight<=SAFE; }
+    /* ---- debug probe: what does the browser actually measure? ---- */
+    mc.innerHTML='<p>test</p>'; var _w=mc.clientWidth, _ch=mc.clientHeight, _sh1=mc.scrollHeight;
+    mc.innerHTML='<p>'+BODY[0]+'</p>'; var _shP=mc.scrollHeight; mc.innerHTML='';
+    DBG='w'+_w+' ch'+_ch+' lh'+Math.round(lh)+' SAFE'+Math.round(SAFE)+' shWord'+_sh1+' shPara'+_shP;
     BODY.forEach(function(par){
       var whole='<p>'+par+'</p>';
       if(fits(cur+whole)){ cur+=whole; return; }
@@ -212,7 +215,7 @@
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
-  var spreads,i=0,two,busy=false,total=0,lastAvail=0,lastLH=0;
+  var spreads,i=0,two,busy=false,total=0,DBG='';
   function build(keep){
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);   // gauge lives inside .book → auto-sizes to a real page
@@ -227,7 +230,7 @@
   function render(){
     pL.innerHTML=pageHTML(spreads[i][0]);
     pR.innerHTML=pageHTML(spreads[i][1]);
-    countEl.textContent=(i+1)+' / '+spreads.length+'  ·  measured h='+lastAvail+'px lh='+lastLH+' (build '+BUILD+')';
+    countEl.textContent=(i+1)+'/'+spreads.length+' · '+DBG+' · '+BUILD;
     prog.style.width=(spreads.length>1?i/(spreads.length-1)*100:0)+'%';
     prevB.disabled=(i===0); nextB.disabled=(i===spreads.length-1);
   }
