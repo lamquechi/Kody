@@ -193,6 +193,106 @@ $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
+-- EXTENSION · ②③④  characters · chapters · slug + SEO
+-- (Safe to run on an existing database — all additive / idempotent.)
+-- ═══════════════════════════════════════════════════════════════
+
+-- ④ — PIECES: human URL slug + SEO fields (the Editor already collects these)
+alter table pieces add column if not exists slug            text;
+alter table pieces add column if not exists seo_title       text;
+alter table pieces add column if not exists seo_description  text;
+alter table pieces add column if not exists seo_keywords     text;
+alter table pieces add column if not exists seo_image        text;
+alter table pieces add column if not exists seo_canonical    text;
+alter table pieces add column if not exists seo_author       text default 'Kody Lâm';
+alter table pieces add column if not exists seo_focus        text;
+alter table pieces add column if not exists seo_index        boolean default true;
+
+-- backfill slug from id for existing rows, then enforce uniqueness
+update pieces set slug = id where slug is null;
+create unique index if not exists pieces_slug_key on pieces (slug);
+create index        if not exists pieces_status_published_idx on pieces (status, published_at desc);
+
+-- ② — CHARACTERS (name · lai lịch · tính cách), reusable across pieces
+create table if not exists characters (
+  id           text primary key,           -- client-generated (e.g. 'c-…'), matches WM.characters
+  name         text not null,
+  aka          text,                       -- alternate / nicknames
+  initial      text,                       -- portrait letter
+  bio          text,                       -- lai lịch / background
+  personality  text,                       -- tính cách
+  role         text,                       -- 'main' | 'recurring' | 'supporting' | …
+  color        text default '#C9A961',     -- accent colour for the tooltip
+  author_id    uuid references profiles(id) on delete set null,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
+);
+
+-- which characters appear in which pieces (many-to-many)
+create table if not exists piece_characters (
+  piece_id      text references pieces(id) on delete cascade,
+  character_id  text references characters(id) on delete cascade,
+  note          text,                       -- optional per-piece note
+  primary key (piece_id, character_id)
+);
+create index if not exists piece_characters_piece_idx on piece_characters (piece_id);
+
+-- ③ — CHAPTERS (a piece may have many; each with its own mood / theme / sound)
+create table if not exists chapters (
+  id             text primary key,          -- client-generated, matches WM.chapters
+  piece_id       text references pieces(id) on delete cascade,
+  idx            int default 0,             -- order within the piece
+  title          text,
+  body           text,                      -- markdown
+  mood           text,                      -- free-text mood / effect name
+  theme_variant  text,                      -- per-chapter reader skin (velvet/mercury/…)
+  sound          text,                      -- ambient sound key or URL
+  created_at     timestamptz default now(),
+  updated_at     timestamptz default now()
+);
+create index if not exists chapters_piece_idx on chapters (piece_id, idx);
+
+-- ─── RLS for the new tables ───
+alter table characters       enable row level security;
+alter table piece_characters enable row level security;
+alter table chapters         enable row level security;
+
+-- CHARACTERS: public may read (tooltips on published pieces); author/admin manage
+drop policy if exists "Public reads characters" on characters;
+create policy "Public reads characters" on characters for select using (true);
+drop policy if exists "Author/admin manage characters" on characters;
+create policy "Author/admin manage characters" on characters
+  for all using (auth.uid() = author_id or is_admin())
+  with check (auth.uid() = author_id or is_admin());
+
+-- PIECE_CHARACTERS: public read; author of the piece (or admin) manages links
+drop policy if exists "Public reads piece_characters" on piece_characters;
+create policy "Public reads piece_characters" on piece_characters for select using (true);
+drop policy if exists "Author/admin manage piece_characters" on piece_characters;
+create policy "Author/admin manage piece_characters" on piece_characters
+  for all using (
+    is_admin() or exists (select 1 from pieces p where p.id = piece_id and p.author_id = auth.uid())
+  ) with check (
+    is_admin() or exists (select 1 from pieces p where p.id = piece_id and p.author_id = auth.uid())
+  );
+
+-- CHAPTERS: readable when the parent piece is readable; author/admin manage
+drop policy if exists "Public reads chapters of published" on chapters;
+create policy "Public reads chapters of published" on chapters
+  for select using (
+    exists (select 1 from pieces p where p.id = piece_id
+            and (p.status = 'published' or p.author_id = auth.uid() or is_admin()))
+  );
+drop policy if exists "Author/admin manage chapters" on chapters;
+create policy "Author/admin manage chapters" on chapters
+  for all using (
+    is_admin() or exists (select 1 from pieces p where p.id = piece_id and p.author_id = auth.uid())
+  ) with check (
+    is_admin() or exists (select 1 from pieces p where p.id = piece_id and p.author_id = auth.uid())
+  );
+
+
+-- ═══════════════════════════════════════════════════════════════
 -- DONE.
 -- Next steps:
 --   1. Settings → API → copy "Project URL" and "anon public" key
