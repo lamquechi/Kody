@@ -631,19 +631,23 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     all() { try { return JSON.parse(localStorage.getItem(CHARS_KEY)) || []; } catch { return []; } },
     get(id) { return this.all().find(c => c.id === id) || null; },
     save(data) {
-      const all = this.all();
+      const all = this.all(); let saved;
       if (data.id && all.some(c => c.id === data.id)) {
         const i = all.findIndex(c => c.id === data.id);
-        all[i] = { ...all[i], ...data, updatedAt: Date.now() };
+        all[i] = { ...all[i], ...data, updatedAt: Date.now() }; saved = all[i];
       } else {
         data.id = data.id || ('ch-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5));
         data.createdAt = Date.now(); data.updatedAt = Date.now();
-        all.push(data);
+        all.push(data); saved = data;
       }
       localStorage.setItem(CHARS_KEY, JSON.stringify(all));
+      if (window.WM && typeof window.WM.syncCharacter === 'function') window.WM.syncCharacter(saved.id, saved);
       return data.id;
     },
-    delete(id) { localStorage.setItem(CHARS_KEY, JSON.stringify(this.all().filter(c => c.id !== id))); }
+    delete(id) {
+      localStorage.setItem(CHARS_KEY, JSON.stringify(this.all().filter(c => c.id !== id)));
+      if (window.WM && typeof window.WM.syncCharacterDelete === 'function') window.WM.syncCharacterDelete(id);
+    }
   };
 
   /* ─── SCHEDULE · the writer's calendar ────────────────────
@@ -653,19 +657,23 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   const schedule = {
     all() { try { return JSON.parse(localStorage.getItem(SCHED_KEY)) || []; } catch { return []; } },
     save(data) {
-      const all = this.all();
+      const all = this.all(); let saved;
       if (data.id && all.some(e => e.id === data.id)) {
         const i = all.findIndex(e => e.id === data.id);
-        all[i] = { ...all[i], ...data };
+        all[i] = { ...all[i], ...data }; saved = all[i];
       } else {
         data.id = data.id || ('ev-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5));
         data.createdAt = Date.now();
-        all.push(data);
+        all.push(data); saved = data;
       }
       localStorage.setItem(SCHED_KEY, JSON.stringify(all));
+      if (window.WM && typeof window.WM.syncEvent === 'function') window.WM.syncEvent(saved.id, saved);
       return data.id;
     },
-    delete(id) { localStorage.setItem(SCHED_KEY, JSON.stringify(this.all().filter(e => e.id !== id))); }
+    delete(id) {
+      localStorage.setItem(SCHED_KEY, JSON.stringify(this.all().filter(e => e.id !== id)));
+      if (window.WM && typeof window.WM.syncEventDelete === 'function') window.WM.syncEventDelete(id);
+    }
   };
 
   /* ─── MOTIF META · editable intention/notes per motif ─────── */

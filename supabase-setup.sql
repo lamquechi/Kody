@@ -210,6 +210,44 @@ alter table pieces add column if not exists focus_keyword    text;        -- foc
 alter table pieces add column if not exists synopsis         text;        -- private note-to-self
 alter table pieces add column if not exists characters       jsonb default '[]'::jsonb;  -- linked character ids
 
+-- Characters (the company of a body of work) — private to the author.
+create table if not exists characters (
+  id          text primary key,
+  author_id   uuid references profiles(id) on delete cascade,
+  name        text,
+  role        text,
+  age         text,
+  color       text,
+  one_line    text,
+  description text,
+  arc         text,
+  created_at  timestamptz default now(),
+  updated_at  timestamptz default now()
+);
+alter table characters enable row level security;
+drop policy if exists "Author manages characters" on characters;
+create policy "Author manages characters" on characters
+  for all using (auth.uid() = author_id or is_admin())
+  with check (auth.uid() = author_id or is_admin());
+
+-- Studio events (reminders / writing sessions / notes on the Calendar).
+create table if not exists studio_events (
+  id          text primary key,
+  author_id   uuid references profiles(id) on delete cascade,
+  type        text,                                    -- deadline|session|publish|note
+  title       text,
+  date        date,
+  piece_id    text,                                    -- optional link to a piece
+  note        text,
+  done        boolean default false,
+  created_at  timestamptz default now()
+);
+alter table studio_events enable row level security;
+drop policy if exists "Author manages events" on studio_events;
+create policy "Author manages events" on studio_events
+  for all using (auth.uid() = author_id or is_admin())
+  with check (auth.uid() = author_id or is_admin());
+
 
 -- ═══════════════════════════════════════════════════════════════
 -- DONE.

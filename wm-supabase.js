@@ -337,6 +337,64 @@
     };
   }
 
+  // ─── CHARACTERS + STUDIO EVENTS: sync (when logged in) ───────
+  // Pull (server ⊕ local, server wins) then expose best-effort upsert/
+  // delete hooks the wm.js stores call. All no-op until the migration
+  // adds the `characters` + `studio_events` tables, so the Studio works
+  // now (localStorage) and follows you across devices once you run it.
+  if (WM.user) {
+    try {
+      let q = supabase.from('characters').select('*');
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      const { data, error } = await q;
+      if (error) throw error;
+      if (data) {
+        const map = {}; (WM.characters.all() || []).forEach(c => { map[c.id] = c; });
+        data.forEach(r => { map[r.id] = { id:r.id, name:r.name || '', role:r.role || '', age:r.age || '',
+          color:r.color || '', oneLine:r.one_line || '', description:r.description || '', arc:r.arc || '',
+          createdAt:r.created_at ? Date.parse(r.created_at) : Date.now(),
+          updatedAt:r.updated_at ? Date.parse(r.updated_at) : Date.now() }; });
+        localStorage.setItem('wm.characters', JSON.stringify(Object.values(map)));
+      }
+    } catch (e) { console.warn('[wm] character pull skipped:', e.message); }
+
+    try {
+      let q = supabase.from('studio_events').select('*');
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      const { data, error } = await q;
+      if (error) throw error;
+      if (data) {
+        const map = {}; (WM.schedule.all() || []).forEach(e => { map[e.id] = e; });
+        data.forEach(r => { map[r.id] = { id:r.id, type:r.type || 'note', title:r.title || '', date:r.date || '',
+          pieceId:r.piece_id || null, note:r.note || '', done:!!r.done,
+          createdAt:r.created_at ? Date.parse(r.created_at) : Date.now() }; });
+        localStorage.setItem('wm.schedule', JSON.stringify(Object.values(map)));
+      }
+    } catch (e) { console.warn('[wm] event pull skipped:', e.message); }
+
+    WM.syncCharacter = function (id, c) {
+      supabase.from('characters').upsert({ id, author_id:WM.user.id, name:c.name || '', role:c.role || '',
+        age:c.age || '', color:c.color || '', one_line:c.oneLine || '', description:c.description || '',
+        arc:c.arc || '', updated_at:new Date().toISOString() }, { onConflict:'id' })
+        .then(({ error }) => { if (error) console.debug('[wm] character not persisted (run the migration):', error.message); });
+    };
+    WM.syncCharacterDelete = function (id) {
+      let q = supabase.from('characters').delete().eq('id', id);
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      q.then(({ error }) => { if (error) console.debug('[wm] character delete', error.message); });
+    };
+    WM.syncEvent = function (id, e) {
+      supabase.from('studio_events').upsert({ id, author_id:WM.user.id, type:e.type || 'note', title:e.title || '',
+        date:e.date || null, piece_id:e.pieceId || null, note:e.note || '', done:!!e.done }, { onConflict:'id' })
+        .then(({ error }) => { if (error) console.debug('[wm] event not persisted (run the migration):', error.message); });
+    };
+    WM.syncEventDelete = function (id) {
+      let q = supabase.from('studio_events').delete().eq('id', id);
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      q.then(({ error }) => { if (error) console.debug('[wm] event delete', error.message); });
+    };
+  }
+
   // ─── PUBLIC: pull PUBLISHED pieces so they can appear on the site ───
   function mapServerPiece(r) {
     const wc = (r.body || '').trim().split(/\s+/).filter(Boolean).length;
