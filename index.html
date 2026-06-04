@@ -30,7 +30,9 @@
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply;
     --lamp:transparent;
-    --evening:radial-gradient(55% 40% at 72% 28%,rgba(184,71,46,.12),transparent 70%),linear-gradient(180deg,#ECE3D0,#E4D9C0 52%,#D6C9AE);
+    /* the view through the window — warm city bokeh (swap for your photo via --portrait) */
+    --bokeh:radial-gradient(circle at 27% 32%,rgba(244,176,116,.85),transparent 5.5%),radial-gradient(circle at 58% 22%,rgba(248,206,150,.7),transparent 4.5%),radial-gradient(circle at 79% 40%,rgba(150,188,208,.6),transparent 5.5%),radial-gradient(circle at 43% 58%,rgba(232,124,82,.7),transparent 6.5%),radial-gradient(circle at 20% 76%,rgba(228,180,128,.55),transparent 5%),radial-gradient(circle at 71% 73%,rgba(176,204,218,.5),transparent 5%),radial-gradient(circle at 52% 86%,rgba(244,194,146,.5),transparent 7.5%),radial-gradient(circle at 88% 63%,rgba(210,160,120,.4),transparent 4%);
+    --evening:var(--bokeh),linear-gradient(165deg,#2b3442,#1b2331 55%,#141b25);
     --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
   }
   /* ════ PALETTE — dark (the night desk) ════ */
@@ -41,7 +43,7 @@
     --rule:#272C33; --rule-soft:#1E2228;
     --grain-op:0.06; --grain-blend:screen;
     --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
-    --evening:radial-gradient(52% 38% at 70% 26%,rgba(229,120,78,.20),transparent 70%),radial-gradient(42% 32% at 28% 82%,rgba(133,171,194,.12),transparent 70%),linear-gradient(180deg,#0B0D11,#13161C 55%,#0C0F14);
+    --evening:var(--bokeh),linear-gradient(165deg,#1a212c,#0f151e 55%,#0a0e15);
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -102,10 +104,12 @@
   .ribbon::before,.ribbon::after{content:"";position:absolute;top:0;bottom:0;width:14vw;z-index:2;pointer-events:none}
   .ribbon::before{left:0;background:linear-gradient(90deg,var(--paper-2),transparent)}
   .ribbon::after{right:0;background:linear-gradient(270deg,var(--paper-2),transparent)}
-  .ribbon .run{display:inline-block;animation:slide 64s linear infinite;font-family:var(--disp);font-style:italic;font-weight:300;font-size:22px;letter-spacing:0.01em;color:var(--ink-soft)}
-  .ribbon .run span{margin:0 22px}
+  .ribbon .run{display:inline-block;animation:slide 96s linear infinite;font-family:var(--disp);font-style:italic;font-weight:300;font-size:22px;letter-spacing:0.01em;color:var(--ink-soft)}
+  .ribbon .run span{margin:0 26px;opacity:.38;transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1),color .7s}
   .ribbon .run span[lang="vi"]{color:var(--blue)}
-  .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal;font-size:13px;opacity:.8;vertical-align:middle}
+  .ribbon .run span.lit{opacity:1;transform:scale(1.07);color:var(--ink)}
+  .ribbon .run span[lang="vi"].lit{color:var(--blue)}
+  .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal;font-size:13px;opacity:.5;vertical-align:middle}
   @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @media(prefers-reduced-motion:reduce){.ribbon .run{animation:none}}
 
@@ -414,25 +418,28 @@
 
 <script>
 /* ── THE WINDOW · rain on glass (canvas) ─────────────────────────
-   Fog condenses on a pane; droplets grow, then run, clearing trails
-   that reveal the backdrop (an evening, or the author's photo).
-   Drag across it to wipe the glass. Honours reduced-motion.        */
+   A lightly misted pane over an evening backdrop (or the author's
+   photo). Droplets bead, then run, clearing the mist to reveal the
+   view; the photo stays visible throughout. Drag to draw rivulets.
+   Honours reduced-motion.                                          */
 (function(){
   var stage=document.getElementById('rainStage'), canvas=document.getElementById('glassCanvas');
   if(!stage||!canvas||!canvas.getContext) return;
   var ctx=canvas.getContext('2d');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var W=0,H=0,DPR=1,raf=null,running=true,drops=[],lastSpawn=0,sprite=null,P=null;
-  function pal(){ var dark=document.body.classList.contains('dark'); return dark?{fog:'16,20,26',sheen:'214,224,232'}:{fog:'226,214,191',sheen:'255,251,243'}; }
+  var W=0,H=0,DPR=1,raf=null,running=true,drops=[],lastSpawn=0,lastWipe=0,sprite=null,P=null;
+  var FOG=0.30;                                  // constant, light — the backdrop is always visible
+  function pal(){ var dark=document.body.classList.contains('dark'); return dark?{fog:'14,18,24',sheen:'216,226,234'}:{fog:'228,217,196',sheen:'255,252,245'}; }
   function makeSprite(){ var S=48,s=document.createElement('canvas'); s.width=s.height=S; var c=s.getContext('2d');
     var g=c.createRadialGradient(S*0.38,S*0.36,1,S/2,S/2,S/2);
-    g.addColorStop(0,'rgba('+P.sheen+',0.5)'); g.addColorStop(0.45,'rgba('+P.sheen+',0.07)'); g.addColorStop(1,'rgba('+P.sheen+',0)');
+    g.addColorStop(0,'rgba('+P.sheen+',0.34)'); g.addColorStop(0.5,'rgba('+P.sheen+',0.05)'); g.addColorStop(1,'rgba('+P.sheen+',0)');
     c.fillStyle=g; c.beginPath(); c.arc(S/2,S/2,S/2,0,7); c.fill();
-    c.fillStyle='rgba('+P.sheen+',0.72)'; c.beginPath(); c.arc(S*0.36,S*0.34,S*0.075,0,7); c.fill();
+    c.fillStyle='rgba('+P.sheen+',0.5)'; c.beginPath(); c.arc(S*0.36,S*0.34,S*0.075,0,7); c.fill();
     return s; }
   function bead(){ return {x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.2,vy:0,run:false}; }
-  function fogFill(a){ ctx.globalCompositeOperation='source-over'; ctx.fillStyle='rgba('+P.fog+','+a+')'; ctx.fillRect(0,0,W,H); }
   function clearC(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+  function mist(){ ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,W,H); ctx.fillStyle='rgba('+P.fog+','+FOG+')'; ctx.fillRect(0,0,W,H); }
+  function sheen(){ ctx.globalCompositeOperation='source-over'; for(var k=0;k<drops.length;k++){ var b=drops[k]; if(b.r<1.5) continue; ctx.drawImage(sprite,b.x-b.r-1,b.y-b.r-1,(b.r+1)*2,(b.r+1)*2); } }
   function resize(){
     W=stage.clientWidth; H=stage.clientHeight; if(!W||!H) return;
     DPR=Math.min(2,window.devicePixelRatio||1);
@@ -440,42 +447,59 @@
     canvas.style.width=W+'px'; canvas.style.height=H+'px';
     ctx.setTransform(DPR,0,0,DPR,0,0);
     P=pal(); sprite=makeSprite();
-    fogFill(0.62);
-    drops=[]; var n=Math.round(W*H/5400);
+    drops=[]; var n=Math.round(W*H/10000);
     for(var i=0;i<n;i++) drops.push(bead());
     if(reduce) staticFrame();
   }
   function staticFrame(){
+    mist();
     ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
     for(var i=0;i<drops.length;i++) clearC(drops[i].x,drops[i].y,drops[i].r+1.1);
-    ctx.globalCompositeOperation='source-over';
-    for(var j=0;j<drops.length;j++){ var d=drops[j]; if(d.r>1.1) ctx.drawImage(sprite,d.x-d.r-1,d.y-d.r-1,(d.r+1)*2,(d.r+1)*2); }
+    sheen();
   }
   function frame(t){
     if(!running) return;
-    fogFill(0.014);
-    if(t-lastSpawn>70){ lastSpawn=t; if(drops.length<W*H/2400) drops.push(bead()); }
+    mist();                                       // redraw a constant light mist every frame
+    if(t-lastSpawn>120){ lastSpawn=t; if(drops.length<W*H/4600) drops.push(bead()); }
     ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
     for(var i=0;i<drops.length;i++){ var d=drops[i];
-      if(d.run){ d.vy+=0.05+d.r*0.012; d.y+=d.vy; clearC(d.x,d.y,d.r); clearC(d.x,d.y-d.vy*0.55,d.r*0.74); d.r*=0.9975;
-        if(Math.random()<0.05) drops.push({x:d.x+(Math.random()*6-3),y:d.y-d.vy,r:0.8+Math.random()*1.2,vy:0,run:false}); }
-      else { d.r+=0.005+Math.random()*0.006; clearC(d.x,d.y,d.r);
-        if(d.r>4.4 && Math.random()<0.035){ d.run=true; d.vy=0.5+Math.random()*0.8; } }
+      if(d.run){ d.vy+=0.05+d.r*0.012; d.y+=d.vy;
+        var trail=Math.min(72,d.vy*6), steps=Math.max(2,Math.ceil(trail/3));
+        for(var st=0;st<=steps;st++){ var yy=d.y-(trail*st/steps), rr=d.r*(1-0.55*st/steps); clearC(d.x,yy,Math.max(0.6,rr)); }
+        d.r*=0.997;
+        if(Math.random()<0.025) drops.push({x:d.x+(Math.random()*6-3),y:d.y-trail,r:0.8+Math.random()*1.1,vy:0,run:false}); }
+      else { d.r+=0.0035+Math.random()*0.004; clearC(d.x,d.y,d.r);
+        if(d.r>5.2 && Math.random()<0.02){ d.run=true; d.vy=0.5+Math.random()*0.7; } }
     }
-    drops=drops.filter(function(d){ return d.y<H+24 && d.r>0.5; });
-    if(drops.length>1700) drops=drops.slice(drops.length-1700);
-    ctx.globalCompositeOperation='source-over';
-    for(var k=0;k<drops.length;k++){ var b=drops[k]; if(b.r<1.2) continue; ctx.drawImage(sprite,b.x-b.r-1,b.y-b.r-1,(b.r+1)*2,(b.r+1)*2); }
+    drops=drops.filter(function(d){ return d.y<H+30 && d.r>0.5; });
+    if(drops.length>1400) drops=drops.slice(drops.length-1400);
+    sheen();
     raf=requestAnimationFrame(frame);
   }
-  function wipe(x,y){ ctx.globalCompositeOperation='destination-out';
-    var g=ctx.createRadialGradient(x,y,0,x,y,32); g.addColorStop(0,'rgba(0,0,0,0.85)'); g.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,32,0,7); ctx.fill(); }
-  stage.addEventListener('pointermove',function(e){ var r=stage.getBoundingClientRect(); wipe(e.clientX-r.left,e.clientY-r.top); stage.classList.add('touched'); },{passive:true});
+  function wipe(x,y){ var n=performance.now(); if(n-lastWipe<38) return; lastWipe=n;   // drag draws rivulets
+    drops.push({x:x,y:y,r:3.2+Math.random()*3,vy:0.7+Math.random()*0.9,run:true});
+    if(drops.length>1400) drops=drops.slice(drops.length-1400); }
+  stage.addEventListener('pointermove',function(e){ if(reduce) return; var r=stage.getBoundingClientRect(); wipe(e.clientX-r.left,e.clientY-r.top); stage.classList.add('touched'); },{passive:true});
   window.addEventListener('resize',function(){ clearTimeout(resize._t); resize._t=setTimeout(resize,180); });
   document.addEventListener('visibilitychange',function(){ running=!document.hidden; if(running&&!reduce){ lastSpawn=performance.now(); raf=requestAnimationFrame(frame); } });
   if('MutationObserver' in window){ new MutationObserver(function(){ P=pal(); sprite=makeSprite(); }).observe(document.body,{attributes:true,attributeFilter:['class']}); }
   requestAnimationFrame(function(){ resize(); if(!reduce) raf=requestAnimationFrame(frame); });
+})();
+</script>
+
+<script>
+/* ── motif ribbon · the line crossing centre lifts into focus ── */
+(function(){
+  var run=document.querySelector('.ribbon .run'); if(!run) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var spans=document.querySelectorAll('.ribbon .run span');
+  function tick(){
+    var cx=innerWidth/2, best=null, bd=1e9;
+    for(var i=0;i<spans.length;i++){ var r=spans[i].getBoundingClientRect(); if(r.right<0||r.left>innerWidth) continue; var c=(r.left+r.right)/2, d=Math.abs(c-cx); if(d<bd){bd=d;best=spans[i];} }
+    for(var j=0;j<spans.length;j++){ var on=spans[j]===best; if(on!==spans[j]._lit){ spans[j].classList.toggle('lit',on); spans[j]._lit=on; } }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 })();
 </script>
 </body>

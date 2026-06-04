@@ -62,26 +62,66 @@
     }).join('');
     $('stageKey').innerHTML = order.map(k=>`<span class="it"><span class="dot" style="background:${progColor(k)}"></span>${progLabel(k)} <b>${counts[k]}</b></span>`).join('');
 
-    // this-week agenda
-    const soon = upcomingEvents(todayYmd(), 7).slice(0,5);
-    $('ovAgenda').innerHTML = soon.length ? soon.map(agendaRow).join('') : '<div class="empty">Nothing on the calendar this week.</div>';
+    renderRooms(items);
+    renderStrip();
+    renderActivity(items);
 
-    // continue writing
-    const drafts = items.filter(p=>p.status!=='published').slice(0,5);
-    $('ovDrafts').innerHTML = drafts.length ? drafts.map(p=>{
-      const st=stageOf(p), pct=p.wordGoal>0?Math.min(100,Math.round(p.words/p.wordGoal*100)):progPct(st);
-      return `<div class="mini" data-edit="${esc(p.id)}" style="flex-direction:column;align-items:stretch;gap:0">
-        <div style="display:flex;gap:12px;align-items:baseline"><span class="mt">${esc(p.title)}</span><span class="mm">${progLabel(st)}</span></div>
-        <div class="mini-prog"><span style="width:${pct}%;background:${progColor(st)}"></span></div>
-        <span class="mm" style="margin-top:6px">${p.words} words${p.wordGoal>0?' / '+p.wordGoal+' goal':''} · ${timeAgo(p.updatedAt)||'—'}</span>
-      </div>`;
-    }).join('') : '<div class="empty">No work in progress. Start a new piece.</div>';
-
-    // latest marks
     const marks = WM.marks.all();
     $('ovMarks').innerHTML = marks.length ? marks.slice(0,4).map(m=>
       `<div class="mini" data-mread="${esc(m.id)}" style="flex-direction:column;align-items:stretch;gap:5px"><span class="mq">"${esc((m.text||'').slice(0,90))}${(m.text||'').length>90?'…':''}"</span><span class="mm">${esc(m.storyTitle||'a piece')} · ${timeAgo(m.createdAt)}${m.read?'':' · <b style="color:var(--scarlet)">new</b>'}</span></div>`).join('')
       : '<div class="empty">No marks yet — they arrive as readers leave them.</div>';
+  }
+
+  const IC = {
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>',
+    pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+    mark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>'
+  };
+  function firstLine(b){ if(!b) return ''; const arr=String(b).split('\n').map(s=>s.replace(/^[#>*\-\s]+/,'').trim()); return arr.find(s=>s.length>0)||''; }
+  function renderRooms(items){
+    const rooms=items.filter(p=>p.status!=='published').sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,3);
+    const el=$('ovRooms');
+    if(!rooms.length){ el.innerHTML='<div class="empty" style="grid-column:1/-1">No rooms in progress — <a style="color:var(--scarlet);cursor:pointer" data-go="pieces">start a new piece →</a></div>'; return; }
+    el.innerHTML=rooms.map(p=>{
+      const st=stageOf(p), pct=p.wordGoal>0?Math.min(100,Math.round(p.words/p.wordGoal*100)):progPct(st);
+      const exc=(p.synopsis||p.excerpt||firstLine(p.body)||'—');
+      let note=timeAgo(p.updatedAt)?('edited '+timeAgo(p.updatedAt)):'just started', nd='';
+      if(p.dueAt){ const days=Math.ceil((p.dueAt-Date.now())/86400000); if(days<0){note='overdue';nd='nd';} else if(days<=30){note='due in '+days+'d';nd='nd';} }
+      return `<div class="room" data-edit="${esc(p.id)}">
+        <div class="rk"><span class="d" style="background:${progColor(st)}"></span>${esc(p.status||'draft')} · ${pct}% · ${progLabel(st)}</div>
+        <div class="rt">${esc(p.title)}</div>
+        <div class="rq">"${esc(exc.slice(0,120))}${exc.length>120?'…':''}"</div>
+        <div class="rbar"><span style="width:${pct}%;background:${progColor(st)}"></span></div>
+        <div class="rf"><span>${p.words}${p.wordGoal>0?' / '+p.wordGoal:''} ${p.lang==='vi'?'từ':'words'}</span><span class="${nd}">${note}</span></div>
+      </div>`;
+    }).join('');
+  }
+  function renderStrip(){
+    const el=$('ovStrip'); const by=eventsByDate();
+    const today=new Date(); today.setHours(0,0,0,0);
+    let cells='', sched=0, pencil=0;
+    for(let i=0;i<14;i++){ const d=new Date(today); d.setDate(today.getDate()+i); const ds=ymd(d);
+      const evs=by[ds]||[];
+      evs.forEach(e=>{ if(e.type==='publish'||e.type==='deadline') sched++; else pencil++; });
+      const top=evs[0], col=top?(EV[top.type]||EV.note).color:'';
+      const dots=evs.slice(0,3).map(()=>'<span class="dot2"></span>').join('');
+      cells+=`<div class="dcell${i===0?' today':''}${evs.length?' has':''}" data-day="${ds}"${evs.length?` style="background:${col};border-color:${col}"`:''}>
+        <span class="dw">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</span>
+        <span class="dd">${d.getDate()}</span>${evs.length?`<span class="dots">${dots}</span>`:''}</div>`;
+    }
+    el.innerHTML=cells;
+    const end=new Date(today); end.setDate(today.getDate()+13);
+    $('ovStripSub').textContent=`${MO_SHORT[today.getMonth()]} ${today.getDate()} → ${MO_SHORT[end.getMonth()]} ${end.getDate()} · ${sched} scheduled, ${pencil} penciled`;
+  }
+  function renderActivity(items){
+    const acts=[];
+    items.forEach(p=>{
+      if(p.status==='published' && p.publishedAt){ const ts=(typeof p.publishedAt==='number')?p.publishedAt:(Date.parse(p.publishedAt)||0); if(ts) acts.push({ts, ic:IC.check, html:`<b>${esc(p.title)}</b> is published.`}); }
+      else if(p.isDraft && p.updatedAt){ acts.push({ts:p.updatedAt, ic:IC.pen, html:`You worked on <span class="pc">"${esc(p.title)}"</span> — ${p.words} words.`}); }
+    });
+    WM.marks.all().forEach(m=>{ acts.push({ts:m.createdAt||0, ic:IC.mark, html:`New mark on <span class="pc">${esc(m.storyTitle||'a piece')}</span>${m.read?'':' — <em>unread</em>'}.`}); });
+    acts.sort((a,b)=>b.ts-a.ts);
+    $('ovActivity').innerHTML = acts.length ? `<div class="feed">${acts.slice(0,7).map(a=>`<div class="feed-row"><span class="feed-ic">${a.ic}</span><span class="feed-tx">${a.html}</span><span class="feed-ago">${timeAgo(a.ts)||''}</span></div>`).join('')}</div>` : '<div class="empty">Quiet so far — publish a piece or jot a plan and it appears here.</div>';
   }
 
   /* ════ PIECES ════ */

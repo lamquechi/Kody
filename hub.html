@@ -94,6 +94,50 @@
   .stage-key .dot{width:9px;height:9px;border-radius:50%}
   .stage-key b{color:var(--ink);font-weight:500}
 
+  /* overview · rooms in progress */
+  .ov-h{font-family:var(--disp);font-weight:400;font-size:25px;letter-spacing:-0.01em;margin:4px 0 16px}
+  .ov-h em{font-style:italic;color:var(--scarlet)}
+  .rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+  .room{border:1px solid var(--rule);border-radius:3px;padding:20px;background:var(--paper-2);cursor:pointer;transition:border-color .22s,transform .22s;display:flex;flex-direction:column}
+  .room:hover{border-color:var(--scarlet);transform:translateY(-2px)}
+  .room .rk{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:7px;margin-bottom:12px}
+  .room .rk .d{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .room .rt{font-family:var(--disp);font-weight:500;font-size:21px;line-height:1.12;margin-bottom:8px}
+  .room .rq{font-family:var(--disp);font-style:italic;font-size:14px;color:var(--ink-soft);line-height:1.5;flex:1;margin-bottom:14px}
+  .room .rbar{height:4px;border-radius:4px;background:var(--paper-3);overflow:hidden;margin-bottom:10px}
+  .room .rbar span{display:block;height:100%;border-radius:4px}
+  .room .rf{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint)}
+  .room .rf .nd{color:var(--scarlet)}
+
+  /* overview · next-14-days strip */
+  .strip-card{margin-bottom:24px}
+  .strip-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin:-6px 0 14px}
+  .day-strip{display:grid;grid-template-columns:repeat(14,1fr);gap:6px}
+  .dcell{border:1px solid var(--rule);border-radius:3px;padding:9px 2px 7px;text-align:center;cursor:pointer;transition:all .18s;min-height:60px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;color:var(--ink)}
+  .dcell:hover{border-color:var(--scarlet);transform:translateY(-2px)}
+  .dcell .dw{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
+  .dcell .dd{font-family:var(--disp);font-size:18px;line-height:1}
+  .dcell.today{border-color:var(--scarlet)}
+  .dcell.today .dd{color:var(--scarlet)}
+  .dcell.has{color:var(--paper)}
+  .dcell.has .dw{color:rgba(255,255,255,.72)}
+  .dcell.has .dd{color:var(--paper)}
+  .dcell .dots{display:flex;gap:3px;position:absolute;bottom:6px}
+  .dcell .dot2{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.9)}
+  @media(max-width:760px){.day-strip{grid-template-columns:repeat(7,1fr)}}
+
+  /* overview · activity feed */
+  .feed{display:flex;flex-direction:column}
+  .feed-row{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-top:1px solid var(--rule-soft)}
+  .feed-row:first-child{border-top:none}
+  .feed-ic{width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:var(--ink-soft)}
+  .feed-ic svg{width:14px;height:14px}
+  .feed-tx{flex:1;font-family:var(--body);font-size:15px;line-height:1.45;color:var(--ink)}
+  .feed-tx b{font-weight:500}
+  .feed-tx em{font-style:italic;color:var(--scarlet)}
+  .feed-tx .pc{color:var(--ink-soft);font-style:italic}
+  .feed-ago{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap;padding-top:3px}
+
   /* two-col */
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .cols.three{grid-template-columns:1fr 1fr 1fr}
@@ -405,14 +449,19 @@
         <div class="stage-key" id="stageKey"></div>
       </div>
 
-      <div class="cols three">
+      <h2 class="ov-h">Rooms still being <em>arranged</em></h2>
+      <div class="rooms" id="ovRooms"></div>
+
+      <div class="card strip-card">
+        <h3>Next 14 days <a data-go="calendar">open calendar →</a></h3>
+        <div class="strip-sub" id="ovStripSub"></div>
+        <div class="day-strip" id="ovStrip"></div>
+      </div>
+
+      <div class="cols">
         <div class="card">
-          <h3>This week <a data-go="calendar">calendar →</a></h3>
-          <div id="ovAgenda"><div class="empty">Nothing on the calendar.</div></div>
-        </div>
-        <div class="card">
-          <h3>Continue writing <a data-go="pieces">all pieces →</a></h3>
-          <div id="ovDrafts"><div class="empty">No work in progress.</div></div>
+          <h3>Recent in the studio <a data-go="pieces">all pieces →</a></h3>
+          <div id="ovActivity"></div>
         </div>
         <div class="card">
           <h3>Latest marks <a data-go="marks">inbox →</a></h3>
