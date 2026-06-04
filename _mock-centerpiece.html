@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-world="atelier">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centerpiece — bigger concepts · Kody Lâm</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#9C8E79;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --rule:#DCD2BD; --rule-soft:#E8E0CF; --grain-op:0.5; --grain-blend:multiply;
+    --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --silk:cubic-bezier(.2,.7,.3,1);
+  }
+  body.dark{
+    --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
+    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#6C6E66;
+    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
+    --rule:#272C33; --rule-soft:#1E2228; --grain-op:0.06; --grain-blend:screen;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s;padding-bottom:80px}
+  ::selection{background:var(--scarlet);color:var(--paper)}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:28px clamp(20px,5vw,64px) 8px}
+  .top h1{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.4vw,34px);letter-spacing:-0.01em}
+  .top h1 em{font-style:italic;color:var(--scarlet)}
+  .moon{cursor:pointer;width:34px;height:34px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);background:none;transition:.2s;flex:0 0 auto}
+  .moon:hover{border-color:var(--scarlet);color:var(--scarlet)}
+  .theme-icon-moon{display:none}body.dark .theme-icon-sun{display:none}body.dark .theme-icon-moon{display:inline}
+  .intro{position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) 14px;max-width:720px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:18px;color:var(--ink-soft)}
+  .intro a{color:var(--scarlet);text-decoration:none;border-bottom:1px solid currentColor}
+  .case{position:relative;z-index:2;margin:0 0 6px}
+  .case .label{padding:30px clamp(20px,5vw,64px) 14px;font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--green);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .case .label b{color:var(--scarlet);font-weight:500}
+  .case .label .art{color:var(--ink-faint);letter-spacing:0.14em}
+  .case .desc{padding:12px clamp(20px,5vw,64px) 0;font-family:var(--disp);font-style:italic;font-size:15px;color:var(--ink-faint);max-width:680px}
+  .band{position:relative;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);overflow:hidden;transition:background .5s,border-color .5s}
+
+  /* ════ M · RAIN ON GLASS ════ */
+  .glass{min-height:300px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;
+    background:radial-gradient(120% 140% at 50% 0%, color-mix(in srgb,var(--blue) 10%, var(--paper-2)), var(--paper-2))}
+  body.dark .glass{background:radial-gradient(120% 150% at 50% -10%, #1b2733, #0c0f13)}
+  .glass .q{position:relative;z-index:3;max-width:680px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(20px,3vw,30px);line-height:1.32;color:var(--ink);
+    filter:blur(1.3px);opacity:.92;transition:filter .6s,opacity .6s}
+  .glass:hover .q{filter:blur(0);opacity:1}
+  .glass .q em{color:var(--scarlet)}
+  .glass::before{content:"";position:absolute;inset:-30%;z-index:1;pointer-events:none;opacity:.5;
+    background-image:repeating-linear-gradient(76deg, transparent 0 16px, color-mix(in srgb,var(--ink) 8%, transparent) 16px 17px);
+    animation:rain .8s linear infinite}
+  body.dark .glass::before{background-image:repeating-linear-gradient(76deg, transparent 0 16px, rgba(190,205,220,.06) 16px 17px)}
+  @keyframes rain{to{transform:translateY(17px)}}
+  .glass .drop{position:absolute;z-index:2;top:-24px;width:2px;height:16px;border-radius:2px;
+    background:linear-gradient(rgba(255,255,255,0), color-mix(in srgb,var(--ink) 30%, transparent));animation:fall linear infinite}
+  body.dark .glass .drop{background:linear-gradient(rgba(255,255,255,0), rgba(200,215,230,.5))}
+  @keyframes fall{to{transform:translateY(360px)}}
+  @media(prefers-reduced-motion:reduce){.glass::before,.glass .drop{animation:none}.glass .q{filter:none}}
+
+  /* ════ N · BOOK-SPINE SHELF ════ */
+  .shelf{padding:44px clamp(20px,5vw,56px) 0}
+  .shelf-row{display:flex;align-items:flex-end;justify-content:center;gap:7px;min-height:230px}
+  .spine{position:relative;width:clamp(40px,5vw,52px);border-radius:2px 2px 0 0;cursor:pointer;
+    background:color-mix(in srgb, var(--mc) 24%, var(--paper));border:1px solid color-mix(in srgb,var(--mc) 42%, var(--rule));border-bottom:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:14px 0 12px;
+    transition:transform .35s var(--silk),box-shadow .35s var(--silk);transform-origin:bottom center;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .spine:hover{transform:translateY(-16px);box-shadow:0 24px 36px -18px rgba(0,0,0,.4)}
+  .spine .band-c{width:64%;height:5px;border-radius:3px;background:var(--mc);opacity:.85}
+  .spine .ttl{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--disp);font-weight:500;font-size:14px;letter-spacing:.01em;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:150px;flex:0 1 auto}
+  .spine .fol{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--mc);writing-mode:horizontal-tb}
+  .shelf-ledge{height:14px;margin-top:-1px;background:linear-gradient(var(--paper-3), color-mix(in srgb,var(--ink) 14%, var(--paper-3)));border-top:1px solid var(--rule);box-shadow:0 16px 22px -16px rgba(0,0,0,.45)}
+  .shelf-cap{text-align:center;padding:16px;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint)}
+  .shelf-cap b{color:var(--scarlet)}
+
+  /* ════ O · FILM STILL ════ */
+  .film{position:relative;aspect-ratio:21/8;min-height:240px;max-height:380px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+  .film .scene{position:absolute;inset:0;opacity:0;transition:opacity 1.2s var(--silk);
+    background:linear-gradient(120deg, color-mix(in srgb,var(--sc) 60%, #0a0d11), #0a0d11 70%)}
+  .film .scene.on{opacity:1}
+  .film .bar{position:absolute;left:0;right:0;height:11%;background:#07090c;z-index:3}
+  .film .bar.t{top:0}.film .bar.b{bottom:0}
+  .film .stage{position:relative;z-index:2;max-width:760px;padding:20px 30px}
+  .film .q{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(20px,3vw,32px);line-height:1.3;color:#F2ECDD;transition:opacity .9s;text-shadow:0 2px 30px rgba(0,0,0,.5)}
+  .film .q em{color:var(--sc-l,#E5905f)}
+  .film .slate{position:absolute;z-index:4;left:20px;bottom:14%;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(242,236,221,.66)}
+  .film .grain{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.5'/%3E%3C/svg%3E")}
+
+  .foot{position:relative;z-index:2;padding:40px clamp(20px,5vw,64px) 0;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);line-height:2}
+  .foot b{color:var(--scarlet)}
+</style>
+</head>
+<body>
+<script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme');if(v!=='light'&&v!=='dark')v='light';document.body.classList.toggle('dark',v==='dark');})();}catch(e){}</script>
+
+<div class="top">
+  <h1>Centerpiece — <em>bigger concepts</em></h1>
+  <button class="moon" id="themeToggle" title="Light / Dark"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
+</div>
+<p class="intro">Not text-tricks this time — three different <em>kinds</em> of object for that zone. All lightweight. (The constellation &amp; the 12 text effects are retired.)</p>
+
+<!-- M -->
+<div class="case">
+  <div class="label"><b>M</b> · Rain on glass <span class="art">— điện ảnh · the city after rain</span></div>
+  <div class="band"><div class="glass" id="glass"><div class="q" id="glassQ">After the rain, the city no longer looked like a city — it looked like something <em>remembering itself</em>.</div></div></div>
+  <div class="desc">The quote sits behind a rain-streaked pane, slightly out of focus; rain falls, droplets slide. Hover to wipe the glass clear. Atmospheric, filmic — your signature image made literal.</div>
+</div>
+
+<!-- N -->
+<div class="case">
+  <div class="label"><b>N</b> · The shelf <span class="art">— sách · your seven pieces as book-spines</span></div>
+  <div class="band"><div class="shelf"><div class="shelf-row" id="shelfRow"></div></div><div class="shelf-ledge"></div><div class="shelf-cap">A bookshelf you can read — hover a spine, click to open. <b>Doubles as the Library shelf.</b></div></div>
+</div>
+
+<!-- O -->
+<div class="case">
+  <div class="label"><b>O</b> · Film still <span class="art">— điện ảnh · letterboxed, changing scene</span></div>
+  <div class="band"><div class="film" id="film">
+    <div class="bar t"></div><div class="bar b"></div>
+    <div class="grain"></div>
+    <div class="stage"><div class="q" id="filmQ"></div></div>
+    <div class="slate" id="filmSlate"></div>
+  </div></div>
+  <div class="desc">A widescreen, letter-boxed frame — black bars, film grain, a duotone scene tinted by motif — that slowly cross-dissolves between "shots", each with its line and a film-slate caption. The most overtly cinematic.</div>
+</div>
+
+<div class="foot">Reply with a letter — <b>M</b>, <b>N</b>, or <b>O</b> — or tell me the register you like and I'll go deeper.<br>Want even more directions? Say "thêm".</div>
+
+<script src="wm-config.js?v=6"></script>
+<script src="wm.js?v=6"></script>
+<script>
+  document.getElementById('themeToggle').addEventListener('click',function(){var d=document.body.classList.toggle('dark');try{localStorage.setItem('wm.theme',d?'dark':'light');}catch(e){}});
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // M · rain droplets
+  (function(){
+    var g=document.getElementById('glass'); if(reduce) return;
+    for(var i=0;i<10;i++){ var d=document.createElement('span'); d.className='drop';
+      d.style.left=(6+Math.random()*88)+'%'; d.style.animationDuration=(1.8+Math.random()*1.8)+'s';
+      d.style.animationDelay=(-Math.random()*3)+'s'; d.style.opacity=(0.3+Math.random()*0.5).toFixed(2); g.appendChild(d); }
+    // rotate the quote occasionally
+    var qs=[
+      'After the rain, the city no longer looked like a city — it looked like something <em>remembering itself</em>.',
+      'The windows held light the way wet stones hold warmth: <em>briefly, carefully</em>.',
+      'After eleven, the city did not sleep — it only <em>lowered its voice</em>.'
+    ], qi=0, el=document.getElementById('glassQ');
+    setInterval(function(){ el.style.opacity='0'; setTimeout(function(){ qi=(qi+1)%qs.length; el.innerHTML=qs[qi]; el.style.opacity=''; },650); }, 6000);
+  })();
+
+  // N · book-spine shelf from WM.stories
+  (function(){
+    var row=document.getElementById('shelfRow'); if(!window.WM||!row) return;
+    var stories=(WM.stories||[]).slice(0,9);
+    row.innerHTML = stories.map(function(s){
+      var mc=(WM.motifs[s.motif]&&WM.motifs[s.motif].color)||'#9B9282';
+      var h=200+Math.round(((s.title||'').length%5)*6); // gentle height variation
+      return '<a class="spine" style="--mc:'+mc+';height:'+h+'px" href="reader.html?id='+s.id+'" title="'+(s.title||'')+'">'+
+        '<span class="band-c"></span><span class="ttl">'+(s.title||s.id)+'</span><span class="fol">'+(s.folio||'·')+'</span></a>';
+    }).join('');
+  })();
+
+  // O · film still scenes
+  (function(){
+    var film=document.getElementById('film'), q=document.getElementById('filmQ'), slate=document.getElementById('filmSlate');
+    if(!window.WM) return;
+    var scenes=[
+      {sc:'#7AAEC4', q:'After the rain, the city no longer looked like a city.', slate:'SC. 01 · THE CITY AFTER RAIN'},
+      {sc:'#6A8C7B', q:'Some memories settle, like <em>water held behind concrete</em>.', slate:'SC. 02 · LETTERS TO THE RESERVOIR'},
+      {sc:'#C9A961', q:'A room lit by small lamps asks a different <em>honesty</em>.', slate:'SC. 03 · IN A ROOM OF SMALL LIGHTS'},
+      {sc:'#8A82B5', q:'After eleven, the city only <em>lowered its voice</em>.', slate:'SC. 04 · NIGHT, UNDER AWNINGS'}
+    ];
+    // build scene layers
+    scenes.forEach(function(s,idx){ var d=document.createElement('div'); d.className='scene'+(idx===0?' on':''); d.style.setProperty('--sc',s.sc); film.insertBefore(d, film.firstChild); });
+    var layers=film.querySelectorAll('.scene'), i=0;
+    function show(n){ layers.forEach(function(l,k){ l.classList.toggle('on',k===n); }); q.innerHTML=scenes[n].q; slate.textContent=scenes[n].slate; }
+    show(0);
+    if(!reduce) setInterval(function(){ i=(i+1)%scenes.length; q.style.opacity='0'; setTimeout(function(){ show(i); q.style.opacity='1'; },500); }, 5200);
+  })();
+</script>
+</body>
+</html>
