@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-world="atelier">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ribbon · Volume II — deeper into the art · Kody Lâm</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#9C8E79;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --rule:#DCD2BD; --rule-soft:#E8E0CF;
+    --grain-op:0.5; --grain-blend:multiply;
+    --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --silk:cubic-bezier(.2,.7,.3,1);
+  }
+  body.dark{
+    --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
+    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#6C6E66;
+    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
+    --rule:#272C33; --rule-soft:#1E2228;
+    --grain-op:0.06; --grain-blend:screen;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s;padding-bottom:80px}
+  ::selection{background:var(--scarlet);color:var(--paper)}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:28px clamp(20px,5vw,64px) 10px}
+  .top h1{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.4vw,34px);letter-spacing:-0.01em}
+  .top h1 em{font-style:italic;color:var(--scarlet)}
+  .moon{cursor:pointer;width:34px;height:34px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);background:none;transition:.2s;flex:0 0 auto}
+  .moon:hover{border-color:var(--scarlet);color:var(--scarlet)}
+  .theme-icon-moon{display:none}
+  body.dark .theme-icon-sun{display:none}
+  body.dark .theme-icon-moon{display:inline}
+  .intro{position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) 18px;max-width:700px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:18px;color:var(--ink-soft)}
+  .intro a{color:var(--scarlet);text-decoration:none;border-bottom:1px solid currentColor}
+
+  .case{position:relative;z-index:2;margin:0 0 8px}
+  .case .label{padding:26px clamp(20px,5vw,64px) 12px;font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .case .label b{color:var(--scarlet);font-weight:500}
+  .case .label .art{color:var(--ink-faint);letter-spacing:0.14em}
+  .case .desc{padding:10px clamp(20px,5vw,64px) 0;font-family:var(--disp);font-style:italic;font-size:15px;color:var(--ink-faint);max-width:640px}
+
+  .band{position:relative;overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);transition:background .5s,border-color .5s;min-height:118px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 clamp(16px,5vw,40px)}
+
+  /* ════ D · INK BLOOM (painting / calligraphy) ════ */
+  .bloom-wrap{position:relative;display:inline-block;max-width:820px}
+  .bloom-blot{position:absolute;left:50%;top:50%;width:120%;height:150%;transform:translate(-50%,-50%) scale(.4);z-index:0;pointer-events:none;opacity:0;
+    background:radial-gradient(50% 50% at 50% 50%, color-mix(in srgb,var(--ink) 16%, transparent), transparent 70%);
+    transition:opacity 1.3s var(--silk),transform 1.3s var(--silk)}
+  .bloom{position:relative;z-index:1;font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(19px,2.7vw,28px);line-height:1.3;color:var(--ink-soft)}
+  .bloom.vi{color:var(--blue)}
+  .bloom{opacity:0;filter:blur(12px);letter-spacing:.14em;transition:opacity 1.2s var(--silk),filter 1.2s var(--silk),letter-spacing 1.4s var(--silk)}
+  .bloom.in{opacity:1;filter:blur(0);letter-spacing:0}
+  .bloom-blot.in{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .bloom.out{opacity:0;filter:blur(7px);transition:opacity .6s,filter .6s}
+
+  /* ════ E · THE REVISION (literature — the draft editing itself) ════ */
+  .draft{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(18px,2.6vw,27px);line-height:1.4;color:var(--ink-soft);max-width:860px;transition:opacity .5s}
+  .draft.fade{opacity:0}
+  .draft .pre{color:var(--ink-soft)}
+  .draft .old{position:relative;color:var(--ink-soft);margin-left:.34em;transition:color .4s}
+  .draft .old.struck{color:var(--ink-faint)}
+  .draft .old.struck::after{content:"";position:absolute;left:-.06em;right:-.06em;top:54%;height:2px;background:var(--scarlet);transform:scaleX(0);transform-origin:left;animation:strike .5s var(--silk) forwards}
+  @keyframes strike{to{transform:scaleX(1)}}
+  .draft .new{display:inline-block;margin-left:.4em;color:var(--scarlet);opacity:0;transform:translateY(-.2em);transition:opacity .65s var(--silk),transform .65s var(--silk)}
+  .draft .new::before{content:"\2038\2009";color:var(--ink-faint);font-style:normal;font-size:.7em;vertical-align:.12em}
+  .draft .new.show{opacity:1;transform:none}
+
+  /* ════ F · SPOTLIGHT SWEEP (theatre / cinema) ════ */
+  .stage{position:relative;display:inline-block;max-width:840px}
+  .stage .dim,.stage .lit{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(19px,2.7vw,28px);line-height:1.34}
+  .stage .dim{color:color-mix(in srgb,var(--ink-faint) 72%, transparent)}
+  .stage .lit{position:absolute;left:0;top:0;right:0;color:var(--ink);
+    -webkit-mask:radial-gradient(38% 150% at 50% 50%, #000 36%, transparent 64%);
+            mask:radial-gradient(38% 150% at 50% 50%, #000 36%, transparent 64%);
+    -webkit-mask-size:62% 100%;mask-size:62% 100%;
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:-40% 50%;mask-position:-40% 50%;
+    animation:sweep 5.2s ease-in-out infinite}
+  .stage.vi .lit{color:var(--blue)}
+  @keyframes sweep{0%{-webkit-mask-position:-40% 50%;mask-position:-40% 50%}100%{-webkit-mask-position:140% 50%;mask-position:140% 50%}}
+  @media(prefers-reduced-motion:reduce){.stage .lit{animation:none;-webkit-mask:none;mask:none;color:var(--ink)}}
+
+  .foot{position:relative;z-index:2;padding:40px clamp(20px,5vw,64px) 0;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);line-height:2}
+  .foot b{color:var(--scarlet)}
+</style>
+</head>
+<body>
+<script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme');if(v!=='light'&&v!=='dark')v='light';document.body.classList.toggle('dark',v==='dark');})();}catch(e){}</script>
+
+<div class="top">
+  <h1>Volume II — <em>deeper into the art</em></h1>
+  <button class="moon" id="themeToggle" title="Light / Dark"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
+</div>
+<p class="intro">Three effects that lean harder into one art form each. Still lightweight. (Volume I — intertitle / currents / cursor — is at <a href="_mock-ribbon.html">_mock-ribbon.html</a>.) Pick any letter, A through F.</p>
+
+<!-- D -->
+<div class="case">
+  <div class="label"><b>D</b> · Ink bloom <span class="art">— hội hoạ · calligraphy</span></div>
+  <div class="band">
+    <span class="bloom-wrap"><span class="bloom-blot" id="bloomBlot"></span><span class="bloom" id="bloomLine">the city looked like something remembering itself</span></span>
+  </div>
+  <div class="desc">Each line blooms out of the paper as if ink were wicking into the fibres — blurred and spread at first, then settling sharp. A soft blot breathes behind it.</div>
+</div>
+
+<!-- E -->
+<div class="case">
+  <div class="label"><b>E</b> · The revision <span class="art">— văn chương · the unsent draft</span></div>
+  <div class="band"><div class="draft" id="draftLine"></div></div>
+  <div class="desc">The line edits itself in front of you: a word is struck through in red pen and a truer one is written in. This <em>is</em> the site — an archive of words being revised, half-unsent.</div>
+</div>
+
+<!-- F -->
+<div class="case">
+  <div class="label"><b>F</b> · Spotlight sweep <span class="art">— kịch nghệ · cinema</span></div>
+  <div class="band"><span class="stage" id="stage"><span class="dim" id="stageDim">a different honesty than daylight asks for</span><span class="lit" id="stageLit" aria-hidden="true">a different honesty than daylight asks for</span></span></div>
+  <div class="desc">The line waits in shadow; a soft stage-light drifts across it, and only the words inside the beam are lit. Theatrical, filmic, hushed.</div>
+</div>
+
+<div class="foot">Reply with one letter: <b>A B C</b> (Volume I) or <b>D E F</b> (here).<br>I'll wire your pick into the homepage band — keeping EN/VI and the lightweight rule.</div>
+
+<script>
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    var d=document.body.classList.toggle('dark');
+    try{localStorage.setItem('wm.theme',d?'dark':'light');}catch(e){}
+  });
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var LINES=[
+    {t:"the city looked like something remembering itself"},
+    {t:"a different honesty than daylight asks for"},
+    {t:"memories settle, like water held behind concrete"},
+    {t:"going home — less like return than surrender"},
+    {t:"after eleven, the city only lowered its voice"},
+    {t:"im lặng — không vì hết điều để nói", vi:true}
+  ];
+
+  // ── D · ink bloom ──
+  (function(){
+    var line=document.getElementById('bloomLine'), blot=document.getElementById('bloomBlot'), i=0;
+    function show(){
+      line.classList.remove('out');
+      void line.offsetWidth;
+      line.classList.add('in'); blot.classList.add('in');
+    }
+    function cycle(){
+      line.classList.remove('in'); line.classList.add('out'); blot.classList.remove('in');
+      setTimeout(function(){
+        i=(i+1)%LINES.length;
+        line.textContent=LINES[i].t; line.classList.toggle('vi',!!LINES[i].vi);
+        line.classList.remove('out');
+        void line.offsetWidth;
+        line.classList.add('in'); blot.classList.add('in');
+      },650);
+    }
+    show();
+    if(!reduce) setInterval(cycle, 4200);
+  })();
+
+  // ── E · the revision ──
+  (function(){
+    var PAIRS=[
+      {pre:"the city looked like", old:"a city", neu:"something remembering itself"},
+      {pre:"going home felt less like", old:"a return", neu:"a quiet surrender"},
+      {pre:"some silences aren't", old:"emptiness", neu:"a gentler way to say it"},
+      {pre:"im lặng — không vì", old:"hết chuyện", neu:"hết điều để nói", vi:true}
+    ];
+    var host=document.getElementById('draftLine'), i=0, timers=[];
+    function clearT(){ timers.forEach(clearTimeout); timers=[]; }
+    function render(p){
+      host.classList.toggle('vi', !!p.vi);
+      host.innerHTML='<span class="pre">'+p.pre+'</span> <span class="old">'+p.old+'</span><span class="new">'+p.neu+'</span>';
+      return { old:host.querySelector('.old'), neu:host.querySelector('.new') };
+    }
+    function run(){
+      host.classList.remove('fade');
+      var p=PAIRS[i], el=render(p);
+      if(reduce){ el.old.classList.add('struck'); el.neu.classList.add('show'); return; }
+      timers.push(setTimeout(function(){ el.old.classList.add('struck'); }, 1300));
+      timers.push(setTimeout(function(){ el.neu.classList.add('show'); }, 1850));
+      timers.push(setTimeout(function(){ host.classList.add('fade'); }, 4600));
+      timers.push(setTimeout(function(){ clearT(); i=(i+1)%PAIRS.length; run(); }, 5300));
+    }
+    run();
+  })();
+
+  // ── F · spotlight sweep ──
+  (function(){
+    var dim=document.getElementById('stageDim'), lit=document.getElementById('stageLit'), stage=document.getElementById('stage'), i=1;
+    function setLine(n){
+      var L=LINES[n]; dim.textContent=L.t; lit.textContent=L.t; stage.classList.toggle('vi',!!L.vi);
+    }
+    setLine(1);
+    if(reduce) return;
+    lit.addEventListener('animationiteration', function(){
+      i=(i+1)%LINES.length; setLine(i);
+    });
+  })();
+</script>
+</body>
+</html>
