@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-world="atelier">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ribbon · Volume III — the conceptual register · Kody Lâm</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#9C8E79;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --rule:#DCD2BD; --rule-soft:#E8E0CF;
+    --grain-op:0.5; --grain-blend:multiply;
+    --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+    --silk:cubic-bezier(.2,.7,.3,1);
+  }
+  body.dark{
+    --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
+    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#6C6E66;
+    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
+    --rule:#272C33; --rule-soft:#1E2228;
+    --grain-op:0.06; --grain-blend:screen;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s;padding-bottom:80px}
+  ::selection{background:var(--scarlet);color:var(--paper)}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:28px clamp(20px,5vw,64px) 10px}
+  .top h1{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.4vw,34px);letter-spacing:-0.01em}
+  .top h1 em{font-style:italic;color:var(--scarlet)}
+  .moon{cursor:pointer;width:34px;height:34px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);background:none;transition:.2s;flex:0 0 auto}
+  .moon:hover{border-color:var(--scarlet);color:var(--scarlet)}
+  .theme-icon-moon{display:none}
+  body.dark .theme-icon-sun{display:none}
+  body.dark .theme-icon-moon{display:inline}
+  .intro{position:relative;z-index:2;padding:0 clamp(20px,5vw,64px) 18px;max-width:720px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:18px;color:var(--ink-soft)}
+  .intro a{color:var(--scarlet);text-decoration:none;border-bottom:1px solid currentColor}
+
+  .case{position:relative;z-index:2;margin:0 0 8px}
+  .case .label{padding:26px clamp(20px,5vw,64px) 12px;font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .case .label b{color:var(--scarlet);font-weight:500}
+  .case .label .art{color:var(--ink-faint);letter-spacing:0.14em}
+  .case .desc{padding:10px clamp(20px,5vw,64px) 0;font-family:var(--disp);font-style:italic;font-size:15px;color:var(--ink-faint);max-width:660px}
+
+  .band{position:relative;overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);transition:background .5s,border-color .5s;min-height:130px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px clamp(16px,5vw,46px)}
+
+  /* ════ G · ERASURE POETRY (văn chương — found poem) ════ */
+  .erase{font-family:var(--disp);font-weight:300;font-size:clamp(17px,2.4vw,25px);line-height:1.5;color:var(--ink-soft);max-width:880px;transition:opacity .6s}
+  .erase.hide{opacity:0}
+  .erase w{display:inline-block;padding:0 .14em;transition:opacity 1.1s var(--silk),filter 1.1s var(--silk),color .9s var(--silk),transform .9s var(--silk)}
+  .erase.go w.drop{opacity:.08;filter:blur(1.2px)}
+  .erase w.keep{font-style:italic}
+  .erase.go w.keep{color:var(--scarlet);transform:translateY(-1px)}
+
+  /* ════ H · KINETIC TYPESET (design — type setting itself) ════ */
+  .kt{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(19px,2.7vw,28px);line-height:1.3;color:var(--ink);max-width:840px}
+  .kt w{display:inline-block;padding:0 .12em;opacity:0;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--rot,0));filter:blur(5px);transition:opacity .85s var(--silk),transform .9s var(--silk),filter .85s var(--silk)}
+  .kt.set w{opacity:1;transform:none;filter:blur(0)}
+  .kt.vi{color:var(--blue)}
+
+  /* ════ I · MARGINALIA (commonplace — handwritten note) ════ */
+  .marg{position:relative;max-width:760px;text-align:left}
+  .marg-main{font-family:var(--disp);font-weight:400;font-size:clamp(19px,2.6vw,27px);line-height:1.32;color:var(--ink)}
+  .marg-main .mw{position:relative;white-space:nowrap}
+  .marg-main .mw::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:-.08em;height:2px;background:var(--scarlet);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s var(--silk) .3s}
+  .marg.go .marg-main .mw::after{transform:scaleX(1)}
+  .marg-note{margin-top:10px;margin-left:1.4em;font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(15px,1.9vw,19px);color:var(--scarlet);opacity:0;transform:translateY(7px) rotate(-2.2deg);transform-origin:left;transition:opacity .7s var(--silk) .55s,transform .7s var(--silk) .55s}
+  .marg.go .marg-note{opacity:1;transform:translateY(0) rotate(-2.2deg)}
+  .marg-note::before{content:"\21B3\2009";font-style:normal;color:var(--ink-faint)}
+  .marg.vi .marg-note{color:var(--blue)}
+  .marg.hide{opacity:0;transition:opacity .5s}
+
+  .foot{position:relative;z-index:2;padding:40px clamp(20px,5vw,64px) 0;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);line-height:2}
+  .foot b{color:var(--scarlet)}
+</style>
+</head>
+<body>
+<script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme');if(v!=='light'&&v!=='dark')v='light';document.body.classList.toggle('dark',v==='dark');})();}catch(e){}</script>
+
+<div class="top">
+  <h1>Volume III — <em>the conceptual register</em></h1>
+  <button class="moon" id="themeToggle" title="Light / Dark"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
+</div>
+<p class="intro">Where the motion becomes an idea. Still lightweight. Earlier sets: <a href="_mock-ribbon.html">Vol I</a> (intertitle / currents / cursor) · <a href="_mock-ribbon-2.html">Vol II</a> (ink bloom / revision / spotlight). Pick any letter, A–I.</p>
+
+<!-- G -->
+<div class="case">
+  <div class="label"><b>G</b> · Erasure poetry <span class="art">— văn chương · the found poem</span></div>
+  <div class="band"><div class="erase" id="eraseLine"></div></div>
+  <div class="desc">A full sentence is shown, then most of it is erased to near-nothing — leaving only the words that were always the poem. The gaps are part of the art.</div>
+</div>
+
+<!-- H -->
+<div class="case">
+  <div class="label"><b>H</b> · Kinetic typeset <span class="art">— thiết kế · type setting itself</span></div>
+  <div class="band"><div class="kt" id="ktLine"></div></div>
+  <div class="desc">The words arrive scattered and rotated, then fly into their places like metal type dropping into a compositor's stick — the line assembling itself before you.</div>
+</div>
+
+<!-- I -->
+<div class="case">
+  <div class="label"><b>I</b> · Marginalia <span class="art">— commonplace · the reader's hand</span></div>
+  <div class="band"><div class="marg" id="margBlock"><div class="marg-main" id="margMain"></div><div class="marg-note" id="margNote"></div></div></div>
+  <div class="desc">A printed line appears; then a word is underlined and a handwritten note is added beneath, slightly slanted — as if a reader annotated the page in red ink.</div>
+</div>
+
+<div class="foot">Reply with one letter — <b>A B C</b> · <b>D E F</b> · <b>G H I</b>.<br>Or say "mix G + ink" and I'll blend two. I'll wire your pick into the homepage band.</div>
+
+<script>
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    var d=document.body.classList.toggle('dark');
+    try{localStorage.setItem('wm.theme',d?'dark':'light');}catch(e){}
+  });
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── G · erasure poetry ──  ([kept] words survive)
+  (function(){
+    var SRC=[
+      "after the [rain] the whole tired [city] still looked like it was [remembering] [itself]",
+      "there is a kind of [honesty] that only the [small] [lamps] of a quiet room will [ask] of [you]",
+      "some [silences] are not empty they are only [a] [gentler] [way] [of] [saying] the same thing",
+      "[im] [lặng] không phải vì đã hết chuyện mà [vì] [chưa] [tìm] [ra] [cách] [nói]"
+    ];
+    var host=document.getElementById('eraseLine'), i=0, timers=[];
+    function clearT(){timers.forEach(clearTimeout);timers=[];}
+    function render(s){
+      host.innerHTML = s.split(' ').map(function(tok){
+        var keep = tok[0]==='[' && tok[tok.length-1]===']';
+        var w = keep ? tok.slice(1,-1) : tok;
+        return '<w class="'+(keep?'keep':'drop')+'">'+w+'</w>';
+      }).join(' ');
+    }
+    function run(){
+      host.classList.remove('hide','go');
+      render(SRC[i]);
+      if(reduce){ host.classList.add('go'); return; }
+      timers.push(setTimeout(function(){ host.classList.add('go'); }, 1500));
+      timers.push(setTimeout(function(){ host.classList.add('hide'); }, 5200));
+      timers.push(setTimeout(function(){ clearT(); i=(i+1)%SRC.length; run(); }, 5900));
+    }
+    run();
+  })();
+
+  // ── H · kinetic typeset ──
+  (function(){
+    var LINES=[
+      {t:"a different honesty than daylight asks for"},
+      {t:"the city looked like something remembering itself"},
+      {t:"memories settle like water held behind concrete"},
+      {t:"im lặng — không vì hết điều để nói", vi:true}
+    ];
+    var host=document.getElementById('ktLine'), i=0, timer;
+    function rnd(a,b){return Math.round(Math.random()*(b-a)+a);}
+    function build(L){
+      host.classList.toggle('vi', !!L.vi);
+      host.classList.remove('set');
+      host.innerHTML = L.t.split(' ').map(function(w,idx){
+        return '<w style="--dx:'+rnd(-70,70)+'px;--dy:'+rnd(-30,30)+'px;--rot:'+rnd(-14,14)+'deg;transition-delay:'+(idx*45)+'ms">'+w+'</w>';
+      }).join(' ');
+    }
+    function run(){
+      build(LINES[i]);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ host.classList.add('set'); }); });
+      if(reduce){ host.classList.add('set'); return; }
+      timer=setTimeout(function(){
+        host.classList.remove('set');           // scatter back out
+        setTimeout(function(){ i=(i+1)%LINES.length; run(); }, 850);
+      }, 3600);
+    }
+    run();
+  })();
+
+  // ── I · marginalia ──
+  (function(){
+    var PAIRS=[
+      {pre:"after eleven, the city only lowered its ", word:"voice", post:"", note:"it never slept"},
+      {pre:"a room of small lamps asks a different ", word:"honesty", post:"", note:"the daylight kind won't do"},
+      {pre:"some memories don't vanish — they ", word:"settle", post:"", note:"they wait for weather"},
+      {pre:"im lặng — không vì hết điều để ", word:"nói", post:"", note:"chỉ là tìm cách nói ít đau hơn", vi:true}
+    ];
+    var block=document.getElementById('margBlock'), main=document.getElementById('margMain'), note=document.getElementById('margNote'), i=0, timers=[];
+    function clearT(){timers.forEach(clearTimeout);timers=[];}
+    function run(){
+      block.classList.remove('go','hide');
+      var p=PAIRS[i];
+      block.classList.toggle('vi', !!p.vi);
+      main.innerHTML = p.pre + '<span class="mw">'+p.word+'</span>' + (p.post||'');
+      note.textContent = p.note;
+      if(reduce){ block.classList.add('go'); return; }
+      timers.push(setTimeout(function(){ block.classList.add('go'); }, 700));
+      timers.push(setTimeout(function(){ block.classList.add('hide'); }, 4800));
+      timers.push(setTimeout(function(){ clearT(); i=(i+1)%PAIRS.length; run(); }, 5400));
+    }
+    run();
+  })();
+</script>
+</body>
+</html>
