@@ -214,15 +214,17 @@
 
   // ─── DRAFTS: sync with pieces table (when logged in) ─────
   if (WM.user) {
-    // Pull this author's drafts + pieces from server → localStorage
+    // Pull pieces from server → localStorage. Admins manage the whole
+    // archive (RLS allows it), so they pull every piece; a non-admin
+    // author pulls only their own. This keeps the Studio's actions
+    // consistent: every piece an admin sees is genuinely manageable.
     try {
-      const { data: rows } = await supabase
-        .from('pieces')
-        .select('*')
-        .eq('author_id', WM.user.id)
-        .order('updated_at', { ascending: false });
+      let q = supabase.from('pieces').select('*').order('updated_at', { ascending: false });
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      const { data: rows } = await q;
       if (rows && rows.length) {
         const draftsObj = {};
+        const metaObj = {};
         rows.forEach(r => {
           draftsObj[r.id] = {
             title: r.title || '',
@@ -234,10 +236,26 @@
             themeVariant: r.theme_variant,
             updatedAt: r.updated_at ? new Date(r.updated_at).getTime() : Date.now()
           };
+          // Capture planning/SEO meta when those columns exist (post-migration).
+          const m = {};
+          if (r.progress != null) m.progress = r.progress;
+          if (r.word_goal != null) m.wordGoal = r.word_goal;
+          if (r.due_at) m.dueAt = new Date(r.due_at).getTime();
+          if (r.scheduled_at) m.scheduledAt = new Date(r.scheduled_at).getTime();
+          if (r.meta_description != null) m.metaDescription = r.meta_description;
+          if (r.focus_keyword != null) m.focusKeyword = r.focus_keyword;
+          if (r.synopsis != null) m.synopsis = r.synopsis;
+          if (Array.isArray(r.characters)) m.characters = r.characters;
+          if (Object.keys(m).length) metaObj[r.id] = m;
         });
-        // Merge: server is source of truth for this author's pieces
+        // Merge: server is source of truth for pieces.
         const local = WM.drafts.all();
         localStorage.setItem('wm.drafts', JSON.stringify({ ...local, ...draftsObj }));
+        if (Object.keys(metaObj).length) {
+          const localMeta = WM.pieceMeta.all();
+          Object.keys(metaObj).forEach(id => { localMeta[id] = { ...(localMeta[id] || {}), ...metaObj[id] }; });
+          localStorage.setItem('wm.pieceMeta', JSON.stringify(localMeta));
+        }
       }
     } catch (e) { console.warn('[wm] draft pull skipped:', e.message); }
 
@@ -265,8 +283,31 @@
     const localDraftsDelete = WM.drafts.delete.bind(WM.drafts);
     WM.drafts.delete = function (id) {
       localDraftsDelete(id);
-      supabase.from('pieces').delete().eq('id', id).eq('author_id', WM.user.id)
-        .then(({ error }) => { if (error) console.error('[wm] draft delete', error.message); });
+      WM.pieceMeta.delete(id);
+      let q = supabase.from('pieces').delete().eq('id', id);
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);   // admins may remove any piece (RLS)
+      q.then(({ error }) => { if (error) console.error('[wm] draft delete', error.message); });
+    };
+
+    // ─── PIECE META: best-effort persist of planning + SEO ───
+    // Updates the extra columns on `pieces`. Silently no-ops until the
+    // migration in supabase-setup.sql adds them, so the Studio works now
+    // (localStorage) and persists cross-device once you run the SQL.
+    WM.syncPieceMeta = function (id, meta) {
+      if (!WM.user || !id) return;
+      const payload = {
+        progress: meta.progress || null,
+        word_goal: meta.wordGoal || 0,
+        due_at: meta.dueAt ? new Date(meta.dueAt).toISOString() : null,
+        scheduled_at: meta.scheduledAt ? new Date(meta.scheduledAt).toISOString() : null,
+        meta_description: meta.metaDescription || null,
+        focus_keyword: meta.focusKeyword || null,
+        synopsis: meta.synopsis || null,
+        characters: meta.characters || []
+      };
+      let q = supabase.from('pieces').update(payload).eq('id', id);
+      if (!WM.isAdmin) q = q.eq('author_id', WM.user.id);
+      q.then(({ error }) => { if (error) console.debug('[wm] pieceMeta not persisted (run the migration):', error.message); });
     };
   }
 

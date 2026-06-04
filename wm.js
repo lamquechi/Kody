@@ -586,6 +586,190 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     }
   };
 
+  /* ─── WORKFLOW · the writing lifecycle ────────────────────
+     Orthogonal to publish status: a piece can be 'published' AND
+     still 'revising', or a 'draft' that is already 'done'.       */
+  const PROGRESS = {
+    idea:     { label: 'Idea',     vi: 'Ý tưởng',     order: 0, pct: 6,   color: '#9C8E79' },
+    outline:  { label: 'Outline',  vi: 'Dàn ý',       order: 1, pct: 22,  color: '#43677A' },
+    drafting: { label: 'Drafting', vi: 'Đang viết',   order: 2, pct: 52,  color: '#B8472E' },
+    revising: { label: 'Revising', vi: 'Chỉnh sửa',   order: 3, pct: 82,  color: '#8A6D2E' },
+    done:     { label: 'Done',     vi: 'Hoàn thành',  order: 4, pct: 100, color: '#3A6B5C' }
+  };
+  const PROGRESS_ORDER = ['idea', 'outline', 'drafting', 'revising', 'done'];
+  const FORM_LABEL = { fiction:'Fiction', 'tan-van':'Tản văn', short:'Short', interactive:'Interactive', poem:'Poem', essay:'Essay' };
+
+  function wordCount(src) {
+    if (!src) return 0;
+    return String(src).replace(/[#>*_`~]+/g, ' ').replace(/^[ \t]*[-•]\s/gm, ' ')
+      .split(/\s+/).filter(Boolean).length;
+  }
+  function readingMinutes(src) { return Math.max(1, Math.round(wordCount(src) / 200)); }
+
+  /* ─── PIECE META · planning + SEO (localStorage, by id) ───
+     Everything that isn't in the core story/draft object lives here:
+     workflow stage, word goal, deadline, scheduled publish, SEO.     */
+  const PMETA_KEY = 'wm.pieceMeta';
+  const PMETA_DEFAULT = { progress:'', wordGoal:0, dueAt:null, scheduledAt:null,
+    metaDescription:'', focusKeyword:'', characters:[], synopsis:'', updatedAt:0 };
+  const pieceMeta = {
+    all() { try { return JSON.parse(localStorage.getItem(PMETA_KEY)) || {}; } catch { return {}; } },
+    get(id) { return { ...PMETA_DEFAULT, ...(this.all()[id] || {}) }; },
+    set(id, data) {
+      const all = this.all();
+      all[id] = { ...PMETA_DEFAULT, ...(all[id] || {}), ...data, updatedAt: Date.now() };
+      localStorage.setItem(PMETA_KEY, JSON.stringify(all));
+      if (window.WM && typeof window.WM.syncPieceMeta === 'function') window.WM.syncPieceMeta(id, all[id]);
+      return all[id];
+    },
+    delete(id) { const all = this.all(); delete all[id]; localStorage.setItem(PMETA_KEY, JSON.stringify(all)); }
+  };
+
+  /* ─── CHARACTERS · the company of a body of work ──────────── */
+  const CHARS_KEY = 'wm.characters';
+  const characters = {
+    all() { try { return JSON.parse(localStorage.getItem(CHARS_KEY)) || []; } catch { return []; } },
+    get(id) { return this.all().find(c => c.id === id) || null; },
+    save(data) {
+      const all = this.all();
+      if (data.id && all.some(c => c.id === data.id)) {
+        const i = all.findIndex(c => c.id === data.id);
+        all[i] = { ...all[i], ...data, updatedAt: Date.now() };
+      } else {
+        data.id = data.id || ('ch-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5));
+        data.createdAt = Date.now(); data.updatedAt = Date.now();
+        all.push(data);
+      }
+      localStorage.setItem(CHARS_KEY, JSON.stringify(all));
+      return data.id;
+    },
+    delete(id) { localStorage.setItem(CHARS_KEY, JSON.stringify(this.all().filter(c => c.id !== id))); }
+  };
+
+  /* ─── SCHEDULE · the writer's calendar ────────────────────
+     Custom events. Piece deadlines & planned publishes are folded
+     in by the studio so the calendar shows one honest picture.     */
+  const SCHED_KEY = 'wm.schedule';
+  const schedule = {
+    all() { try { return JSON.parse(localStorage.getItem(SCHED_KEY)) || []; } catch { return []; } },
+    save(data) {
+      const all = this.all();
+      if (data.id && all.some(e => e.id === data.id)) {
+        const i = all.findIndex(e => e.id === data.id);
+        all[i] = { ...all[i], ...data };
+      } else {
+        data.id = data.id || ('ev-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5));
+        data.createdAt = Date.now();
+        all.push(data);
+      }
+      localStorage.setItem(SCHED_KEY, JSON.stringify(all));
+      return data.id;
+    },
+    delete(id) { localStorage.setItem(SCHED_KEY, JSON.stringify(this.all().filter(e => e.id !== id))); }
+  };
+
+  /* ─── MOTIF META · editable intention/notes per motif ─────── */
+  const MMETA_KEY = 'wm.motifMeta';
+  const motifMeta = {
+    all() { try { return JSON.parse(localStorage.getItem(MMETA_KEY)) || {}; } catch { return {}; } },
+    get(key) { return { note:'', status:'active', ...(this.all()[key] || {}) }; },
+    set(key, data) { const all = this.all(); all[key] = { ...(all[key] || {}), ...data }; localStorage.setItem(MMETA_KEY, JSON.stringify(all)); }
+  };
+
+  /* ─── REMOVED · tombstones so deletes stay deleted ────────
+     A built-in sample lives in this file as an offline fallback; once
+     the author deletes a piece it must not resurrect in the Studio.   */
+  const REMOVED_KEY = 'wm.removed';
+  const removed = {
+    all() { try { return JSON.parse(localStorage.getItem(REMOVED_KEY)) || []; } catch { return []; } },
+    has(id) { return this.all().includes(id); },
+    add(id) { const a = this.all(); if (!a.includes(id)) { a.push(id); localStorage.setItem(REMOVED_KEY, JSON.stringify(a)); } },
+    remove(id) { localStorage.setItem(REMOVED_KEY, JSON.stringify(this.all().filter(x => x !== id))); }
+  };
+
+  /* ─── UNIFIED PIECE VIEW · stories ⊕ drafts ⊕ meta ────────
+     The single source the Studio, Calendar, SEO + Characters read,
+     so every surface agrees on what a "piece" is.                  */
+  const pieces = {
+    list() {
+      const map = {};
+      stories.forEach(s => {
+        map[s.id] = {
+          id:s.id, title:s.title, form:s.form, lang:s.lang, motif:s.motif || null,
+          status:(s.status || 'published'), reads:s.reads || 0,
+          marks:(marks.forStory(s.id).length || s.marks || 0),
+          body:s.body || '', description:s.description || '', excerpt:s.excerpt || '',
+          publishedAt:s.publishedAt || null, isStory:true, isDraft:false,
+          updatedAt:(s.publishedAt ? new Date(s.publishedAt).getTime() : 0)
+        };
+      });
+      drafts.list().forEach(d => {
+        const ex = map[d.id] || {};
+        map[d.id] = { ...ex, id:d.id, title:d.title || ex.title || 'Untitled',
+          form:d.form || ex.form, lang:d.lang || ex.lang,
+          motif:(d.motif !== undefined ? d.motif : ex.motif) || null,
+          status:d.status || ex.status || 'draft', reads:ex.reads || 0,
+          marks:(ex.marks != null ? ex.marks : marks.forStory(d.id).length),
+          body:d.body || ex.body || '', description:ex.description || '', excerpt:ex.excerpt || '',
+          publishedAt:ex.publishedAt || null, updatedAt:d.updatedAt || ex.updatedAt || 0,
+          isStory:ex.isStory || false, isDraft:true };
+      });
+      const pm = pieceMeta.all();
+      return Object.values(map).filter(p => !removed.has(p.id)).map(p => {
+        const m = { ...PMETA_DEFAULT, ...(pm[p.id] || {}) };
+        const wc = wordCount(p.body);
+        return { ...p, progress:m.progress || '', wordGoal:m.wordGoal || 0,
+          dueAt:m.dueAt || null, scheduledAt:m.scheduledAt || null,
+          metaDescription:m.metaDescription || '', focusKeyword:m.focusKeyword || '',
+          characters:m.characters || [], synopsis:m.synopsis || '',
+          words:wc, minutes:Math.max(1, Math.round(wc / 200)) };
+      }).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    },
+    get(id) { return this.list().find(p => p.id === id) || null; }
+  };
+
+  /* ─── SEO · an honest, computed health check per piece ────── */
+  const seo = {
+    // override (optional) supplies live values from an open editor before save.
+    analyze(piece, override) {
+      const meta = pieceMeta.get(piece.id);
+      override = override || {};
+      const title = (override.title != null ? override.title : (piece.title || '')).trim();
+      const desc = (override.metaDescription != null ? override.metaDescription : (meta.metaDescription || piece.description || piece.excerpt || '')).trim();
+      const kw = (override.focusKeyword != null ? override.focusKeyword : (meta.focusKeyword || '')).trim().toLowerCase();
+      const body = (override.body != null ? override.body : (piece.body || '')).trim();
+      const wc = wordCount(body);
+      const slug = piece.id || '';
+      const lc = s => (s || '').toLowerCase();
+      const checks = [];
+      const add = (ok, label, hint, weight = 1) => checks.push({ ok:!!ok, label, hint, weight });
+
+      add(title.length >= 20 && title.length <= 60, 'Title length',
+        title.length < 20 ? 'A touch short — aim for 20–60 characters.' : title.length > 60 ? 'A little long — search trims past ~60 characters.' : 'Good length for a search result.');
+      add(!!desc, 'Meta description', desc ? 'A search summary is set.' : 'Write a 120–160 character summary readers see in search.', 1.5);
+      if (desc) add(desc.length >= 80 && desc.length <= 170, 'Description length',
+        desc.length < 80 ? 'A little thin — 120–160 reads best.' : desc.length > 170 ? 'Will be trimmed past ~160.' : 'Ideal length.');
+      add(!!kw, 'Focus phrase', kw ? 'A guiding phrase is set.' : 'Choose the one phrase this piece should be found by.', 1.5);
+      if (kw) {
+        add(lc(title).includes(kw), 'Phrase in title', lc(title).includes(kw) ? 'Present in the title.' : 'Try to work it into the title.');
+        add(lc(desc).includes(kw), 'Phrase in description', lc(desc).includes(kw) ? 'Present in the description.' : 'Mention it in the description.');
+        add(lc(body).includes(kw), 'Phrase in the prose', lc(body).includes(kw) ? 'It appears in the writing.' : 'It should appear in the prose itself.');
+        add(lc(slug).includes(kw.replace(/\s+/g, '-')), 'Phrase in the URL', lc(slug).includes(kw.replace(/\s+/g, '-')) ? 'Part of the address.' : 'A keyword-bearing slug helps.');
+      }
+      add(wc >= 300, 'Enough depth', wc >= 300 ? wc + ' words — plenty to index.' : 'Only ' + wc + ' words; ~300+ ranks more reliably.');
+      add(/^[a-z0-9-]+$/.test(slug) && slug.length <= 60, 'Clean URL', 'Lowercase, hyphenated, concise.');
+      const sentences = body.split(/[.!?…]+/).filter(s => s.trim().length > 0).length || 1;
+      const wps = wc / sentences;
+      add(wc === 0 || wps <= 28, 'Readable rhythm', wc ? Math.round(wps) + ' words per sentence on average.' : 'Write a few lines to measure.');
+
+      const earned = checks.reduce((a, c) => a + (c.ok ? c.weight : 0), 0);
+      const total = checks.reduce((a, c) => a + c.weight, 0) || 1;
+      const score = Math.round(100 * earned / total);
+      const grade = score >= 85 ? 'Strong' : score >= 65 ? 'Decent' : score >= 40 ? 'Thin' : 'Needs work';
+      return { score, grade, checks, words:wc, hasKeyword:!!kw, hasDescription:!!desc };
+    }
+  };
+
   /* ─── AUTO-APPLY ON LOAD ──────────────────────────────── */
   function autoApply() {
     identity.apply();
@@ -600,9 +784,11 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   /* ─── PUBLIC API ──────────────────────────────────────── */
   return {
     stories, motifs, themes,
+    PROGRESS, PROGRESS_ORDER, FORM_LABEL,
     getStory, getStoriesByMotif, getRelatedStories,
-    getParam, renderMarkdown, escapeHtml,
+    getParam, renderMarkdown, escapeHtml, wordCount, readingMinutes,
     identity, site, drafts,
-    reader, marks, shelf
+    reader, marks, shelf,
+    pieceMeta, characters, schedule, motifMeta, pieces, seo, removed
   };
 })();

@@ -84,8 +84,52 @@
     font-family:var(--body);font-size:17px;line-height:1.8;color:var(--ink)}
   .body-in::placeholder{color:var(--ink-faint);font-style:italic}
 
-  .hint-md{margin-top:18px;font-family:var(--mono);font-size:10px;line-height:1.9;letter-spacing:0.04em;color:var(--ink-faint);border-top:1px solid var(--rule);padding-top:14px}
-  .hint-md b{color:var(--scarlet);font-weight:500}
+  /* friendly format help */
+  .howto{margin-top:18px;border-top:1px solid var(--rule);padding-top:14px}
+  .howto summary{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint);cursor:pointer;list-style:none;transition:color .2s}
+  .howto summary::-webkit-details-marker{display:none}
+  .howto summary::before{content:"＋ ";color:var(--scarlet)}
+  .howto[open] summary::before{content:"− "}
+  .howto summary:hover{color:var(--scarlet)}
+  .howto ul{margin:14px 0 8px 4px;list-style:none;display:flex;flex-direction:column;gap:9px}
+  .howto li{font-family:var(--body);font-size:14px;line-height:1.5;color:var(--ink-soft);padding-left:16px;position:relative}
+  .howto li::before{content:"·";position:absolute;left:2px;color:var(--scarlet)}
+  .howto li b{font-family:var(--mono);font-size:12px;color:var(--scarlet);font-weight:500}
+  .howto li em{font-style:italic;color:var(--ink)}
+  .howto p{font-family:var(--disp);font-style:italic;font-size:13px;color:var(--ink-faint);margin-top:6px}
+
+  /* word-goal bar */
+  .wc-wrap{display:flex;align-items:center;gap:10px}
+  .wc-bar{width:64px;height:4px;border-radius:4px;background:var(--rule);overflow:hidden}
+  .wc-bar span{display:block;height:100%;background:var(--scarlet);border-radius:4px;transition:width .4s var(--silk)}
+  .wc-bar.met span{background:var(--green)}
+
+  /* details · planning & SEO */
+  .details{margin-top:26px;border-top:1px solid var(--rule);padding-top:8px}
+  .det-h{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--green);margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+  .det-h:first-child{margin-top:8px}
+  .det-note{font-family:var(--disp);font-style:italic;font-size:12px;text-transform:none;letter-spacing:0;color:var(--ink-faint)}
+  .det-grid{display:flex;flex-wrap:wrap;gap:14px}
+  .fld{display:flex;flex-direction:column;gap:6px;flex:1;min-width:150px}
+  .fld.wide{flex:2;min-width:240px}
+  .fld label{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint);display:flex;justify-content:space-between}
+  .fld .cc{color:var(--ink-faint);letter-spacing:.04em}
+  .fld input,.det-area{background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;width:100%}
+  .fld input:focus,.det-area:focus{border-color:var(--scarlet)}
+  .det-area{resize:vertical}
+  .char-pick{display:flex;flex-wrap:wrap;gap:8px}
+  .cpick{font-family:var(--mono);font-size:10px;letter-spacing:.04em;border:1px solid var(--rule);border-radius:20px;padding:7px 13px;cursor:pointer;color:var(--ink-soft);transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+  .cpick:hover{border-color:var(--scarlet)}
+  .cpick.on{border-color:var(--scarlet);color:var(--scarlet);background:color-mix(in srgb,var(--scarlet) 8%,transparent)}
+  .cpick .cd{width:8px;height:8px;border-radius:50%;background:var(--cc,var(--scarlet))}
+  .char-empty{font-family:var(--disp);font-style:italic;font-size:14px;color:var(--ink-faint)}
+  .char-empty a{color:var(--scarlet);text-decoration:none}
+
+  /* seo chip (preview header + details) */
+  .seo-chip{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--rule);color:var(--ink-soft);white-space:nowrap}
+  .seo-chip.s-strong{color:var(--green);border-color:color-mix(in srgb,var(--green) 45%,transparent)}
+  .seo-chip.s-decent{color:var(--gold,#8A6D2E);border-color:color-mix(in srgb,#8A6D2E 45%,transparent)}
+  .seo-chip.s-weak{color:var(--scarlet);border-color:color-mix(in srgb,var(--scarlet) 45%,transparent)}
 
   /* preview */
   .pv-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:18px;display:flex;align-items:center;gap:12px}
@@ -164,6 +208,9 @@
           <option value="published">Published</option>
         </select>
       </label>
+      <label>Stage
+        <select id="mProgress"><option value="">— stage —</option></select>
+      </label>
     </div>
 
     <input type="text" class="title-in" id="title" placeholder="Untitled — give it a name…" autocomplete="off">
@@ -174,18 +221,45 @@
       <button data-md="chapter" title="Chapter heading">¶ chapter</button>
       <button data-md="divider" title="Scene break">✦ break</button>
       <span class="gap"></span>
-      <span class="wc" id="wc">0 words · 0 min</span>
+      <div class="wc-wrap"><span class="wc" id="wc">0 words · 0 min</span><span class="wc-bar" id="wcBar" style="display:none"><span></span></span></div>
     </div>
 
-    <textarea class="body-in" id="body" placeholder="Begin where the weather changes…&#10;&#10;Write in plain text. Use *asterisks* for emphasis, a line starting with &gt; for a pull-quote, and ## for a chapter heading." spellcheck="true"></textarea>
+    <textarea class="body-in" id="body" placeholder="Begin where the weather changes…&#10;&#10;Write in plain words. The buttons above add formatting for you — no code to remember." spellcheck="true"></textarea>
 
-    <div class="hint-md">
-      <b>*word*</b> → emphasis &nbsp;·&nbsp; <b>&gt; line</b> → pull-quote &nbsp;·&nbsp; <b>## Title</b> → chapter heading &nbsp;·&nbsp; <b>✦</b> on its own line → scene break &nbsp;·&nbsp; blank line → new paragraph
-    </div>
+    <details class="howto">
+      <summary>How to format — no code to remember</summary>
+      <ul>
+        <li>Wrap a word in <b>*asterisks*</b> to give it a gentle <em>emphasis</em>.</li>
+        <li>Begin a line with <b>&gt;&nbsp;</b> to lift it into a pull-quote.</li>
+        <li>Begin a line with <b>##&nbsp;</b> to make it a chapter heading.</li>
+        <li>Put a single <b>✦</b> on its own line for a scene break.</li>
+        <li>Leave a blank line to start a new paragraph.</li>
+      </ul>
+      <p>Or simply use the buttons above the page — they insert all of this for you.</p>
+    </details>
+
+    <!-- ════ DETAILS · planning & findability ════ -->
+    <section class="details">
+      <h4 class="det-h">Planning</h4>
+      <div class="det-grid">
+        <div class="fld"><label>Word goal</label><input type="number" id="dGoal" min="0" step="50" placeholder="e.g. 1200"></div>
+        <div class="fld"><label>Deadline</label><input type="date" id="dDue"></div>
+        <div class="fld"><label>Planned publish</label><input type="date" id="dSched"></div>
+      </div>
+      <h4 class="det-h">Findability <span class="seo-chip" id="seoChipB"></span></h4>
+      <div class="det-grid">
+        <div class="fld"><label>Focus phrase</label><input id="dKw" placeholder="the one phrase to be found by"></div>
+        <div class="fld wide"><label>Meta description <span class="cc" id="dDescCount">0/160</span></label><input id="dDesc" placeholder="The 1–2 sentence summary readers see in search."></div>
+      </div>
+      <h4 class="det-h">Synopsis <span class="det-note">— a private note-to-self about this piece</span></h4>
+      <textarea id="dSyn" class="det-area" rows="2" placeholder="What is this piece really about?"></textarea>
+      <h4 class="det-h">Characters</h4>
+      <div class="char-pick" id="dChars"></div>
+    </section>
   </section>
 
   <section class="pane preview" id="preview">
-    <div class="pv-eyebrow">Live preview · as the reader sees it</div>
+    <div class="pv-eyebrow">Live preview <span class="seo-chip" id="seoChip"></span></div>
     <h1 class="pv-title placeholder" id="pvTitle">Untitled</h1>
     <div class="pv-tags" id="pvTags"></div>
     <div class="pv-body" id="pvBody"><p class="pv-empty">The page fills as you write…</p></div>
@@ -194,173 +268,128 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="wm-config.js?v=6"></script>
-<script src="wm.js?v=6"></script>
-<script src="wm-supabase.js?v=6"></script>
-<script src="wm-i18n.js?v=6"></script>
-<script src="wm-theme.js?v=1"></script>
+<script src="wm-config.js?v=7"></script>
+<script src="wm.js?v=7"></script>
+<script src="wm-supabase.js?v=7"></script>
+<script src="wm-i18n.js?v=7"></script>
+<script src="wm-theme.js?v=2"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
   const els = {
     title:$('title'), body:$('body'), form:$('mForm'), lang:$('mLang'),
-    motif:$('mMotif'), status:$('mStatus'), wc:$('wc'), statusEl:$('status'),
-    pvTitle:$('pvTitle'), pvTags:$('pvTags'), pvBody:$('pvBody'), toast:$('toast')
+    motif:$('mMotif'), status:$('mStatus'), progress:$('mProgress'),
+    wc:$('wc'), wcBar:$('wcBar'), statusEl:$('status'),
+    pvTitle:$('pvTitle'), pvTags:$('pvTags'), pvBody:$('pvBody'), toast:$('toast'),
+    goal:$('dGoal'), due:$('dDue'), sched:$('dSched'), kw:$('dKw'), desc:$('dDesc'),
+    descCount:$('dDescCount'), syn:$('dSyn'), chars:$('dChars'),
+    seoChip:$('seoChip'), seoChipB:$('seoChipB')
   };
+  const pad = n => String(n).padStart(2,'0');
+  const ymd = ts => { if(!ts) return ''; const d=new Date(ts); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); };
+  const tsFromYmd = s => { if(!s) return null; const a=s.split('-').map(Number); return new Date(a[0],(a[1]||1)-1,a[2]||1).getTime(); };
 
-  // ── populate motif options from WM ──
-  Object.keys(WM.motifs || {}).forEach(k => {
-    const o = document.createElement('option');
-    o.value = k; o.textContent = (WM.motifs[k].name || k);
-    els.motif.appendChild(o);
-  });
+  // ── populate motif + progress options ──
+  Object.keys(WM.motifs || {}).forEach(k => { const o=document.createElement('option'); o.value=k; o.textContent=(WM.motifs[k].name||k); els.motif.appendChild(o); });
+  WM.PROGRESS_ORDER.forEach(k => { const o=document.createElement('option'); o.value=k; o.textContent=WM.PROGRESS[k].label; els.progress.appendChild(o); });
 
-  // ── identify the piece ──
   let pieceId = WM.getParam('id');     // null for a new piece
+  let charSel = new Set();
 
-  function slugify(s){
-    return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
-      .replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
-  }
-  function uniqueId(base){
-    base = base || ('piece-' + Date.now());
-    const taken = new Set([
-      ...WM.stories.map(s=>s.id),
-      ...Object.keys(WM.drafts.all())
-    ]);
-    if (!taken.has(base)) return base;
-    let n = 2; while (taken.has(base+'-'+n)) n++;
-    return base+'-'+n;
+  function slugify(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60); }
+  function uniqueId(base){ base=base||('piece-'+Date.now()); const taken=new Set([...WM.stories.map(s=>s.id),...Object.keys(WM.drafts.all())]); if(!taken.has(base)) return base; let n=2; while(taken.has(base+'-'+n)) n++; return base+'-'+n; }
+
+  // ── characters picker ──
+  function renderCharPicker(){
+    const all = WM.characters.all();
+    if(!all.length){ els.chars.innerHTML='<span class="char-empty">No characters yet — add them in the <a href="hub.html">Studio</a>, then link them here.</span>'; return; }
+    els.chars.innerHTML = all.map(c=>`<span class="cpick${charSel.has(c.id)?' on':''}" data-char="${WM.escapeHtml(c.id)}" style="--cc:${c.color||'var(--scarlet)'}"><span class="cd"></span>${WM.escapeHtml(c.name||'Unnamed')}</span>`).join('');
+    els.chars.querySelectorAll('.cpick').forEach(el=>el.addEventListener('click',()=>{ const id=el.dataset.char; if(charSel.has(id)){charSel.delete(id);el.classList.remove('on');} else {charSel.add(id);el.classList.add('on');} markDirty(); }));
   }
 
-  // ── load existing content ──
+  // ── load existing content + meta ──
   function load(){
-    if (!pieceId) return;
-    const d = WM.drafts.get(pieceId);   // author's working copy
-    const s = WM.getStory(pieceId);     // or a published story
-    const src = d || s;
-    if (!src) return;
-    els.title.value = src.title || '';
-    els.body.value  = src.body  || '';
-    if (src.form)   els.form.value   = src.form;
-    if (src.lang)   els.lang.value   = src.lang;
-    if (src.motif)  els.motif.value  = src.motif;
-    els.status.value = (src.status === 'published') ? 'published' : 'draft';
+    renderCharPicker();
+    if(pieceId){
+      const d=WM.drafts.get(pieceId), s=WM.getStory(pieceId), src=d||s;
+      if(src){
+        els.title.value=src.title||''; els.body.value=src.body||'';
+        if(src.form) els.form.value=src.form; if(src.lang) els.lang.value=src.lang;
+        if(src.motif) els.motif.value=src.motif;
+        els.status.value=(src.status==='published')?'published':'draft';
+      }
+      const m=WM.pieceMeta.get(pieceId);
+      els.progress.value=m.progress||'';
+      els.goal.value=m.wordGoal||''; els.due.value=ymd(m.dueAt); els.sched.value=ymd(m.scheduledAt);
+      els.kw.value=m.focusKeyword||''; els.desc.value=m.metaDescription||''; els.syn.value=m.synopsis||'';
+      charSel=new Set(m.characters||[]); renderCharPicker();
+    }
+    els.descCount.textContent=(els.desc.value||'').length+'/160';
   }
 
-  // ── render preview ──
-  const FORM_LABEL = {fiction:'Fiction','tan-van':'Tản văn',short:'Short',interactive:'Interactive'};
+  // ── render preview + word-goal bar + findability ──
   function renderPreview(){
-    const t = els.title.value.trim();
-    els.pvTitle.textContent = t || 'Untitled';
-    els.pvTitle.classList.toggle('placeholder', !t);
-    const motifName = els.motif.value ? (WM.motifs[els.motif.value]?.name || els.motif.value) : '';
-    const tags = [FORM_LABEL[els.form.value]||els.form.value, els.lang.value.toUpperCase(), motifName].filter(Boolean);
-    els.pvTags.innerHTML = tags.join('<span class="dot">✦</span>');
-    const md = els.body.value.trim();
-    els.pvBody.innerHTML = md ? WM.renderMarkdown(md) : '<p class="pv-empty">The page fills as you write…</p>';
-    const words = md ? md.replace(/[#>*_`\-]/g,' ').split(/\s+/).filter(Boolean).length : 0;
-    els.wc.textContent = words + ' word' + (words===1?'':'s') + ' · ' + Math.max(1, Math.round(words/200)) + ' min';
+    const t=els.title.value.trim();
+    els.pvTitle.textContent=t||'Untitled'; els.pvTitle.classList.toggle('placeholder',!t);
+    const motifName=els.motif.value?(WM.motifs[els.motif.value]?.name||els.motif.value):'';
+    const tags=[WM.FORM_LABEL[els.form.value]||els.form.value, els.lang.value.toUpperCase(), motifName].filter(Boolean);
+    els.pvTags.innerHTML=tags.join('<span class="dot">✦</span>');
+    const md=els.body.value.trim();
+    els.pvBody.innerHTML=md?WM.renderMarkdown(md):'<p class="pv-empty">The page fills as you write…</p>';
+    const words=WM.wordCount(md);
+    const min=Math.max(1,Math.round(words/200));
+    const goal=parseInt(els.goal.value,10)||0;
+    if(goal>0){ const pct=Math.min(100,Math.round(words/goal*100)); els.wcBar.style.display='inline-block'; els.wcBar.firstElementChild.style.width=pct+'%'; els.wcBar.classList.toggle('met',words>=goal); els.wc.textContent=words+' / '+goal+' words · '+min+' min'; }
+    else { els.wcBar.style.display='none'; els.wc.textContent=words+' word'+(words===1?'':'s')+' · '+min+' min'; }
+    const a=WM.seo.analyze({id:pieceId||'new',title:els.title.value,body:els.body.value,lang:els.lang.value,form:els.form.value},{metaDescription:els.desc.value,focusKeyword:els.kw.value});
+    [els.seoChip,els.seoChipB].forEach(ch=>{ if(!ch) return; ch.textContent='Findability · '+a.score; ch.className='seo-chip '+(a.score>=85?'s-strong':a.score>=65?'s-decent':'s-weak'); });
   }
 
-  // ── status indicator + toast ──
-  function setStatus(text, kind){ els.statusEl.textContent = text; els.statusEl.className = 'status ' + (kind||''); }
-  function toast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(()=>els.toast.classList.remove('show'), 2200); }
+  function setStatus(text,kind){ els.statusEl.textContent=text; els.statusEl.className='status '+(kind||''); }
+  function toast(msg){ els.toast.textContent=msg; els.toast.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>els.toast.classList.remove('show'),2200); }
 
-  // ── collect + save ──
-  function collect(){
-    return {
-      title: els.title.value.trim() || 'Untitled',
-      body: els.body.value,
-      form: els.form.value,
-      lang: els.lang.value,
-      motif: els.motif.value || null,
-      status: els.status.value
-    };
-  }
+  function collect(){ return { title:els.title.value.trim()||'Untitled', body:els.body.value, form:els.form.value, lang:els.lang.value, motif:els.motif.value||null, status:els.status.value }; }
+  function collectMeta(){ return { progress:els.progress.value||'', wordGoal:parseInt(els.goal.value,10)||0, dueAt:tsFromYmd(els.due.value), scheduledAt:tsFromYmd(els.sched.value), focusKeyword:els.kw.value.trim(), metaDescription:els.desc.value.trim(), synopsis:els.syn.value.trim(), characters:Array.from(charSel) }; }
   function doSave(announce){
-    if (!pieceId){
-      pieceId = uniqueId(slugify(els.title.value) || '');
-      history.replaceState(null, '', 'editor.html?id=' + pieceId);
-    }
-    const data = collect();
-    WM.drafts.save(pieceId, data);
-    setStatus(data.status === 'published' ? 'Published ✓' : 'Saved ✓', 'saved');
-    if (announce) toast(data.status === 'published' ? 'Published to the library.' : 'Draft saved.');
+    if(!pieceId){ pieceId=uniqueId(slugify(els.title.value)||''); history.replaceState(null,'','editor.html?id='+pieceId); }
+    if(WM.removed && WM.removed.has(pieceId)) WM.removed.remove(pieceId);   // un-tombstone on re-create
+    const data=collect();
+    WM.drafts.save(pieceId,data);
+    WM.pieceMeta.set(pieceId,collectMeta());
+    setStatus(data.status==='published'?'Published ✓':'Saved ✓','saved');
+    if(announce) toast(data.status==='published'?'Published to the library.':'Saved.');
   }
 
-  // ── publish button reflects + toggles status ──
-  function syncPublishLabel(){ $('publishBtn').textContent = els.status.value === 'published' ? 'Unpublish' : 'Publish'; }
+  function syncPublishLabel(){ $('publishBtn').textContent=els.status.value==='published'?'Unpublish':'Publish'; }
 
-  let dirty = false, saveTimer = null;
-  function markDirty(){
-    dirty = true; setStatus('Unsaved…', 'dirty');
-    renderPreview();
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } }, 1200);
-  }
+  let dirty=false, saveTimer=null;
+  function markDirty(){ dirty=true; setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
 
-  els.title.addEventListener('input', markDirty);
-  els.body.addEventListener('input', markDirty);
-  els.form.addEventListener('change', markDirty);
-  els.lang.addEventListener('change', markDirty);
-  els.motif.addEventListener('change', markDirty);
-  els.status.addEventListener('change', ()=>{ syncPublishLabel(); markDirty(); });
+  ['title','body'].forEach(k=>els[k].addEventListener('input',markDirty));
+  ['form','lang','motif','progress'].forEach(k=>els[k].addEventListener('change',markDirty));
+  ['goal','due','sched','kw','syn'].forEach(k=>els[k].addEventListener('input',markDirty));
+  els.desc.addEventListener('input',()=>{ els.descCount.textContent=(els.desc.value||'').length+'/160'; markDirty(); });
+  els.status.addEventListener('change',()=>{ syncPublishLabel(); markDirty(); });
 
-  $('saveBtn').addEventListener('click', ()=>{ clearTimeout(saveTimer); doSave(true); dirty=false; });
-  $('publishBtn').addEventListener('click', ()=>{
-    const nowPub = els.status.value === 'published';
-    els.status.value = nowPub ? 'draft' : 'published';
-    syncPublishLabel();
-    clearTimeout(saveTimer); doSave(true); dirty=false;
-    renderPreview();
-  });
+  $('saveBtn').addEventListener('click',()=>{ clearTimeout(saveTimer); doSave(true); dirty=false; });
+  $('publishBtn').addEventListener('click',()=>{ const nowPub=els.status.value==='published'; els.status.value=nowPub?'draft':'published'; syncPublishLabel(); clearTimeout(saveTimer); doSave(true); dirty=false; renderPreview(); });
 
-  // ── markdown toolbar ──
-  document.querySelectorAll('.tools button[data-md]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const ta = els.body, s = ta.selectionStart, e = ta.selectionEnd;
-      const sel = ta.value.slice(s,e), type = btn.dataset.md;
-      let out = sel;
-      if (type==='em')           out = '*' + (sel||'word') + '*';
-      else if (type==='quote')   out = '\n> ' + (sel||'A line worth lingering on.') + '\n';
-      else if (type==='chapter') out = '\n## ' + (sel||'Chapter') + '\n\n';
-      else if (type==='divider') out = '\n✦\n';
-      ta.value = ta.value.slice(0,s) + out + ta.value.slice(e);
-      ta.focus();
-      const pos = s + out.length; ta.setSelectionRange(pos,pos);
-      markDirty();
-    });
-  });
+  // markdown toolbar
+  document.querySelectorAll('.tools button[data-md]').forEach(btn=>{ btn.addEventListener('click',()=>{ const ta=els.body,s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e),type=btn.dataset.md; let out=sel; if(type==='em')out='*'+(sel||'word')+'*'; else if(type==='quote')out='\n> '+(sel||'A line worth lingering on.')+'\n'; else if(type==='chapter')out='\n## '+(sel||'Chapter')+'\n\n'; else if(type==='divider')out='\n✦\n'; ta.value=ta.value.slice(0,s)+out+ta.value.slice(e); ta.focus(); const pos=s+out.length; ta.setSelectionRange(pos,pos); markDirty(); }); });
 
-  // ── preview toggle (desktop hide / mobile show) ──
-  $('previewToggle').addEventListener('click', ()=>{
-    if (matchMedia('(max-width:860px)').matches){
-      document.body.classList.toggle('show-preview');
-      $('previewToggle').classList.toggle('on', document.body.classList.contains('show-preview'));
-    } else {
-      document.body.classList.toggle('preview-off');
-      $('previewToggle').classList.toggle('on', !document.body.classList.contains('preview-off'));
-    }
-  });
+  // preview toggle (desktop hide / mobile show)
+  $('previewToggle').addEventListener('click',()=>{ if(matchMedia('(max-width:860px)').matches){ document.body.classList.toggle('show-preview'); $('previewToggle').classList.toggle('on',document.body.classList.contains('show-preview')); } else { document.body.classList.toggle('preview-off'); $('previewToggle').classList.toggle('on',!document.body.classList.contains('preview-off')); } });
 
-  // warn on unsaved leave
-  window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+  window.addEventListener('beforeunload',e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
 
-  // ── auth guard ──
   function guard(detail){
-    const online = !!detail.online;
-    if (online && !WM.user){
-      const here = 'editor.html' + (pieceId ? ('?id='+pieceId) : '');
-      location.href = 'login.html?redirect=' + encodeURIComponent(here);
-      return;
-    }
-    if (!online) $('offlineNote').classList.add('show');
-    load(); renderPreview(); syncPublishLabel();
-    setStatus(pieceId ? 'Loaded' : 'New piece', 'saved');
+    const online=!!detail.online;
+    if(online && !WM.user){ const here='editor.html'+(pieceId?('?id='+pieceId):''); location.href='login.html?redirect='+encodeURIComponent(here); return; }
+    if(!online) $('offlineNote').classList.add('show');
+    load(); renderPreview(); syncPublishLabel(); setStatus(pieceId?'Loaded':'New piece','saved');
   }
-  if (typeof WM !== 'undefined' && WM.online !== undefined) guard({ online: WM.online });
-  else window.addEventListener('wm:ready', e=>guard(e.detail), { once:true });
+  if(typeof WM!=='undefined' && WM.online!==undefined) guard({online:WM.online});
+  else window.addEventListener('wm:ready',e=>guard(e.detail),{once:true});
 
   // first paint from localStorage in case the backend is slow
   load(); renderPreview(); syncPublishLabel();

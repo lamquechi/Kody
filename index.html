@@ -30,6 +30,7 @@
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply;
     --lamp:transparent;
+    --evening:radial-gradient(55% 40% at 72% 28%,rgba(184,71,46,.12),transparent 70%),linear-gradient(180deg,#ECE3D0,#E4D9C0 52%,#D6C9AE);
     --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
   }
   /* ════ PALETTE — dark (the night desk) ════ */
@@ -40,6 +41,7 @@
     --rule:#272C33; --rule-soft:#1E2228;
     --grain-op:0.06; --grain-blend:screen;
     --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
+    --evening:radial-gradient(52% 38% at 70% 26%,rgba(229,120,78,.20),transparent 70%),radial-gradient(42% 32% at 28% 82%,rgba(133,171,194,.12),transparent 70%),linear-gradient(180deg,#0B0D11,#13161C 55%,#0C0F14);
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -70,25 +72,22 @@
   body.dark .theme-icon-sun{display:none}
   body.dark .theme-icon-moon{display:inline}
 
-  /* ════ HERO ════ */
-  .hero{position:relative;min-height:84vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
-  .hero .entry,.hero h1,.hero .lede{position:relative;z-index:2}
-  /* PORTRAIT — a banner figure on the right that shares the page background.
-     Shoot yourself on the right against a paper-tone background; the photo's
-     edges feather into the page so you + the left-hand title read as one scene.
-     ADD YOUR PHOTO:  set  --portrait:url('me.jpg')  on .hero-photo  and remove
-     the "is-empty" class. (Tip: a soft, paper-coloured backdrop blends best.) */
-  .hero-photo{position:absolute;right:-1%;top:50%;transform:translateY(-50%);width:min(384px,35%);height:88%;z-index:0;pointer-events:none;
-    background:var(--portrait, transparent) center/cover no-repeat;
-    -webkit-mask:radial-gradient(118% 104% at 68% 50%, #000 50%, transparent 80%);
-            mask:radial-gradient(118% 104% at 68% 50%, #000 50%, transparent 80%)}
-  .hero-photo.is-empty{background:radial-gradient(54% 70% at 58% 46%, var(--paper-3), transparent 72%)}
-  .hero-photo .ph-fig{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
-  .hero-photo.is-empty .ph-fig{display:flex}
-  .hero-photo .ph-fig svg{width:64%;height:auto;opacity:.5}
-  .hero-photo .ph-fig path,.hero-photo .ph-fig circle{fill:none;stroke:var(--ink-faint);stroke-width:1.4}
-  .hero-photo .ph-cap{position:absolute;left:0;right:0;bottom:11%;display:none;text-align:center;z-index:1;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint)}
-  .hero-photo.is-empty .ph-cap{display:block}
+  /* ════ HERO · rain on the window ════ */
+  .hero{position:relative;min-height:86vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+  .hero .htext{position:relative;z-index:3}
+  .hero .entry,.hero h1,.hero .lede,.hero .scribble{position:relative;z-index:3}
+  /* THE WINDOW — a living, rain-streaked pane on the right. Behind the glass:
+     an evening backdrop, or YOUR PHOTO. Add one by setting --portrait on
+     #rainBackdrop, e.g.  style="--portrait:url('me.jpg')"  — the rain reveals
+     it as droplets streak down. (A soft, evenly-lit photo blends best.) */
+  .rain-stage{position:absolute;right:-10px;top:5%;bottom:5%;width:46%;max-width:560px;z-index:1;border-radius:5px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--rule), 0 34px 80px -54px rgba(0,0,0,.6);
+    -webkit-mask:linear-gradient(95deg,transparent,#000 26%);mask:linear-gradient(95deg,transparent,#000 26%)}
+  .rain-backdrop{position:absolute;inset:0;z-index:1;background-image:var(--portrait,var(--evening));background-size:cover;background-position:center;transition:background .5s}
+  .glass-canvas{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;touch-action:none}
+  .rain-hint{position:absolute;right:13px;bottom:11px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);opacity:0;transition:opacity .6s;pointer-events:none}
+  .rain-stage:hover .rain-hint{opacity:.65}
+  .rain-stage.touched .rain-hint{opacity:0!important}
   .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--scarlet);margin-bottom:26px}
   .hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:1.02;letter-spacing:-0.025em;font-optical-sizing:auto;max-width:15ch}
   .hero h1 .l{display:block}
@@ -96,7 +95,7 @@
   .hero h1 .ink .uline{position:absolute;left:-2%;right:-2%;bottom:-0.16em;width:104%;height:0.3em;overflow:visible;pointer-events:none}
   .hero h1 .ink .uline path{fill:none;stroke:var(--scarlet);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
   .hero .lede{margin:30px 0 0;max-width:480px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:21px;line-height:1.55;color:var(--ink-soft)}
-  .hero .scribble{position:absolute;left:0;bottom:4%;max-width:190px;z-index:2;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.45;color:var(--green);padding-left:16px;border-left:1px solid var(--green);transform:rotate(-2deg)}
+  .hero .scribble{margin:30px 0 0;max-width:340px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.45;color:var(--green);padding-left:16px;border-left:1px solid var(--green)}
 
   /* ════ MOTIF RIBBON ════ */
   .ribbon{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:20px 0;white-space:nowrap;position:relative;transition:background .5s,border-color .5s}
@@ -163,9 +162,7 @@
     .col-margin{padding:0 0 28px;border-top:1px solid var(--rule)}
     .entry-row{grid-template-columns:40px 1fr}.entry-row .meta{grid-column:2;text-align:left;margin-top:6px}
     .hero{min-height:auto;padding:30px 0 48px}
-    .hero .scribble{display:none}
-    .hero-photo.is-empty{display:none}                 /* hide the empty portrait placeholder on mobile */
-    .hero-photo{position:relative;right:auto;top:auto;transform:none;width:min(280px,72%);height:340px;margin:26px auto 0}
+    .rain-stage{position:relative;right:auto;top:auto;bottom:auto;width:100%;max-width:none;height:300px;margin:30px 0 0;-webkit-mask:none;mask:none}
     footer{flex-direction:column;align-items:flex-start;gap:18px}
     footer .col{text-align:left}
     .col-main,.col-margin,footer{padding-left:0;padding-right:0}
@@ -188,8 +185,8 @@
     .reveal.in{opacity:1;transform:none;filter:blur(0)}
     .hero h1 .l{opacity:0;transform:translateY(42px)}
     .hero h1 .ink .uline path{stroke-dashoffset:1}
-    .hero .entry,.hero .lede,.hero .scribble,.hero-photo{opacity:0}
-    body.revealed .hero-photo{animation:wmFadeUp 1.5s ease .35s forwards}
+    .hero .entry,.hero .lede,.hero .scribble,.rain-stage{opacity:0}
+    body.revealed .rain-stage{animation:wmFadeUp 1.5s ease .35s forwards}
     body.revealed .hero h1 .l{animation:wmLineRise 1.3s cubic-bezier(.2,.75,.2,1) forwards}
     body.revealed .hero h1 .l:nth-child(1){animation-delay:.1s}body.revealed .hero h1 .l:nth-child(2){animation-delay:.3s}
     @keyframes wmLineRise{to{opacity:1;transform:none}}
@@ -252,18 +249,21 @@
   <div class="inner">
     <!-- HERO -->
     <section class="hero">
-      <!-- Portrait plate (right). Add your photo: set --portrait:url('me.jpg') and drop the "is-empty" class. -->
-      <div class="hero-photo is-empty" id="heroPhoto" aria-hidden="true">
-        <div class="ph-fig"><svg viewBox="0 0 100 150" preserveAspectRatio="xMidYMax meet"><circle cx="50" cy="31" r="17"/><path d="M21 150 C23 95 30 73 50 73 C70 73 77 95 79 150"/></svg></div>
-        <span class="ph-cap">Portrait · your photo here</span>
+      <!-- THE WINDOW · rain-streaked glass. Add your photo: set --portrait on #rainBackdrop -->
+      <div class="rain-stage" id="rainStage" aria-hidden="true">
+        <div class="rain-backdrop" id="rainBackdrop"></div>
+        <canvas class="glass-canvas" id="glassCanvas"></canvas>
+        <span class="rain-hint">✦ drag across the glass</span>
       </div>
-      <div class="entry">— Entry · a bilingual commonplace · MMXXVI</div>
-      <h1>
-        <span class="l">A small archive of</span>
-        <span class="l"><span class="ink">unsent<svg class="uline" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M5,9 C48,3 104,12 150,6 S196,4 196,8"/></svg></span> words.</span>
-      </h1>
-      <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
-      <p class="scribble">— for the readers who linger past the second paragraph.</p>
+      <div class="htext">
+        <div class="entry">— Entry · a bilingual commonplace · MMXXVI</div>
+        <h1>
+          <span class="l">A small archive of</span>
+          <span class="l"><span class="ink">unsent<svg class="uline" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M5,9 C48,3 104,12 150,6 S196,4 196,8"/></svg></span> words.</span>
+        </h1>
+        <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+        <p class="scribble">— for the readers who linger past the second paragraph.</p>
+      </div>
     </section>
   </div>
 
@@ -325,11 +325,11 @@
   </div>
 </div>
 
-<script src="wm-config.js?v=6"></script>
-<script src="wm.js?v=6"></script>
-<script src="wm-supabase.js?v=6"></script>
-<script src="wm-i18n.js?v=6"></script>
-<script src="wm-theme.js?v=1"></script>
+<script src="wm-config.js?v=7"></script>
+<script src="wm.js?v=7"></script>
+<script src="wm-supabase.js?v=7"></script>
+<script src="wm-i18n.js?v=7"></script>
+<script src="wm-theme.js?v=2"></script>
 <script>
   /* ── signature overture: hold a quote, then lift to reveal the hero ── */
   (function(){
@@ -410,6 +410,73 @@
     var sh = document.getElementById('startHere');
     if (sh) sh.addEventListener('click', function(e){ e.stopPropagation(); window.location.href = 'reader.html?id=the-city-after-rain'; });
   })();
+</script>
+
+<script>
+/* ── THE WINDOW · rain on glass (canvas) ─────────────────────────
+   Fog condenses on a pane; droplets grow, then run, clearing trails
+   that reveal the backdrop (an evening, or the author's photo).
+   Drag across it to wipe the glass. Honours reduced-motion.        */
+(function(){
+  var stage=document.getElementById('rainStage'), canvas=document.getElementById('glassCanvas');
+  if(!stage||!canvas||!canvas.getContext) return;
+  var ctx=canvas.getContext('2d');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W=0,H=0,DPR=1,raf=null,running=true,drops=[],lastSpawn=0,sprite=null,P=null;
+  function pal(){ var dark=document.body.classList.contains('dark'); return dark?{fog:'16,20,26',sheen:'214,224,232'}:{fog:'226,214,191',sheen:'255,251,243'}; }
+  function makeSprite(){ var S=48,s=document.createElement('canvas'); s.width=s.height=S; var c=s.getContext('2d');
+    var g=c.createRadialGradient(S*0.38,S*0.36,1,S/2,S/2,S/2);
+    g.addColorStop(0,'rgba('+P.sheen+',0.5)'); g.addColorStop(0.45,'rgba('+P.sheen+',0.07)'); g.addColorStop(1,'rgba('+P.sheen+',0)');
+    c.fillStyle=g; c.beginPath(); c.arc(S/2,S/2,S/2,0,7); c.fill();
+    c.fillStyle='rgba('+P.sheen+',0.72)'; c.beginPath(); c.arc(S*0.36,S*0.34,S*0.075,0,7); c.fill();
+    return s; }
+  function bead(){ return {x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.2,vy:0,run:false}; }
+  function fogFill(a){ ctx.globalCompositeOperation='source-over'; ctx.fillStyle='rgba('+P.fog+','+a+')'; ctx.fillRect(0,0,W,H); }
+  function clearC(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+  function resize(){
+    W=stage.clientWidth; H=stage.clientHeight; if(!W||!H) return;
+    DPR=Math.min(2,window.devicePixelRatio||1);
+    canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    P=pal(); sprite=makeSprite();
+    fogFill(0.62);
+    drops=[]; var n=Math.round(W*H/5400);
+    for(var i=0;i<n;i++) drops.push(bead());
+    if(reduce) staticFrame();
+  }
+  function staticFrame(){
+    ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
+    for(var i=0;i<drops.length;i++) clearC(drops[i].x,drops[i].y,drops[i].r+1.1);
+    ctx.globalCompositeOperation='source-over';
+    for(var j=0;j<drops.length;j++){ var d=drops[j]; if(d.r>1.1) ctx.drawImage(sprite,d.x-d.r-1,d.y-d.r-1,(d.r+1)*2,(d.r+1)*2); }
+  }
+  function frame(t){
+    if(!running) return;
+    fogFill(0.014);
+    if(t-lastSpawn>70){ lastSpawn=t; if(drops.length<W*H/2400) drops.push(bead()); }
+    ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
+    for(var i=0;i<drops.length;i++){ var d=drops[i];
+      if(d.run){ d.vy+=0.05+d.r*0.012; d.y+=d.vy; clearC(d.x,d.y,d.r); clearC(d.x,d.y-d.vy*0.55,d.r*0.74); d.r*=0.9975;
+        if(Math.random()<0.05) drops.push({x:d.x+(Math.random()*6-3),y:d.y-d.vy,r:0.8+Math.random()*1.2,vy:0,run:false}); }
+      else { d.r+=0.005+Math.random()*0.006; clearC(d.x,d.y,d.r);
+        if(d.r>4.4 && Math.random()<0.035){ d.run=true; d.vy=0.5+Math.random()*0.8; } }
+    }
+    drops=drops.filter(function(d){ return d.y<H+24 && d.r>0.5; });
+    if(drops.length>1700) drops=drops.slice(drops.length-1700);
+    ctx.globalCompositeOperation='source-over';
+    for(var k=0;k<drops.length;k++){ var b=drops[k]; if(b.r<1.2) continue; ctx.drawImage(sprite,b.x-b.r-1,b.y-b.r-1,(b.r+1)*2,(b.r+1)*2); }
+    raf=requestAnimationFrame(frame);
+  }
+  function wipe(x,y){ ctx.globalCompositeOperation='destination-out';
+    var g=ctx.createRadialGradient(x,y,0,x,y,32); g.addColorStop(0,'rgba(0,0,0,0.85)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,32,0,7); ctx.fill(); }
+  stage.addEventListener('pointermove',function(e){ var r=stage.getBoundingClientRect(); wipe(e.clientX-r.left,e.clientY-r.top); stage.classList.add('touched'); },{passive:true});
+  window.addEventListener('resize',function(){ clearTimeout(resize._t); resize._t=setTimeout(resize,180); });
+  document.addEventListener('visibilitychange',function(){ running=!document.hidden; if(running&&!reduce){ lastSpawn=performance.now(); raf=requestAnimationFrame(frame); } });
+  if('MutationObserver' in window){ new MutationObserver(function(){ P=pal(); sprite=makeSprite(); }).observe(document.body,{attributes:true,attributeFilter:['class']}); }
+  requestAnimationFrame(function(){ resize(); if(!reduce) raf=requestAnimationFrame(frame); });
+})();
 </script>
 </body>
 </html>

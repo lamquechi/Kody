@@ -193,9 +193,29 @@ $$;
 
 
 -- ═══════════════════════════════════════════════════════════════
+-- MIGRATION · The Studio (planning + SEO on pieces)
+-- ───────────────────────────────────────────────────────────────
+-- Additive and safe to re-run. Until you run it, the Studio still
+-- works (planning + SEO live in your browser); running it persists
+-- Progress, Word goals, Deadlines, planned Publishes and SEO fields
+-- to Supabase so they follow you across devices.
+-- Paste into Supabase → SQL Editor → Run.
+-- ═══════════════════════════════════════════════════════════════
+alter table pieces add column if not exists progress         text;        -- idea|outline|drafting|revising|done
+alter table pieces add column if not exists word_goal        int  default 0;
+alter table pieces add column if not exists due_at           timestamptz; -- deadline (shows on the Calendar)
+alter table pieces add column if not exists scheduled_at     timestamptz; -- planned publish (shows on the Calendar)
+alter table pieces add column if not exists meta_description text;        -- search summary (SEO)
+alter table pieces add column if not exists focus_keyword    text;        -- focus phrase (SEO)
+alter table pieces add column if not exists synopsis         text;        -- private note-to-self
+alter table pieces add column if not exists characters       jsonb default '[]'::jsonb;  -- linked character ids
+
+
+-- ═══════════════════════════════════════════════════════════════
 -- DONE.
 -- Next steps:
---   1. Settings → API → copy "Project URL" and "anon public" key
+--   1. Settings → API → copy "Project URL" and "anon public" (publishable) key
 --   2. Paste into your wm-config.js
 --   3. Sign up the first account on /login.html — that account becomes admin automatically
+--   4. (Optional) Run the MIGRATION block above to sync planning + SEO
 -- ═══════════════════════════════════════════════════════════════
