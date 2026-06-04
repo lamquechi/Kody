@@ -59,6 +59,8 @@
     'open the library': 'Mở thư viện',
     '← return to the atelier': '← Về trang chủ',
     'return to the atelier': 'Về trang chủ',
+    '← back to the site': '← Về trang chủ',
+    'back to the site': 'Về trang chủ',
     '← back to the library': '← Về Thư viện',
     'begin here': 'Bắt đầu ở đây',
     'full index': 'Mục lục đầy đủ',

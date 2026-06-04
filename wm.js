@@ -430,7 +430,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
       document.querySelectorAll('[data-identity="greeting"]').forEach(el => {
         el.innerHTML = hasName && callName
           ? 'Welcome back, <em>' + escapeHtml(callName) + '</em>.'
-          : 'Welcome back to the <em>atelier</em>.';
+          : 'Welcome back to the <em>studio</em>.';
       });
       document.querySelectorAll('[data-identity="tagline"]').forEach(el => {
         if (id.tagline) { el.textContent = id.tagline; el.classList.remove('placeholder'); }
