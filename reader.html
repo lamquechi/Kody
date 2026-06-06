@@ -427,7 +427,9 @@
   toc.addEventListener('click',function(e){ if(e.target===toc) toc.classList.remove('open'); });
 
   /* ── end-of-piece colophon + reader actions ── */
-  var NEXT = (typeof WM!=='undefined' && WM.getRelatedStories) ? (WM.getRelatedStories(story.id,1)[0]||null) : null;
+  var sameMotif = (typeof WM!=='undefined' && WM.getStoriesByMotif && story.motif) ? WM.getStoriesByMotif(story.motif).filter(function(s){return s.id!==story.id;}) : [];
+  var MORE = sameMotif.length ? sameMotif.slice(0,3) : ((typeof WM!=='undefined' && WM.getRelatedStories) ? WM.getRelatedStories(story.id,3) : []);
+  var motifLabel = (typeof WM!=='undefined' && WM.motifs && WM.motifs[story.motif]) ? WM.motifs[story.motif].name : '';
   function ENDCARD(){
     var saved = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
     return '<div class="copy ending">'
@@ -436,7 +438,7 @@
       + (story.excerpt?'<div class="end-q">"'+inline(story.excerpt)+'"</div>':'')
       + '<div class="end-by">Kody Lâm</div>'
       + '<div class="end-actions"><button data-act="mark">✎ Leave a mark</button><button data-act="save">'+(saved?'♥ Saved':'♡ Save to shelf')+'</button><button data-act="share">↗ Share</button></div>'
-      + (NEXT?'<div class="end-next"><span>Read next</span><a data-next="'+NEXT.id+'">'+NEXT.title+' →</a></div>':'')
+      + (MORE.length?'<div class="end-next"><span>'+(sameMotif.length?('More in '+inline(motifLabel)):'Read next')+'</span>'+MORE.map(function(s){return '<a data-next="'+s.id+'">'+s.title+' →</a>';}).join('')+'</div>':'')
       + '<a class="end-lib" href="library.html">← Back to the Library</a>'
       + '</div>';
   }
