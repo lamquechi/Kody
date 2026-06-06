@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-world="atelier">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=11">
+<title>Your Shelf — Kody Lâm</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="The pieces you've saved — a small private shelf.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#897A60;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --rule:#DCD2BD; --rule-soft:#E8E0CF;
+    --grain-op:0.5; --grain-blend:multiply; --lamp:transparent;
+    --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  }
+  body.dark{
+    --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
+    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#83857B;
+    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
+    --rule:#272C33; --rule-soft:#1E2228;
+    --grain-op:0.06; --grain-blend:screen;
+    --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);font-size:19px;line-height:1.82;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--lamp)}
+
+  .spine{position:fixed;left:0;top:0;bottom:0;width:62px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:44px 0 26px;z-index:60;background:var(--paper);transition:background .5s,border-color .5s}
+  .spine .mk{color:var(--scarlet);text-decoration:none;transition:transform .4s ease}
+  .spine:hover .mk{transform:translateY(-3px) rotate(-4deg)}
+  .spine .vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:0.34em;text-transform:uppercase;color:var(--ink-faint)}
+  .spine .stamp{width:26px;height:26px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:12px;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:.85}
+
+  .wrap{margin-left:62px;position:relative;z-index:2}
+  .inner{max-width:1100px;margin:0 auto;padding:0 56px}
+  .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)}
+  .brand-m{display:none;margin-right:auto;font-family:var(--disp);font-style:italic;font-size:19px;color:var(--scarlet);text-transform:none;letter-spacing:0;text-decoration:none}
+  .top a{color:inherit;text-decoration:none;transition:.2s;position:relative}.top a:hover{color:var(--scarlet)}
+  .top a.cur{color:var(--ink)}
+  .moon{cursor:pointer;width:30px;height:30px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);background:none;transition:.2s}
+  .moon:hover{border-color:var(--scarlet);color:var(--scarlet)}
+  .theme-icon-moon{display:none}
+  body.dark .theme-icon-sun{display:none}
+  body.dark .theme-icon-moon{display:inline}
+
+  .hero{padding:52px 0 18px}
+  .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--scarlet);margin-bottom:22px}
+  .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(46px,9vw,104px);line-height:0.92;letter-spacing:-0.03em}
+  .hero h1 em{font-style:italic;color:var(--scarlet)}
+  .hero .lede{margin-top:22px;max-width:560px;font-family:var(--disp);font-style:italic;font-weight:400;font-size:19px;line-height:1.55;color:var(--ink-soft)}
+  .hero .count{margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint)}
+  .hero .count b{color:var(--scarlet)}
+
+  main{padding:30px 0 30px;min-height:30vh}
+  .row{display:grid;grid-template-columns:54px 1fr auto;gap:24px;align-items:baseline;padding:24px 0;border-top:1px solid var(--rule);position:relative}
+  .row:last-of-type{border-bottom:1px solid var(--rule)}
+  .row .ln{font-family:var(--disp);font-style:italic;font-size:22px;color:var(--ink-faint)}
+  .row .body{cursor:pointer}
+  .row h3{font-family:var(--disp);font-weight:500;font-size:clamp(21px,2.5vw,30px);line-height:1.06;letter-spacing:-0.01em;transition:color .3s}
+  .row .body:hover h3{color:var(--scarlet)}
+  .row.vi .body:hover h3{color:var(--blue)}
+  .row p{margin-top:7px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--ink-soft);max-width:560px}
+  .row .side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+  .row .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.8}
+  .row .meta .lng-tag{color:var(--scarlet)}.row.vi .meta .lng-tag{color:var(--blue)}
+  .row .rm{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);background:none;border:1px solid var(--rule);border-radius:100px;padding:6px 12px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .row .rm:hover{border-color:var(--scarlet);color:var(--scarlet)}
+
+  .empty{text-align:center;padding:60px 0}
+  .empty .o{font-family:var(--disp);color:var(--scarlet);letter-spacing:0.4em;margin-bottom:14px}
+  .empty h2{font-family:var(--disp);font-weight:400;font-size:clamp(26px,3.6vw,38px);line-height:1.1;margin-bottom:12px}
+  .empty h2 em{font-style:italic;color:var(--scarlet)}
+  .empty p{font-size:16px;color:var(--ink-soft);max-width:440px;margin:0 auto 24px}
+  .empty a{font-family:var(--mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--scarlet);text-decoration:none;border:1px solid var(--scarlet);padding:13px 26px;transition:.3s}
+  .empty a:hover{background:var(--scarlet);color:var(--paper)}
+
+  footer{padding:54px 56px 56px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;align-items:flex-end;border-top:1px solid var(--ink);margin-top:30px}
+  footer .big{font-family:var(--disp);font-style:italic;font-size:30px;color:var(--ink)}
+  footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
+  footer .col a{color:inherit;text-decoration:none}footer .col a:hover{color:var(--scarlet)}
+
+  @media(max-width:900px){
+    .spine{display:none}.wrap{margin-left:0}.brand-m{display:inline-block}.inner,.top{padding-left:20px;padding-right:20px}
+    .row{grid-template-columns:36px 1fr}.row .side{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between;margin-top:8px}
+    footer{padding-left:0;padding-right:0}
+  }
+</style>
+</head>
+<body>
+<script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
+
+<aside class="spine">
+  <a href="index.html" class="mk" title="Home"><svg viewBox="0 0 100 100" style="width:22px;height:26px;display:block" aria-hidden="true"><path fill="currentColor" d="M50 8C50 8 78 46 78 64a28 28 0 1 1-56 0C22 46 50 8 50 8Z"/></svg></a>
+  <div class="vert">Kody Lâm · Your Shelf</div>
+  <div class="stamp">✦</div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <a href="index.html" class="brand-m">Kody Lâm</a>
+    <a href="index.html">Home</a><a href="library.html">Library</a><a href="motifs.html">Motifs</a><a href="shelf.html" class="cur">Shelf</a><a href="about.html">About</a>
+    <button class="moon" id="themeToggle" title="Light / Dark" aria-label="Toggle light or dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
+  </div>
+
+  <div class="inner">
+    <header class="hero">
+      <div class="entry">— Kept for later · saved on this device</div>
+      <h1>Your <em>Shelf</em></h1>
+      <p class="lede">The pieces you pressed <em>save</em> on while reading — gathered here, waiting for a quieter hour.</p>
+      <div class="count" id="count"></div>
+    </header>
+
+    <main id="main"></main>
+
+    <footer>
+      <div><div class="big">Kody Lâm</div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">Your Shelf</div></div>
+      <div class="col">A bilingual commonplace · MMXXVI<br><a href="library.html">Library</a> · <a href="index.html">Home</a> · <a href="about.html">About</a></div>
+    </footer>
+  </div>
+</div>
+
+<script src="wm-config.js?v=8"></script>
+<script src="wm.js?v=8"></script>
+<script src="wm-supabase.js?v=8"></script>
+<script src="wm-i18n.js?v=8"></script>
+<script src="wm-theme.js?v=3"></script>
+<script>
+(function(){
+  var FORMS={fiction:'Fiction',short:'Short','tan-van':'Tản văn',poem:'Poem',essay:'Essay'};
+  var main=document.getElementById('main'), countEl=document.getElementById('count');
+  function motifName(m){ return (typeof WM!=='undefined' && WM.motifs && WM.motifs[m]) ? WM.motifs[m].name : m; }
+
+  function saved(){ try{ return (WM.shelf&&WM.shelf.all)?WM.shelf.all():[]; }catch(e){ return []; } }
+  function resolve(ids){ return ids.map(function(id){ return (WM.getStory?WM.getStory(id):null); }).filter(Boolean); }
+
+  function render(){
+    var ids = saved(), pieces = resolve(ids);
+    countEl.innerHTML = pieces.length ? ('<b>'+pieces.length+'</b> piece'+(pieces.length===1?'':'s')+' kept') : '';
+    if(!pieces.length){
+      main.innerHTML = '<div class="empty"><div class="o">· · ·</div><h2>Your shelf is <em>empty</em>.</h2><p>While reading, press <em>♡ Save</em> in the top bar and the piece will wait for you here.</p><a href="library.html">Browse the Library →</a></div>';
+      return;
+    }
+    main.innerHTML = pieces.map(function(s){
+      var vi=s.lang==='vi';
+      return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'">'
+        + '<div class="ln">'+(s.folio||'✦')+'</div>'
+        + '<div class="body" data-open="'+s.id+'"><h3'+(vi?' lang="vi"':'')+'>'+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p></div>'
+        + '<div class="side"><div class="meta">'+(FORMS[s.form]||s.form)+'<br>'+(s.readTime||'')+' min<br><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span></div>'
+        + '<button class="rm" data-remove="'+s.id+'">♥ Remove</button></div>'
+        + '</article>';
+    }).join('');
+  }
+
+  main.addEventListener('click', function(e){
+    var rm=e.target.closest('[data-remove]');
+    if(rm){ try{ WM.shelf.toggle(rm.dataset.remove); }catch(err){} render(); return; }
+    var op=e.target.closest('[data-open]');
+    if(op){ location.href='reader.html?id='+encodeURIComponent(op.dataset.open); }
+  });
+
+  render();
+  // re-resolve once the backend has merged server pieces + synced bookmarks
+  window.addEventListener('wm:ready', render, {once:true});
+})();
+</script>
+</body>
+</html>
