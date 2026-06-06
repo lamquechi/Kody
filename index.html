@@ -150,6 +150,20 @@
   .col-margin .stamp-begin{margin-top:14px;display:block;width:fit-content;border:1.5px solid var(--scarlet);color:var(--scarlet);font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 14px;transform:rotate(-2deg);opacity:.85;cursor:pointer;transition:transform .3s}
   .mnote.warm:hover .stamp-begin{transform:rotate(0deg) scale(1.04)}
 
+  /* ════ THE QUIET LETTER (newsletter) ════ */
+  .letter{border-top:1px solid var(--rule);padding:62px 0}
+  .letter-in{max-width:620px}
+  .letter p{font-family:var(--disp);font-style:italic;font-size:18px;line-height:1.6;color:var(--ink-soft);max-width:520px;margin:0 0 26px}
+  .sub-form{display:flex;gap:10px;flex-wrap:wrap;max-width:520px}
+  .sub-form input{flex:1;min-width:220px;background:var(--paper-2);border:1px solid var(--rule);border-radius:2px;padding:14px 16px;font-family:var(--body);font-size:16px;color:var(--ink);outline:none;transition:border-color .2s}
+  .sub-form input:focus{border-color:var(--scarlet)}
+  .sub-form input::placeholder{color:var(--ink-faint)}
+  .sub-form button{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);background:var(--ink);border:none;border-radius:2px;padding:14px 22px;cursor:pointer;transition:background .25s}
+  .sub-form button:hover{background:var(--scarlet)}
+  .sub-form button:disabled{opacity:.55;cursor:default}
+  .sub-msg{margin-top:14px;font-family:var(--disp);font-style:italic;font-size:15.5px;min-height:1.2em}
+  .sub-msg.ok{color:var(--green)}.sub-msg.err{color:var(--scarlet)}
+
   footer{padding:64px 56px 60px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;align-items:flex-end;border-top:1px solid var(--ink);margin-top:8px}
   footer .big{font-family:var(--disp);font-style:italic;font-size:34px;color:var(--ink)}
   footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
@@ -317,6 +331,19 @@
         <div class="mnote warm reveal"><span class="ref">⁂ begin</span>Folio I is the doorway.<span class="stamp-begin" id="startHere">Start here →</span></div>
       </aside>
     </div>
+
+    <section class="letter reveal" id="subscribe">
+      <div class="letter-in">
+        <div class="sec-k">The quiet letter · gửi bạn đọc</div>
+        <h2 class="sec-h">A letter, only when there's <em>weather</em> worth sending.</h2>
+        <p>No schedule, no noise — just a note when a new piece is ready, perhaps once a month. Leave anytime.</p>
+        <form class="sub-form" id="subForm" novalidate>
+          <input type="email" id="subEmail" placeholder="you@email.com" autocomplete="email" aria-label="Your email" required>
+          <button type="submit" id="subBtn">Receive future letters →</button>
+        </form>
+        <div class="sub-msg" id="subMsg" role="status" aria-live="polite"></div>
+      </div>
+    </section>
 
     <footer class="reveal">
       <div>
@@ -500,6 +527,24 @@
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+})();
+</script>
+<script>
+/* ── the quiet letter · newsletter signup ── */
+(function(){
+  var f=document.getElementById('subForm'); if(!f) return;
+  var email=document.getElementById('subEmail'), msg=document.getElementById('subMsg'), btn=document.getElementById('subBtn'), label=btn.textContent;
+  function show(ok,t){ msg.className='sub-msg '+(ok?'ok':'err'); msg.textContent=t; }
+  f.addEventListener('submit', function(e){ e.preventDefault();
+    var v=(email.value||'').trim();
+    if(!v || v.indexOf('@')<1 || v.lastIndexOf('.')<v.indexOf('@')){ show(false,'Please enter a valid email.'); email.focus(); return; }
+    btn.disabled=true; btn.textContent='Sending…';
+    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=label; if(ok) email.value=''; }
+    if(typeof WM!=='undefined' && WM.newsletter && WM.newsletter.subscribe){
+      WM.newsletter.subscribe(v,'home').then(function(r){ done(true,(r&&r.already)?'You’re already on the list — thank you ✦':'Kept. I’ll write when there’s weather worth sending ✦'); })
+        .catch(function(err){ done(false,(err&&err.message)||'Could not subscribe right now — try again in a moment.'); });
+    } else { done(false,'The letter list needs the live site — try again in a moment.'); }
+  });
 })();
 </script>
 </body>

@@ -43,5 +43,11 @@ window.WM_CONFIG = {
   // works-in-progress at beta.html and leave private notes — without
   // ever reaching the admin studio. Give them this passphrase only.
   // Leave '' to keep the beta room closed.
-  betaPassphrase: ''   // e.g. 'phong-doc-rieng'
+  betaPassphrase: '',  // e.g. 'phong-doc-rieng'
+
+  // ── Contact address (optional) ─────────────────────────────
+  // If set, the About page's "get in touch" form opens the visitor's
+  // mail app addressed to you. Leave '' to instead add them to the
+  // quiet-letter list (subscribers). e.g. 'you@email.com'
+  contactEmail: ''
 };

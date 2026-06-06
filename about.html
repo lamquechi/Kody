@@ -224,13 +224,14 @@
         <div class="entry">Get in touch</div>
         <h3>For a <em>quiet</em> letter,<br>or a translation, or a beta read.</h3>
         <p class="lead">I read every message, though I reply slowly. Anything from "this stayed with me" to "would you let me translate this into French" — both have happened.</p>
-        <form class="cform" onsubmit="event.preventDefault(); alert('Demo — wire this to email or a real form in Settings → Presence.');">
-          <input type="text" placeholder="your name (optional)">
-          <input type="email" placeholder="your email" required>
-          <textarea placeholder="a short note…" required></textarea>
-          <button type="submit">Send →</button>
+        <form class="cform" id="contactForm" novalidate>
+          <input type="text" id="cfName" placeholder="your name (optional)">
+          <input type="email" id="cfEmail" placeholder="your email" required>
+          <textarea id="cfMsg" placeholder="a short note…"></textarea>
+          <button type="submit" id="cfBtn">Send →</button>
         </form>
-        <div class="direct"><span>Or directly · <a href="#">hello@watermemory.studio</a></span><span><a href="#">Instagram</a></span><span><a href="#">Newsletter</a></span></div>
+        <div class="cform-msg" id="cfStatus" role="status" aria-live="polite" style="font-family:var(--disp);font-style:italic;font-size:15px;margin-top:12px;min-height:1.1em"></div>
+        <div class="direct"><span>Or · <a href="index.html#subscribe">the quiet letter →</a></span><span><a href="index.html#subscribe">Newsletter</a></span></div>
       </div>
     </section>
 
@@ -279,6 +280,33 @@
     document.addEventListener('mouseover',function(e){ if(e.target.closest&&e.target.closest(hot)) ring.classList.add('big'); });
     document.addEventListener('mouseout',function(e){ if(e.target.closest&&e.target.closest(hot)) ring.classList.remove('big'); });
   })();
+</script>
+<script>
+/* ── get in touch · mailto when configured, else the quiet letter ── */
+(function(){
+  var f=document.getElementById('contactForm'); if(!f) return;
+  var cfg=window.WM_CONFIG||{};
+  var st=document.getElementById('cfStatus'), btn=document.getElementById('cfBtn'), label=btn?btn.textContent:'Send →';
+  function show(ok,t){ if(st){ st.style.color=ok?'var(--green)':'var(--scarlet)'; st.textContent=t; } }
+  f.addEventListener('submit', function(e){ e.preventDefault();
+    var name=(document.getElementById('cfName').value||'').trim(),
+        email=(document.getElementById('cfEmail').value||'').trim(),
+        note=(document.getElementById('cfMsg').value||'').trim();
+    if(!email || email.indexOf('@')<1 || email.lastIndexOf('.')<email.indexOf('@')){ show(false,'Please add a valid email.'); return; }
+    if(cfg.contactEmail){
+      var sub=encodeURIComponent('A note from '+(name||'a reader'));
+      var body=encodeURIComponent((note||'')+'\n\n— '+(name||'a reader')+' <'+email+'>');
+      window.location.href='mailto:'+cfg.contactEmail+'?subject='+sub+'&body='+body;
+      show(true,'Opening your mail app…'); return;
+    }
+    btn.disabled=true; btn.textContent='Sending…';
+    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=label; }
+    if(typeof WM!=='undefined' && WM.newsletter && WM.newsletter.subscribe){
+      WM.newsletter.subscribe(email,'about').then(function(r){ done(true,(r&&r.already)?'You’re already on the list — thank you ✦':'Thank you — you’re on the quiet letter now ✦'); f.reset(); })
+        .catch(function(err){ done(false,(err&&err.message)||'Could not send right now — try again in a moment.'); });
+    } else { done(false,'The list needs the live site — try again in a moment.'); }
+  });
+})();
 </script>
 </body>
 </html>
