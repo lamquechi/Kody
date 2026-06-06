@@ -29,6 +29,8 @@
     'elsewhere': 'Nơi khác',
     'atelier': 'Trang chủ',
     'motifs': 'Mô-típ',
+    'home': 'Trang chủ',
+    'shelf': 'Kệ sách',
     'notes': 'Ghi chú',
     'influences': 'Ảnh hưởng',
     'identity': 'Con người',

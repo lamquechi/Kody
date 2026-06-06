@@ -148,6 +148,12 @@
   }
 
   a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--scarlet,var(--accent,#B8472E));outline-offset:2px;border-radius:2px}
+
+  .langsel{display:inline-flex;align-items:center;gap:5px}
+  .langsel button{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);background:none;border:none;cursor:pointer;padding:2px;transition:color .2s}
+  .langsel button:hover{color:var(--scarlet)}
+  .langsel button.active{color:var(--ink)}
+  .langsel .sep{color:var(--ink-faint);font-size:10px}
 </style>
 </head>
 <body>
@@ -163,6 +169,7 @@
   <div class="top">
     <a href="index.html" class="brand-m">Kody Lâm</a>
     <a href="library.html">Library</a><a href="motifs.html">Motifs</a><a href="shelf.html">Shelf</a><a href="about.html" class="cur">About</a>
+    <span class="langsel"><button data-lang="en">EN</button><span class="sep">·</span><button data-lang="vi">VI</button></span>
     <button class="moon" id="themeToggle" title="Light / Dark" aria-label="Toggle light or dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
   </div>
 
