@@ -151,6 +151,8 @@
     .row{grid-template-columns:40px 1fr}.row .meta{grid-column:2;text-align:left;margin-top:6px}
     footer{padding-left:0;padding-right:0}
   }
+
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--scarlet,var(--accent,#B8472E));outline-offset:2px;border-radius:2px}
 </style>
 </head>
 <body>
@@ -294,7 +296,10 @@
   }
   function bindRows(){
     listEl.querySelectorAll('.row').forEach(function(r){
-      r.addEventListener('click',function(){ window.location.href='reader.html?id='+r.getAttribute('data-id'); });
+      r.setAttribute('tabindex','0'); r.setAttribute('role','link');
+      function go(){ window.location.href='reader.html?id='+r.getAttribute('data-id'); }
+      r.addEventListener('click', go);
+      r.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
     });
   }
 
@@ -304,7 +309,7 @@
   document.getElementById('sort').addEventListener('change',function(e){ state.sort=e.target.value; renderList(); });
 
   // featured cards
-  document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.addEventListener('click',function(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); }); });
+  document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.setAttribute('tabindex','0'); c.setAttribute('role','link'); function go(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } c.addEventListener('click', go); c.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } }); });
 
   function updateStats(){
     var n=stories.length, vi=stories.filter(function(s){return s.lang==='vi';}).length, en=n-vi;
