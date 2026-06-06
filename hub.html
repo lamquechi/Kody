@@ -195,6 +195,11 @@
   .wgoal b{color:var(--ink-soft);font-weight:500}
   .wgoal.met b{color:var(--green)}
 
+  .bulk-bar{display:none;align-items:center;gap:8px;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:9px 14px;margin-bottom:14px}
+  .bulk-bar.show{display:flex}
+  .bulk-bar #bulkCount{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+  .bulk-bar .bsp{flex:1}
+  .pieces-check{width:16px;height:16px;accent-color:var(--scarlet);cursor:pointer;vertical-align:middle}
   .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
   .ra{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--rule);border-radius:2px;background:none;color:var(--ink-soft);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
   .ra:hover{border-color:var(--scarlet);color:var(--scarlet)}
@@ -491,8 +496,9 @@
         </div>
         <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="pieceSearch" placeholder="Search titles…" autocomplete="off"></div>
       </div>
+      <div class="bulk-bar" id="bulkBar"><span id="bulkCount"></span><span class="bsp"></span><button class="ra" data-bulk="publish">Publish</button><button class="ra" data-bulk="unpublish">Unpublish</button><button class="ra danger" data-bulk="delete">Delete</button><button class="ra" data-bulk="clear">Clear</button></div>
       <table>
-        <thead><tr><th>Title</th><th>Form</th><th>Progress</th><th>Status</th><th class="r">Words</th><th class="r">Reads</th><th class="r">Marks</th><th class="r">Actions</th></tr></thead>
+        <thead><tr><th style="width:30px"><input type="checkbox" id="selAll" class="pieces-check" aria-label="Select all"></th><th>Title</th><th>Form</th><th>Progress</th><th>Status</th><th class="r">Words</th><th class="r">Reads</th><th class="r">Marks</th><th class="r">Actions</th></tr></thead>
         <tbody id="pieceRows"></tbody>
       </table>
     </section>
@@ -542,6 +548,7 @@
         <div><div class="p-eyebrow">The company</div><h1 class="p-title"><em>Characters</em></h1><p class="p-sub">The people who walk through your rooms — and which pieces they live in.</p></div>
         <button class="btn btn-ink" id="addChar">+ New character</button>
       </div>
+      <div class="toolbar"><div class="search" style="max-width:300px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="charSearch" placeholder="Search characters…" autocomplete="off"></div></div>
       <div class="char-grid" id="charGrid"></div>
     </section>
 
@@ -551,6 +558,7 @@
         <div><div class="p-eyebrow">The recurring weather</div><h1 class="p-title"><em>Motifs</em></h1><p class="p-sub">The temperatures you keep returning to. Notes here are private; the public archive lives at motifs.html.</p></div>
         <a class="btn btn-ghost" href="motifs.html" target="_blank">↗ Public archive</a>
       </div>
+      <div class="toolbar"><div class="search" style="max-width:300px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="motifSearch" placeholder="Search motifs…" autocomplete="off"></div></div>
       <div class="motif-grid" id="motifGrid"></div>
     </section>
 

@@ -125,7 +125,8 @@
   }
 
   /* ════ PIECES ════ */
-  let pieceWf='all', pieceSearch='';
+  let pieceWf='all', pieceSearch='', selectedPieces=new Set();
+  let charSearch='', motifSearch='';
   function progSelect(p){
     const cur = p.progress || '';
     const opts = ['<option value="">— stage —</option>'].concat(PORDER().map(k=>
@@ -164,6 +165,7 @@
       const viewable = p.status==='published';   // drafts preview live in the editor
       const goalMet = p.wordGoal>0 && p.words>=p.wordGoal;
       return `<tr>
+        <td><input type="checkbox" class="pieces-check" data-sel="${esc(p.id)}"${selectedPieces.has(p.id)?' checked':''}></td>
         <td><span class="t-title ${p.lang==='vi'?'vi':''}" data-edit="${esc(p.id)}">${esc(p.title)}</span></td>
         <td class="meta-mono">${FORM()[p.form]||p.form||'—'} · ${(p.lang||'en').toUpperCase()}</td>
         <td>${progSelect(p)}</td>
@@ -177,9 +179,31 @@
           ${manage?`<button class="ra" data-pub="${esc(p.id)}">${p.status==='published'?'Unpublish':'Publish'}</button>`:''}
           ${manage?`<button class="ra danger" data-del="${esc(p.id)}">Delete</button>`:''}
         </div></td></tr>`;
-    }).join('') : `<tr><td colspan="8"><div class="empty">No pieces here. ${pieceWf!=='all'||pieceSearch?'Try another filter.':'Write your first.'}</div></td></tr>`;
+    }).join('') : `<tr><td colspan="9"><div class="empty">No pieces here. ${pieceWf!=='all'||pieceSearch?'Try another filter.':'Write your first.'}</div></td></tr>`;
+    updateBulkBar();
   }
   function setC(id,n){ const e=$(id); if(e) e.textContent=n; }
+  function updateBulkBar(){
+    const present=new Set(WM.pieces.list().map(p=>p.id));
+    Array.from(selectedPieces).forEach(id=>{ if(!present.has(id)) selectedPieces.delete(id); });
+    const n=selectedPieces.size, bar=$('bulkBar');
+    if(bar){ bar.classList.toggle('show',n>0); const c=$('bulkCount'); if(c) c.textContent=n+' selected'; }
+    const sa=$('selAll'); if(sa){ const checks=document.querySelectorAll('#pieceRows [data-sel]'); sa.checked=checks.length>0 && Array.from(checks).every(x=>x.checked); }
+  }
+  function bulkAction(kind){
+    if(kind==='clear'){ selectedPieces.clear(); renderPieces(); return; }
+    const ids=Array.from(selectedPieces); if(!ids.length) return;
+    if(kind==='delete'){
+      if(!confirm('Delete '+ids.length+' piece'+(ids.length===1?'':'s')+'? This cannot be undone.')) return;
+      ids.forEach(id=>{ try{ WM.drafts.delete(id); }catch(e){} WM.pieceMeta.delete(id); WM.removed.add(id); });
+      toast(ids.length+' deleted.');
+    } else {
+      const pub=kind==='publish';
+      ids.forEach(id=>{ const p=WM.pieces.get(id); if(!p) return; const d=WM.drafts.get(id)||{title:p.title,body:p.body,form:p.form,lang:p.lang,motif:p.motif}; WM.drafts.save(id,{...d,status:pub?'published':'draft'}); });
+      toast(ids.length+(pub?' published.':' moved to drafts.'));
+    }
+    selectedPieces.clear(); renderPieces(); renderOverview(); updateBadges();
+  }
 
   function setProgress(id,val){ WM.pieceMeta.set(id,{progress:val}); renderPieces(); renderOverview(); }
   function togglePublish(id){
@@ -297,8 +321,11 @@
   /* ════ CHARACTERS ════ */
   function piecesForChar(cid){ return WM.pieces.list().filter(p=>(WM.pieceMeta.get(p.id).characters||[]).includes(cid)); }
   function renderCharacters(){
-    const chars = WM.characters.all();
-    if(!chars.length){ $('charGrid').innerHTML = `<div class="empty" style="grid-column:1/-1">No characters yet. Add the first person who walks through your rooms — <a style="color:var(--scarlet);cursor:pointer" id="charEmptyAdd">new character →</a></div>`;
+    let chars = WM.characters.all(); const total=chars.length;
+    if(charSearch) chars = chars.filter(c=>((c.name||'')+' '+(c.role||'')+' '+(c.oneLine||'')+' '+(c.description||'')).toLowerCase().includes(charSearch));
+    if(!chars.length){ $('charGrid').innerHTML = total
+        ? '<div class="empty" style="grid-column:1/-1">No characters match “'+esc(charSearch)+'”.</div>'
+        : `<div class="empty" style="grid-column:1/-1">No characters yet. Add the first person who walks through your rooms — <a style="color:var(--scarlet);cursor:pointer" id="charEmptyAdd">new character →</a></div>`;
       const a=$('charEmptyAdd'); if(a) a.addEventListener('click',()=>openCharModal()); return; }
     $('charGrid').innerHTML = chars.map(c=>{
       const inPieces=piecesForChar(c.id); const col=c.color||'var(--scarlet)';
@@ -364,7 +391,9 @@
   function renderMotifs(){
     const motifs = WM.motifs||{}; const items=WM.pieces.list();
     const order = ['rain','water','window','silence','night','city','draft'];
-    const keys = order.filter(k=>motifs[k]).concat(Object.keys(motifs).filter(k=>!order.includes(k)));
+    let keys = order.filter(k=>motifs[k]).concat(Object.keys(motifs).filter(k=>!order.includes(k)));
+    if(motifSearch) keys = keys.filter(k=>((motifs[k].name||k)+' '+(motifs[k].subtitle||'')).toLowerCase().includes(motifSearch));
+    if(!keys.length){ $('motifGrid').innerHTML='<div class="empty" style="grid-column:1/-1">No motifs match.</div>'; return; }
     $('motifGrid').innerHTML = keys.map(k=>{
       const m=motifs[k]; const list=items.filter(p=>p.motif===k);
       const reads=list.reduce((a,p)=>a+(p.reads||0),0);
@@ -556,6 +585,8 @@
       pieceWf=t.dataset.wf; renderPieces();
     }));
     $('pieceSearch').addEventListener('input',e=>{ pieceSearch=e.target.value.trim().toLowerCase(); renderPieces(); });
+    { const cs=$('charSearch'); if(cs) cs.addEventListener('input',e=>{ charSearch=e.target.value.trim().toLowerCase(); renderCharacters(); }); }
+    { const ms=$('motifSearch'); if(ms) ms.addEventListener('input',e=>{ motifSearch=e.target.value.trim().toLowerCase(); renderMotifs(); }); }
 
     // calendar nav
     $('calPrev').addEventListener('click',()=>{ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); });
@@ -579,11 +610,14 @@
       }
       const seot=e.target.closest('[data-seotoggle]'); if(seot){ seot.closest('.seo-row').classList.toggle('open'); return; }
       const day=e.target.closest('[data-day]'); if(day){ openEventModal(day.dataset.day); return; }
+      const bk=e.target.closest('[data-bulk]'); if(bk){ bulkAction(bk.dataset.bulk); return; }
     });
 
-    // progress quick-set
+    // progress quick-set + bulk selection
     document.addEventListener('change',e=>{
       const ps=e.target.closest('[data-prog]'); if(ps){ setProgress(ps.dataset.prog, ps.value); return; }
+      const sel=e.target.closest('[data-sel]'); if(sel){ if(sel.checked) selectedPieces.add(sel.dataset.sel); else selectedPieces.delete(sel.dataset.sel); updateBulkBar(); return; }
+      if(e.target.id==='selAll'){ const on=e.target.checked; document.querySelectorAll('#pieceRows [data-sel]').forEach(c=>{ c.checked=on; if(on) selectedPieces.add(c.dataset.sel); else selectedPieces.delete(c.dataset.sel); }); updateBulkBar(); return; }
     });
 
     // motif notes (save on blur)
