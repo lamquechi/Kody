@@ -30,9 +30,6 @@
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply;
     --lamp:transparent;
-    /* the view through the window — warm city bokeh (swap for your photo via --portrait) */
-    --bokeh:radial-gradient(circle at 27% 32%,rgba(244,176,116,.85),transparent 5.5%),radial-gradient(circle at 58% 22%,rgba(248,206,150,.7),transparent 4.5%),radial-gradient(circle at 79% 40%,rgba(150,188,208,.6),transparent 5.5%),radial-gradient(circle at 43% 58%,rgba(232,124,82,.7),transparent 6.5%),radial-gradient(circle at 20% 76%,rgba(228,180,128,.55),transparent 5%),radial-gradient(circle at 71% 73%,rgba(176,204,218,.5),transparent 5%),radial-gradient(circle at 52% 86%,rgba(244,194,146,.5),transparent 7.5%),radial-gradient(circle at 88% 63%,rgba(210,160,120,.4),transparent 4%);
-    --evening:var(--bokeh),linear-gradient(165deg,#2b3442,#1b2331 55%,#141b25);
     --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
   }
   /* ════ PALETTE — dark (the night desk) ════ */
@@ -43,7 +40,6 @@
     --rule:#272C33; --rule-soft:#1E2228;
     --grain-op:0.06; --grain-blend:screen;
     --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
-    --evening:var(--bokeh),linear-gradient(165deg,#1a212c,#0f151e 55%,#0a0e15);
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -64,7 +60,7 @@
   .inner{max-width:1200px;margin:0 auto;padding:0 56px}
 
   /* top bar */
-  .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)}
+  .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:12.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-soft)}
   .brand-m{display:none;margin-right:auto;font-family:var(--disp);font-style:italic;font-size:19px;color:var(--scarlet);text-transform:none;letter-spacing:0;text-decoration:none}
   .top a{color:inherit;text-decoration:none;transition:.2s}.top a:hover{color:var(--scarlet)}
   .top .lang b{color:var(--ink)}
@@ -74,23 +70,18 @@
   body.dark .theme-icon-sun{display:none}
   body.dark .theme-icon-moon{display:inline}
 
-  /* ════ HERO · rain on the window ════ */
+  /* ════ HERO ════ */
   .hero{position:relative;min-height:86vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
   .hero .htext{position:relative;z-index:3}
   .hero .entry,.hero h1,.hero .lede,.hero .scribble{position:relative;z-index:3}
-  /* THE WINDOW — a living, rain-streaked pane on the right. Behind the glass:
-     an evening backdrop, or YOUR PHOTO. Add one by setting --portrait on
-     #rainBackdrop, e.g.  style="--portrait:url('me.jpg')"  — the rain reveals
-     it as droplets streak down. (A soft, evenly-lit photo blends best.) */
-  .rain-stage{position:absolute;right:-10px;top:5%;bottom:5%;width:46%;max-width:560px;z-index:1;border-radius:5px;overflow:hidden;
-    box-shadow:inset 0 0 0 1px var(--rule), 0 34px 80px -54px rgba(0,0,0,.6);
-    -webkit-mask:linear-gradient(95deg,transparent,#000 26%);mask:linear-gradient(95deg,transparent,#000 26%)}
-  .rain-backdrop{position:absolute;inset:0;z-index:1;background-image:var(--portrait,var(--evening));background-size:cover;background-position:center;transition:background .5s}
-  .glass-canvas{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;touch-action:none}
-  .rain-hint{position:absolute;right:13px;bottom:11px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);opacity:0;transition:opacity .6s;pointer-events:none}
-  .rain-stage:hover .rain-hint{opacity:.65}
-  .rain-stage.touched .rain-hint{opacity:0!important}
-  .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--scarlet);margin-bottom:26px}
+  /* portrait plate — a clean frontispiece on the right.
+     Add your photo:  style="--portrait:url('me.jpg')"  on #portrait. */
+  .portrait-plate{position:absolute;right:0;top:7%;bottom:7%;width:38%;max-width:440px;z-index:1;
+    border:1px solid var(--rule);background:var(--portrait,linear-gradient(160deg,var(--paper-2),var(--paper-3)));
+    background-size:cover;background-position:center;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+  .portrait-plate::before{content:"";position:absolute;inset:11px;border:1px solid var(--rule-soft);pointer-events:none}
+  .portrait-plate .cap{position:relative;z-index:2;margin-bottom:22px;font-family:var(--mono);font-size:9.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper);padding:6px 14px;border:1px solid var(--rule);white-space:nowrap}
+  .hero .entry{font-family:var(--mono);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--scarlet);margin-bottom:26px}
   .hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:1.02;letter-spacing:-0.025em;font-optical-sizing:auto;max-width:15ch}
   .hero h1 .l{display:block}
   .hero h1 .ink{position:relative;font-style:italic;font-weight:400;color:var(--scarlet);white-space:nowrap}
@@ -180,7 +171,7 @@
     .col-margin{padding:0 0 28px;border-top:1px solid var(--rule)}
     .entry-row{grid-template-columns:40px 1fr}.entry-row .meta{grid-column:2;text-align:left;margin-top:6px}
     .hero{min-height:auto;padding:30px 0 48px}
-    .rain-stage{position:relative;right:auto;top:auto;bottom:auto;width:100%;max-width:none;height:300px;margin:30px 0 0;-webkit-mask:none;mask:none}
+    .portrait-plate{position:relative;right:auto;top:auto;bottom:auto;width:100%;max-width:340px;height:380px;margin:30px auto 0}
     footer{flex-direction:column;align-items:flex-start;gap:18px}
     footer .col{text-align:left}
     .col-main,.col-margin,footer{padding-left:0;padding-right:0}
@@ -203,8 +194,8 @@
     .reveal.in{opacity:1;transform:none;filter:blur(0)}
     .hero h1 .l{opacity:0;transform:translateY(42px)}
     .hero h1 .ink .uline path{stroke-dashoffset:1}
-    .hero .entry,.hero .lede,.hero .scribble,.rain-stage{opacity:0}
-    body.revealed .rain-stage{animation:wmFadeUp 1.5s ease .35s forwards}
+    .hero .entry,.hero .lede,.hero .scribble,.portrait-plate{opacity:0}
+    body.revealed .portrait-plate{animation:wmFadeUp 1.5s ease .35s forwards}
     body.revealed .hero h1 .l{animation:wmLineRise 1.3s cubic-bezier(.2,.75,.2,1) forwards}
     body.revealed .hero h1 .l:nth-child(1){animation-delay:.1s}body.revealed .hero h1 .l:nth-child(2){animation-delay:.3s}
     @keyframes wmLineRise{to{opacity:1;transform:none}}
@@ -238,7 +229,7 @@
   a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--scarlet,var(--accent,#B8472E));outline-offset:2px;border-radius:2px}
 
   .langsel{display:inline-flex;align-items:center;gap:5px}
-  .langsel button{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);background:none;border:none;cursor:pointer;padding:2px;transition:color .2s}
+  .langsel button{font-family:var(--mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint);background:none;border:none;cursor:pointer;padding:2px;transition:color .2s}
   .langsel button:hover{color:var(--scarlet)}
   .langsel button.active{color:var(--ink)}
   .langsel .sep{color:var(--ink-faint);font-size:10px}
@@ -275,11 +266,9 @@
   <div class="inner">
     <!-- HERO -->
     <section class="hero">
-      <!-- THE WINDOW · rain-streaked glass. Add your photo: set --portrait on #rainBackdrop -->
-      <div class="rain-stage" id="rainStage" aria-hidden="true">
-        <div class="rain-backdrop" id="rainBackdrop"></div>
-        <canvas class="glass-canvas" id="glassCanvas"></canvas>
-        <span class="rain-hint">✦ drag across the glass</span>
+      <!-- Portrait plate. Add your photo:  style="--portrait:url('me.jpg')"  on #portrait -->
+      <div class="portrait-plate" id="portrait" aria-hidden="true">
+        <span class="cap">Kody Lâm</span>
       </div>
       <div class="htext">
         <div class="entry">— Entry · a bilingual commonplace · MMXXVI</div>
@@ -454,76 +443,6 @@
   })();
 </script>
 
-<script>
-/* ── THE WINDOW · rain on glass (canvas) ─────────────────────────
-   A lightly misted pane over an evening backdrop (or the author's
-   photo). Droplets bead, then run, clearing the mist to reveal the
-   view; the photo stays visible throughout. Drag to draw rivulets.
-   Honours reduced-motion.                                          */
-(function(){
-  var stage=document.getElementById('rainStage'), canvas=document.getElementById('glassCanvas');
-  if(!stage||!canvas||!canvas.getContext) return;
-  var ctx=canvas.getContext('2d');
-  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var W=0,H=0,DPR=1,raf=null,running=true,drops=[],lastSpawn=0,lastWipe=0,sprite=null,P=null;
-  var FOG=0.30;                                  // constant, light — the backdrop is always visible
-  function pal(){ var dark=document.body.classList.contains('dark'); return dark?{fog:'14,18,24',sheen:'216,226,234'}:{fog:'228,217,196',sheen:'255,252,245'}; }
-  function makeSprite(){ var S=48,s=document.createElement('canvas'); s.width=s.height=S; var c=s.getContext('2d');
-    var g=c.createRadialGradient(S*0.38,S*0.36,1,S/2,S/2,S/2);
-    g.addColorStop(0,'rgba('+P.sheen+',0.34)'); g.addColorStop(0.5,'rgba('+P.sheen+',0.05)'); g.addColorStop(1,'rgba('+P.sheen+',0)');
-    c.fillStyle=g; c.beginPath(); c.arc(S/2,S/2,S/2,0,7); c.fill();
-    c.fillStyle='rgba('+P.sheen+',0.5)'; c.beginPath(); c.arc(S*0.36,S*0.34,S*0.075,0,7); c.fill();
-    return s; }
-  function bead(){ return {x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.2,vy:0,run:false}; }
-  function clearC(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
-  function mist(){ ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,W,H); ctx.fillStyle='rgba('+P.fog+','+FOG+')'; ctx.fillRect(0,0,W,H); }
-  function sheen(){ ctx.globalCompositeOperation='source-over'; for(var k=0;k<drops.length;k++){ var b=drops[k]; if(b.r<1.5) continue; ctx.drawImage(sprite,b.x-b.r-1,b.y-b.r-1,(b.r+1)*2,(b.r+1)*2); } }
-  function resize(){
-    W=stage.clientWidth; H=stage.clientHeight; if(!W||!H) return;
-    DPR=Math.min(2,window.devicePixelRatio||1);
-    canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
-    canvas.style.width=W+'px'; canvas.style.height=H+'px';
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-    P=pal(); sprite=makeSprite();
-    drops=[]; var n=Math.round(W*H/10000);
-    for(var i=0;i<n;i++) drops.push(bead());
-    if(reduce) staticFrame();
-  }
-  function staticFrame(){
-    mist();
-    ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
-    for(var i=0;i<drops.length;i++) clearC(drops[i].x,drops[i].y,drops[i].r+1.1);
-    sheen();
-  }
-  function frame(t){
-    if(!running) return;
-    mist();                                       // redraw a constant light mist every frame
-    if(t-lastSpawn>120){ lastSpawn=t; if(drops.length<W*H/4600) drops.push(bead()); }
-    ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='#000';
-    for(var i=0;i<drops.length;i++){ var d=drops[i];
-      if(d.run){ d.vy+=0.05+d.r*0.012; d.y+=d.vy;
-        var trail=Math.min(72,d.vy*6), steps=Math.max(2,Math.ceil(trail/3));
-        for(var st=0;st<=steps;st++){ var yy=d.y-(trail*st/steps), rr=d.r*(1-0.55*st/steps); clearC(d.x,yy,Math.max(0.6,rr)); }
-        d.r*=0.997;
-        if(Math.random()<0.025) drops.push({x:d.x+(Math.random()*6-3),y:d.y-trail,r:0.8+Math.random()*1.1,vy:0,run:false}); }
-      else { d.r+=0.0035+Math.random()*0.004; clearC(d.x,d.y,d.r);
-        if(d.r>5.2 && Math.random()<0.02){ d.run=true; d.vy=0.5+Math.random()*0.7; } }
-    }
-    drops=drops.filter(function(d){ return d.y<H+30 && d.r>0.5; });
-    if(drops.length>1400) drops=drops.slice(drops.length-1400);
-    sheen();
-    raf=requestAnimationFrame(frame);
-  }
-  function wipe(x,y){ var n=performance.now(); if(n-lastWipe<38) return; lastWipe=n;   // drag draws rivulets
-    drops.push({x:x,y:y,r:3.2+Math.random()*3,vy:0.7+Math.random()*0.9,run:true});
-    if(drops.length>1400) drops=drops.slice(drops.length-1400); }
-  stage.addEventListener('pointermove',function(e){ if(reduce) return; var r=stage.getBoundingClientRect(); wipe(e.clientX-r.left,e.clientY-r.top); stage.classList.add('touched'); },{passive:true});
-  window.addEventListener('resize',function(){ clearTimeout(resize._t); resize._t=setTimeout(resize,180); });
-  document.addEventListener('visibilitychange',function(){ running=!document.hidden; if(running&&!reduce){ lastSpawn=performance.now(); raf=requestAnimationFrame(frame); } });
-  if('MutationObserver' in window){ new MutationObserver(function(){ P=pal(); sprite=makeSprite(); }).observe(document.body,{attributes:true,attributeFilter:['class']}); }
-  requestAnimationFrame(function(){ resize(); if(!reduce) raf=requestAnimationFrame(frame); });
-})();
-</script>
 
 <script>
 /* ── motif ribbon · the line crossing centre lifts into focus ── */
