@@ -171,10 +171,10 @@
 
   <div class="inner">
     <header class="hero">
-      <div class="entry">— The archive · seven pieces · MMXXVI</div>
+      <div class="entry">— The archive · <span id="libCount">seven pieces</span> · MMXXVI</div>
       <h1>The <em>Library</em></h1>
       <p class="lede">A curated shelf — each piece marked by form, motif, and quiet length. Letters meant to be read slowly, ideally past midnight.</p>
-      <div class="stats">
+      <div class="stats" id="libStats">
         <span><b>7</b> pieces</span><span><b>5</b> in English</span><span><b>2</b> in Vietnamese</span><span>read like a <b>book</b></span>
       </div>
     </header>
@@ -240,7 +240,7 @@
     </main>
 
     <footer>
-      <div><div class="big">Kody Lâm</div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">The Library · seven pieces</div></div>
+      <div><div class="big">Kody Lâm</div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">The Library · <span id="libFoot">seven pieces</span></div></div>
       <div class="col">A bilingual commonplace · MMXXVI<br><a href="index.html">Home</a> · <a href="about.html">About</a> · <a href="motifs.html">Motifs</a></div>
       <div class="sig">— K.L.</div>
     </footer>
@@ -306,7 +306,17 @@
   // featured cards
   document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.addEventListener('click',function(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); }); });
 
-  renderList();
+  function updateStats(){
+    var n=stories.length, vi=stories.filter(function(s){return s.lang==='vi';}).length, en=n-vi;
+    var num=n+' piece'+(n===1?'':'s');
+    var st=document.getElementById('libStats'); if(st) st.innerHTML='<span><b>'+n+'</b> '+(n===1?'piece':'pieces')+'</span><span><b>'+en+'</b> in English</span><span><b>'+vi+'</b> in Vietnamese</span><span>read like a <b>book</b></span>';
+    var c=document.getElementById('libCount'); if(c) c.textContent=num;
+    var f=document.getElementById('libFoot'); if(f) f.textContent=num;
+  }
+  function reload(){ stories=(typeof WM!=='undefined'&&WM.stories?WM.stories.slice():[]); stories.forEach(function(s,idx){s._i=idx;}); renderList(); updateStats(); }
+
+  renderList(); updateStats();
+  window.addEventListener('wm:ready', reload, {once:true});
 
   // reveals
   (function(){

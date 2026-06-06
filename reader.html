@@ -114,6 +114,36 @@
   .missing a{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-decoration:none;border:1px solid var(--accent);padding:12px 24px}
   .missing a:hover{background:var(--accent);color:var(--page)}
 
+  .chrome button.on{color:var(--accent)}
+
+  /* leave-a-mark sheet */
+  .sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:24px}
+  .sheet.open{display:flex}
+  .sheet-card{background:var(--page);color:var(--text);max-width:440px;width:100%;padding:26px 26px 20px;border-radius:4px;box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+  .sheet-card h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .sheet-card .x{float:right;font-family:var(--mono);font-size:11px;color:var(--muted);cursor:pointer;letter-spacing:.1em}
+  .sheet-lead{font-family:var(--disp);font-style:italic;font-size:14px;color:var(--muted);margin-bottom:14px}
+  .sheet-card textarea{width:100%;background:var(--page2);border:1px solid var(--edge);border-radius:3px;padding:12px 14px;font-family:var(--body);font-size:16px;color:var(--text);outline:none;resize:vertical;transition:border-color .2s}
+  .sheet-card textarea:focus{border-color:var(--accent)}
+  .sheet-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+  .sheet-msg{font-family:var(--disp);font-style:italic;color:var(--accent);font-size:14px}
+  .sheet-foot button{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--page);background:var(--accent);border:none;border-radius:3px;padding:11px 18px;cursor:pointer;transition:opacity .2s}
+  .sheet-foot button:hover{opacity:.88}
+
+  /* end-of-piece card */
+  .copy.ending{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .copy.ending .end-mark{font-family:var(--disp);color:var(--accent);letter-spacing:.3em;font-size:18px;margin-bottom:8px}
+  .copy.ending .end-end{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--faint)}
+  .copy.ending .end-q{font-family:var(--disp);font-style:italic;font-size:clamp(18px,2.2vw,24px);line-height:1.4;color:var(--text);max-width:34ch;margin:16px 0 6px}
+  .copy.ending .end-by{font-family:var(--disp);font-style:italic;color:var(--muted);font-size:15px;margin-bottom:20px}
+  .copy.ending .end-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+  .copy.ending .end-actions button{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--edge);border-radius:100px;padding:10px 17px;cursor:pointer;transition:.2s}
+  .copy.ending .end-actions button:hover{border-color:var(--accent);color:var(--accent)}
+  .copy.ending .end-next{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:18px;line-height:2}
+  .copy.ending .end-next a{display:block;font-family:var(--disp);font-style:italic;text-transform:none;letter-spacing:0;font-size:21px;color:var(--accent);cursor:pointer;text-decoration:none}
+  .copy.ending .end-lib{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+  .copy.ending .end-lib:hover{color:var(--accent)}
+
   @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:10px} }
   @media (prefers-reduced-motion: reduce){ .flipping .flip{transition:none} .progress{transition:none} }
 </style>
@@ -127,6 +157,8 @@
   <div class="tools">
     <span class="seg" id="size"><button data-s="0">A−</button><button data-s="1" class="on">A</button><button data-s="2">A+</button></span>
     <span class="seg" id="theme"><button data-t="day" class="on">Day</button><button data-t="sepia">Sepia</button><button data-t="night">Night</button></span>
+    <button id="markBtn" title="Leave a mark">✎ Mark</button>
+    <button id="saveBtn" title="Save to shelf">♡ Save</button>
     <button id="tocBtn">☰ Contents</button>
   </div>
 </div>
@@ -156,6 +188,15 @@
   <a href="library.html">← Back to the Library</a>
 </div>
 
+<div class="sheet" id="markSheet">
+  <div class="sheet-card">
+    <h4>Leave a mark <span class="x" id="markX">close ✕</span></h4>
+    <p class="sheet-lead">A line you're keeping, or a quiet note to the author. Anonymous.</p>
+    <textarea id="markText" rows="4" placeholder="The sentence that stayed with you…"></textarea>
+    <div class="sheet-foot"><span class="sheet-msg" id="markMsg"></span><button id="markSend">Send ✦</button></div>
+  </div>
+</div>
+
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
 <script src="wm-supabase.js?v=8"></script>
@@ -172,11 +213,15 @@
     if(!s && typeof WM!=='undefined' && WM.stories) s = WM.stories[0] || null;
     return s;
   }
-  var story = pick();
-  if(!story){ document.getElementById('missing').classList.add('show'); return; }
+  var reqId = (typeof WM!=='undefined' && WM.getParam) ? WM.getParam('id') : (new URLSearchParams(location.search).get('id'));
+  function showMissing(){ document.getElementById('missing').classList.add('show'); }
 
+  function start(story){
   document.title = story.title + ' — Kody Lâm';
   document.getElementById('chromeTitle').textContent = story.title;
+  /* count one read once the backend is ready */
+  function doCount(){ try{ if(WM.countRead) WM.countRead(story.id); }catch(e){} }
+  if(typeof WM!=='undefined' && WM.online!==undefined) doCount(); else window.addEventListener('wm:ready', doCount, {once:true});
 
   /* ── markdown → blocks → chapters ── */
   function inline(s){
@@ -293,6 +338,7 @@
     if(idx==null||idx<0) return '<div class="blank"></div>';
     if(idx===0) return TITLE;
     var b=idx-1; if(b>=bodyPages.length) return '<div class="blank"></div>';
+    if(bodyPages[b]===' end') return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— ⁂ —</div>';
     return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'
          + '<div class="copy">'+bodyPages[b]+'</div>'
          + '<div class="num">— '+(b+1)+' —</div>';
@@ -304,6 +350,7 @@
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);
     bodyPages = paginate();
+    bodyPages.push(' end');                 // a closing colophon page
     total = 1 + bodyPages.length;
     if(two){ spreads=[[null,0]]; for(var k=1;k<total;k+=2) spreads.push([k, k+1<total?k+1:null]); }
     else   { spreads=[]; for(var k2=0;k2<total;k2++) spreads.push([null,k2]); }
@@ -372,10 +419,65 @@
   document.getElementById('tocX').addEventListener('click',function(){ toc.classList.remove('open'); });
   toc.addEventListener('click',function(e){ if(e.target===toc) toc.classList.remove('open'); });
 
+  /* ── end-of-piece colophon + reader actions ── */
+  var NEXT = (typeof WM!=='undefined' && WM.getRelatedStories) ? (WM.getRelatedStories(story.id,1)[0]||null) : null;
+  function ENDCARD(){
+    var saved = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
+    return '<div class="copy ending">'
+      + '<div class="end-mark">⁂</div>'
+      + '<div class="end-end">— end —</div>'
+      + (story.excerpt?'<div class="end-q">"'+inline(story.excerpt)+'"</div>':'')
+      + '<div class="end-by">Kody Lâm</div>'
+      + '<div class="end-actions"><button data-act="mark">✎ Leave a mark</button><button data-act="save">'+(saved?'♥ Saved':'♡ Save to shelf')+'</button></div>'
+      + (NEXT?'<div class="end-next"><span>Read next</span><a data-next="'+NEXT.id+'">'+NEXT.title+' →</a></div>':'')
+      + '<a class="end-lib" href="library.html">← Back to the Library</a>'
+      + '</div>';
+  }
+  function reflectSave(){
+    var on = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
+    var b=document.getElementById('saveBtn'); if(b){ b.classList.toggle('on',on); b.textContent=on?'♥ Saved':'♡ Save'; }
+    var e2=book.querySelector('.ending [data-act="save"]'); if(e2) e2.textContent=on?'♥ Saved':'♡ Save to shelf';
+  }
+  function toggleSave(){ try{ if(WM.shelf&&WM.shelf.toggle){ WM.shelf.toggle(story.id); reflectSave(); } }catch(e){} }
+  document.getElementById('saveBtn').addEventListener('click', toggleSave);
+
+  var markSheet=document.getElementById('markSheet');
+  function openMark(){ markSheet.classList.add('open'); var t=document.getElementById('markText'); if(t) setTimeout(function(){t.focus();},60); }
+  function closeMark(){ markSheet.classList.remove('open'); }
+  document.getElementById('markBtn').addEventListener('click', openMark);
+  document.getElementById('markX').addEventListener('click', closeMark);
+  markSheet.addEventListener('click', function(e){ if(e.target===markSheet) closeMark(); });
+  document.getElementById('markSend').addEventListener('click', function(){
+    var t=document.getElementById('markText'), msg=document.getElementById('markMsg');
+    var v=(t.value||'').trim(); if(!v){ t.focus(); return; }
+    try{ WM.marks.add({storyId:story.id, storyTitle:story.title, text:v}); }catch(e){}
+    t.value=''; if(msg) msg.textContent='Kept — thank you ✦';
+    setTimeout(closeMark,1100); setTimeout(function(){ if(msg) msg.textContent=''; },1400);
+  });
+  book.addEventListener('click', function(e){
+    var a=e.target.closest('[data-act]'); if(a){ e.stopPropagation(); (a.dataset.act==='mark')?openMark():toggleSave(); return; }
+    var n=e.target.closest('[data-next]'); if(n){ e.stopPropagation(); location.href='reader.html?id='+encodeURIComponent(n.dataset.next); }
+  });
+  if(typeof WM!=='undefined' && WM.online!==undefined) reflectSave(); else window.addEventListener('wm:ready', reflectSave, {once:true});
+
   var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){build(true);},180); },{passive:true});
   build();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){build(true);});
   addEventListener('load',function(){build(true);});
+  }  /* ── end start() ── */
+
+  /* ── boot: resolve the piece, awaiting the backend for server-only pieces ── */
+  var first = pick();
+  if(first){ start(first); }
+  else if(typeof WM!=='undefined' && WM.online!==undefined){
+    if(WM.fetchPiece && reqId) WM.fetchPiece(reqId).then(function(x){ x?start(x):showMissing(); }); else showMissing();
+  } else {
+    window.addEventListener('wm:ready', function(){
+      var s=pick(); if(s){ start(s); return; }
+      if(typeof WM!=='undefined' && WM.fetchPiece && reqId){ WM.fetchPiece(reqId).then(function(x){ x?start(x):showMissing(); }); }
+      else showMissing();
+    }, {once:true});
+  }
 })();
 </script>
 </body>
