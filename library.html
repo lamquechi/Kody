@@ -200,6 +200,7 @@
           <button class="lng" data-lng="en">EN</button>
           <button class="lng" data-lng="vi">VI</button>
         </div>
+        <button class="chip" id="savedChip" data-saved aria-pressed="false" title="Show only saved">♡ Saved</button>
         <select class="sort" id="sort">
           <option value="latest">Sort · Latest</option>
           <option value="length">Sort · By length</option>
@@ -262,16 +263,18 @@
   stories.forEach(function(s,idx){ s._i=idx; });
 
   var listEl=document.getElementById('list'), emptyEl=document.getElementById('empty');
-  var state={ q:'', cat:'all', lng:'all', sort:'latest' };
+  var state={ q:'', cat:'all', lng:'all', sort:'latest', savedOnly:false };
 
   function motifName(m){ return (typeof WM!=='undefined' && WM.motifs && WM.motifs[m]) ? WM.motifs[m].name : m; }
 
+  function fmtReads(n){ return n ? (n>=1000?(n/1000).toFixed(1)+'K':n)+' reads' : 'new'; }
   function rowHTML(s){
     var vi = s.lang==='vi';
-    return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'" data-cat="'+s.form+'" data-lng="'+s.lang+'" data-search="'+((s.title+' '+(s.excerpt||'')+' '+s.motif+' '+s.form).toLowerCase().replace(/"/g,''))+'" data-min="'+(s.readTime||0)+'" data-motif="'+s.motif+'">'
+    var isSaved = !!(typeof WM!=='undefined' && WM.shelf && WM.shelf.has && WM.shelf.has(s.id));
+    return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'" data-cat="'+s.form+'" data-lng="'+s.lang+'" data-saved="'+(isSaved?'1':'0')+'" data-search="'+((s.title+' '+(s.excerpt||'')+' '+s.motif+' '+s.form).toLowerCase().replace(/"/g,''))+'" data-min="'+(s.readTime||0)+'" data-motif="'+s.motif+'">'
       + '<div class="ln">'+(s.folio||'')+'</div>'
       + '<div><h3'+(vi?' lang="vi"':'')+'>'+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p></div>'
-      + '<div class="meta">'+(FORMS[s.form]||s.form)+'<br>'+(s.readTime||'')+' min<br><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span></div>'
+      + '<div class="meta">'+(FORMS[s.form]||s.form)+'<br>'+(s.readTime||'')+' min · '+fmtReads(s.reads)+'<br><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span>'+(isSaved?' · <span style="color:var(--scarlet)">♥ saved</span>':'')+'</div>'
       + '</article>';
   }
 
@@ -290,7 +293,8 @@
       var mq = !q || r.getAttribute('data-search').indexOf(q)>=0 || r.querySelector('h3').textContent.toLowerCase().indexOf(q)>=0;
       var mc = state.cat==='all' || r.getAttribute('data-cat')===state.cat;
       var ml = state.lng==='all' || r.getAttribute('data-lng')===state.lng;
-      var show = mq&&mc&&ml; r.style.display=show?'':'none'; if(show)vis++;
+      var msv = !state.savedOnly || r.getAttribute('data-saved')==='1';
+      var show = mq&&mc&&ml&&msv; r.style.display=show?'':'none'; if(show)vis++;
     });
     emptyEl.classList.toggle('show', vis===0);
   }
@@ -307,6 +311,7 @@
   document.querySelectorAll('#chips .chip').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#chips .chip').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.cat=c.getAttribute('data-cat'); applyFilters(); }); });
   document.querySelectorAll('#lngs .lng').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#lngs .lng').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.lng=c.getAttribute('data-lng'); applyFilters(); }); });
   document.getElementById('sort').addEventListener('change',function(e){ state.sort=e.target.value; renderList(); });
+  (function(){ var sc=document.getElementById('savedChip'); if(sc) sc.addEventListener('click',function(){ state.savedOnly=!state.savedOnly; sc.classList.toggle('on',state.savedOnly); sc.setAttribute('aria-pressed',state.savedOnly?'true':'false'); applyFilters(); }); })();
 
   // featured cards
   document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.setAttribute('tabindex','0'); c.setAttribute('role','link'); function go(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } c.addEventListener('click', go); c.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } }); });

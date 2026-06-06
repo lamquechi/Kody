@@ -429,9 +429,17 @@
 
   /* ════ READERS ════ */
   let subsCache=[];
+  function renderTopPieces(){
+    const el=$('topPieces'); if(!el) return;
+    const items=WM.pieces.list().filter(p=>p.status==='published').sort((a,b)=>(b.reads||0)-(a.reads||0)).slice(0,6);
+    el.innerHTML = items.length ? items.map((p,i)=>
+      `<div class="mini" data-edit="${esc(p.id)}"><span class="mt">${i+1}. ${esc(p.title)}</span><span class="mm">${(p.reads||0)>=1000?((p.reads/1000).toFixed(1)+'K'):(p.reads||0)} reads · ${p.marks||0} marks</span></div>`).join('')
+      : '<div class="empty">No reads yet — they accumulate as readers arrive.</div>';
+  }
   async function renderReaders(){
     let shelf=0; try{ shelf=(WM.shelf.all()||[]).length; }catch(e){}
     $('shelfCount').textContent=shelf;
+    renderTopPieces();
     if(!(window.WM && WM.supabase && WM.isAdmin)){
       $('subsWrap').innerHTML='<div class="note"><b>Offline / not admin</b> &nbsp;The subscriber list loads from the live backend when you\'re signed in as the author.</div>';
       return;
