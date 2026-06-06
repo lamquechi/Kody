@@ -420,6 +420,7 @@
       <button class="nav-item" data-target="seo"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> SEO</button>
       <div class="nav-sep"></div>
       <button class="nav-item" data-target="marks"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg> Marks <span class="badge" id="bMarks" style="display:none"></span></button>
+      <button class="nav-item" data-target="messages"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg> Messages <span class="badge" id="bMsgs" style="display:none"></span></button>
       <button class="nav-item" data-target="readers"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16v16H4z"/><path d="m4 7 8 5 8-5"/></svg> Readers</button>
       <button class="nav-item" data-target="settings"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 4.6V4a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 18 6.6l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 21 11h.09a2 2 0 0 1 0 4z"/></svg> Settings</button>
     </nav>
@@ -586,6 +587,15 @@
         <button class="btn btn-ghost" id="markAllRead">Mark all read</button>
       </div>
       <div id="markList"></div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="panel" data-panel="messages">
+      <div class="p-head">
+        <div><div class="p-eyebrow">The post</div><h1 class="p-title"><em>Messages</em></h1><p class="p-sub" id="msgSub">Notes sent through the About page.</p></div>
+        <button class="btn btn-ghost" id="msgRefresh">Refresh</button>
+      </div>
+      <div id="msgList"><div class="empty">—</div></div>
     </section>
 
     <!-- READERS -->

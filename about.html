@@ -309,11 +309,17 @@
       show(true,'Opening your mail app…'); return;
     }
     btn.disabled=true; btn.textContent='Sending…';
-    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=label; }
-    if(typeof WM!=='undefined' && WM.newsletter && WM.newsletter.subscribe){
-      WM.newsletter.subscribe(email,'about').then(function(r){ done(true,(r&&r.already)?'You’re already on the list — thank you ✦':'Thank you — you’re on the quiet letter now ✦'); f.reset(); })
-        .catch(function(err){ done(false,(err&&err.message)||'Could not send right now — try again in a moment.'); });
-    } else { done(false,'The list needs the live site — try again in a moment.'); }
+    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=label; if(ok) f.reset(); }
+    function subscribeFallback(){
+      if(typeof WM!=='undefined' && WM.newsletter && WM.newsletter.subscribe){
+        WM.newsletter.subscribe(email,'about').then(function(){ done(true,'Thank you — I’ve noted your email ✦'); })
+          .catch(function(err){ done(false,(err&&err.message)||'Could not send right now — try again in a moment.'); });
+      } else { done(false,'The list needs the live site — try again in a moment.'); }
+    }
+    if(typeof WM!=='undefined' && WM.messages && WM.messages.send){
+      WM.messages.send({name:name, email:email, body:note}).then(function(){ done(true,'Thank you — your note reached me ✦'); })
+        .catch(subscribeFallback);   // inbox table not set up yet → keep them on the list
+    } else { subscribeFallback(); }
   });
 })();
 </script>

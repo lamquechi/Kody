@@ -248,6 +248,25 @@ create policy "Author manages events" on studio_events
   for all using (auth.uid() = author_id or is_admin())
   with check (auth.uid() = author_id or is_admin());
 
+-- Messages (the About contact form → the Studio inbox).
+create table if not exists messages (
+  id              uuid primary key default gen_random_uuid(),
+  name            text,
+  email           text,
+  body            text,
+  read_by_author  boolean default false,
+  created_at      timestamptz default now()
+);
+alter table messages enable row level security;
+drop policy if exists "Anyone sends a message" on messages;
+create policy "Anyone sends a message" on messages for insert with check (true);
+drop policy if exists "Admin reads messages" on messages;
+create policy "Admin reads messages" on messages for select using (is_admin());
+drop policy if exists "Admin updates messages" on messages;
+create policy "Admin updates messages" on messages for update using (is_admin());
+drop policy if exists "Admin deletes messages" on messages;
+create policy "Admin deletes messages" on messages for delete using (is_admin());
+
 
 -- ═══════════════════════════════════════════════════════════════
 -- DONE.

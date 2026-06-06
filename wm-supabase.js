@@ -113,6 +113,27 @@
     }
   };
 
+  // ─── MESSAGES (contact form → admin inbox) ───────────────
+  WM.messages = {
+    async send(m) {
+      const { error } = await supabase.from('messages').insert({ name: m.name || null, email: m.email || null, body: m.body || '' });
+      if (error) throw error;
+      return true;
+    },
+    async list() {
+      const { data, error } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    async unreadCount() {
+      const { count, error } = await supabase.from('messages').select('id', { count: 'exact', head: true }).eq('read_by_author', false);
+      if (error) throw error;
+      return count || 0;
+    },
+    async markRead(id) { await supabase.from('messages').update({ read_by_author: true }).eq('id', id); },
+    async remove(id) { await supabase.from('messages').delete().eq('id', id); }
+  };
+
   // ─── MARKS: dual-write + sync ────────────────────────────
   const localMarksAdd = WM.marks.add.bind(WM.marks);
   WM.marks.add = function (mark) {

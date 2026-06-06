@@ -456,6 +456,30 @@
       </div>`).join('') : '<div class="empty">No marks yet. When a reader underlines a line and leaves a note, it lands here.</div>';
   }
 
+  /* ════ MESSAGES (contact inbox) ════ */
+  async function renderMessages(){
+    const el=$('msgList'); if(!el) return;
+    if(!(window.WM && WM.messages && WM.isAdmin)){ el.innerHTML='<div class="note"><b>Offline / not admin</b> &nbsp;Messages load from the live backend when you\'re signed in as the author.</div>'; $('msgSub').textContent=''; return; }
+    el.innerHTML='<div class="empty">Loading…</div>';
+    try{
+      const list=await WM.messages.list();
+      const unread=list.filter(m=>!m.read_by_author).length;
+      $('msgSub').textContent = list.length ? (unread+' unread · '+list.length+' total') : 'Nothing yet.';
+      el.innerHTML = list.length ? list.map(m=>{
+        const t=m.created_at?new Date(m.created_at).getTime():0;
+        return `<div class="mark ${m.read_by_author?'':'unread'}">
+          <div class="mhead"><span class="mfrom">from <b>${esc(m.name||'a reader')}</b>${m.email?' · '+esc(m.email):''}</span><span class="mfrom">${timeAgo(t)}</span></div>
+          <div class="mbody">${esc(m.body||'').replace(/\n/g,'<br>')}</div>
+          <div class="mact">${m.read_by_author?'':`<button class="ra" data-msgread="${esc(m.id)}">Mark read</button>`}${m.email?`<a class="ra" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: your note')}">Reply</a>`:''}<button class="ra danger" data-msgdel="${esc(m.id)}">Delete</button></div>
+        </div>`;
+      }).join('') : '<div class="empty">No messages yet — the About page contact form lands here.</div>';
+    }catch(e){ el.innerHTML='<div class="note"><b>Couldn\'t load</b> &nbsp;'+esc(e.message||'query failed')+' — run the migration to create the messages table.</div>'; }
+  }
+  async function updateMsgBadge(){
+    if(!(window.WM && WM.messages && WM.isAdmin)) return;
+    try{ const n=await WM.messages.unreadCount(); const b=$('bMsgs'); if(!b) return; if(n>0){ b.style.display='inline-block'; b.textContent=n; } else b.style.display='none'; }catch(e){}
+  }
+
   /* ════ READERS ════ */
   let subsCache=[];
   function renderTopPieces(){
@@ -551,6 +575,7 @@
     if(target==='motifs')renderMotifs();
     if(target==='seo')renderSeo();
     if(target==='marks')renderMarks();
+    if(target==='messages')renderMessages();
     if(target==='readers')renderReaders();
     if(target==='settings')fillSettings();
     closeSide();
@@ -611,6 +636,8 @@
       const seot=e.target.closest('[data-seotoggle]'); if(seot){ seot.closest('.seo-row').classList.toggle('open'); return; }
       const day=e.target.closest('[data-day]'); if(day){ openEventModal(day.dataset.day); return; }
       const bk=e.target.closest('[data-bulk]'); if(bk){ bulkAction(bk.dataset.bulk); return; }
+      const mrd=e.target.closest('[data-msgread]'); if(mrd){ WM.messages.markRead(mrd.dataset.msgread).then(()=>{ renderMessages(); updateMsgBadge(); }); return; }
+      const mdl=e.target.closest('[data-msgdel]'); if(mdl){ if(confirm('Delete this message?')) WM.messages.remove(mdl.dataset.msgdel).then(()=>{ renderMessages(); updateMsgBadge(); }); return; }
     });
 
     // progress quick-set + bulk selection
@@ -648,8 +675,9 @@
     $('gateSignOut').addEventListener('click',doSignOut);
     $('modalBg').addEventListener('click',e=>{ if(e.target===$('modalBg')) closeModal(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+    { const mr=$('msgRefresh'); if(mr) mr.addEventListener('click', renderMessages); }
 
-    updateBadges();
+    updateBadges(); updateMsgBadge();
   }
   async function doSignOut(){ try{ if(WM.auth&&WM.auth.signOut) await WM.auth.signOut(); }catch(e){} location.href='login.html'; }
 
