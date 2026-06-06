@@ -25,7 +25,7 @@
   /* ════ PALETTE — light (the day desk) ════ */
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
-    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#9C8E79;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#897A60;
     --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply;
@@ -38,7 +38,7 @@
   /* ════ PALETTE — dark (the night desk) ════ */
   body.dark{
     --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
-    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#6C6E66;
+    --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#83857B;
     --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
     --rule:#272C33; --rule-soft:#1E2228;
     --grain-op:0.06; --grain-blend:screen;
@@ -48,7 +48,7 @@
 
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:var(--body);font-size:18px;line-height:1.78;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
+  body{font-family:var(--body);font-size:19px;line-height:1.82;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
   /* paper grain + lamp glow */
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
