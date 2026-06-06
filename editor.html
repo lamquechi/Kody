@@ -158,6 +158,13 @@
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:100;background:var(--ink);color:var(--paper);font-family:var(--disp);font-style:italic;font-size:15px;padding:13px 22px;border-radius:3px;opacity:0;pointer-events:none;transition:all .35s var(--silk);box-shadow:0 18px 40px -20px rgba(0,0,0,.5)}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* focus mode — distraction-free writing */
+  body.focus-mode .meta,body.focus-mode .tools,body.focus-mode .howto,body.focus-mode .details,body.focus-mode .pane.preview{display:none}
+  body.focus-mode .desk{grid-template-columns:1fr}
+  body.focus-mode .pane.write{border-right:none;max-width:760px;margin:0 auto;padding-top:46px}
+  body.focus-mode .body-in{min-height:66vh;font-size:19px;line-height:1.85}
+  body.focus-mode .title-in{font-size:clamp(30px,4vw,44px)}
+
   @media(max-width:860px){
     .desk{grid-template-columns:1fr}
     .pane.write{border-right:none}
@@ -178,6 +185,7 @@
   <a href="hub.html" class="back" title="Back to the studio">‹ The Studio<small>the writing desk</small></a>
   <span class="status saved" id="status">Ready</span>
   <span class="spacer"></span>
+  <button class="btn-ghost" id="focusBtn" title="Focus mode — distraction-free (Esc to exit)">Focus</button>
   <button class="btn-ghost on" id="previewToggle" title="Toggle preview">Preview</button>
   <button class="btn-ghost" id="publishBtn">Publish</button>
   <button class="btn-ink" id="saveBtn">Save</button>
@@ -363,14 +371,17 @@
     const data=collect();
     WM.drafts.save(pieceId,data);
     WM.pieceMeta.set(pieceId,collectMeta());
-    setStatus(data.status==='published'?'Published ✓':'Saved ✓','saved');
+    markSaved(data.status==='published');
     if(announce) toast(data.status==='published'?'Published to the library.':'Saved.');
   }
 
   function syncPublishLabel(){ $('publishBtn').textContent=els.status.value==='published'?'Unpublish':'Publish'; }
 
-  let dirty=false, saveTimer=null;
-  function markDirty(){ dirty=true; setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
+  let dirty=false, saveTimer=null, savedAt=0, savedTimer=null, savedLabel='Saved';
+  function relTime(ts){ var s=(Date.now()-ts)/1000; if(s<6)return 'just now'; if(s<60)return Math.floor(s)+'s ago'; if(s<3600)return Math.floor(s/60)+'m ago'; return Math.floor(s/3600)+'h ago'; }
+  function tickSaved(){ if(savedAt) setStatus(savedLabel+' · '+relTime(savedAt),'saved'); }
+  function markSaved(published){ savedAt=Date.now(); savedLabel=published?'Published':'Saved'; tickSaved(); clearInterval(savedTimer); savedTimer=setInterval(tickSaved,12000); }
+  function markDirty(){ dirty=true; savedAt=0; clearInterval(savedTimer); setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
 
   ['title','body'].forEach(k=>els[k].addEventListener('input',markDirty));
   ['form','lang','motif','progress'].forEach(k=>els[k].addEventListener('change',markDirty));
@@ -406,6 +417,13 @@
 
   // preview toggle (desktop hide / mobile show)
   $('previewToggle').addEventListener('click',()=>{ if(matchMedia('(max-width:860px)').matches){ document.body.classList.toggle('show-preview'); $('previewToggle').classList.toggle('on',document.body.classList.contains('show-preview')); } else { document.body.classList.toggle('preview-off'); $('previewToggle').classList.toggle('on',!document.body.classList.contains('preview-off')); } });
+
+  // focus mode + ⌘S save + Esc to exit focus
+  $('focusBtn').addEventListener('click',function(){ var on=document.body.classList.toggle('focus-mode'); this.classList.toggle('on',on); this.textContent=on?'Exit focus':'Focus'; if(on) els.body.focus(); });
+  document.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); clearTimeout(saveTimer); doSave(true); dirty=false; }
+    else if(e.key==='Escape' && document.body.classList.contains('focus-mode')){ document.body.classList.remove('focus-mode'); var fb=$('focusBtn'); fb.classList.remove('on'); fb.textContent='Focus'; }
+  });
 
   window.addEventListener('beforeunload',e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
 
