@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=11">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=12">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Kody Lâm">
 <meta property="og:title" content="Reading — Kody Lâm">
@@ -153,7 +153,7 @@
 </style>
 </head>
 <body class="day">
-<script>/* no-flash reading theme */try{(function(){var m=localStorage.getItem('wm.reader.book');if(m!=='day'&&m!=='sepia'&&m!=='night'){var t=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode');m=(t==='dark')?'night':'day';}document.body.className=m;})();}catch(e){}</script>
+<script>/* no-flash reading theme — follows the site-wide light/dark choice */try{(function(){var t=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode');var book=localStorage.getItem('wm.reader.book');var m;if(t==='light')m='day';else if(t==='dark')m=(book==='sepia'||book==='night')?book:'night';else m=(book==='day'||book==='sepia'||book==='night')?book:'day';document.body.className=m;})();}catch(e){}</script>
 
 <div class="chrome">
   <a href="library.html" class="back"><span class="arrow">←</span>Library</a>
