@@ -462,6 +462,18 @@
     } catch (e) { console.warn('[wm] fetchPiece:', e.message); }
     return null;
   };
+  // Characters linked to a piece (for the reader's character cards). Public
+  // read; returns [] gracefully if the migration/policy isn't in place yet.
+  WM.fetchCharactersForPiece = async function (pieceId) {
+    try {
+      let ids = [];
+      const { data: prows } = await supabase.from('pieces').select('characters').eq('id', pieceId).limit(1);
+      if (prows && prows[0] && Array.isArray(prows[0].characters)) ids = prows[0].characters;
+      if (!ids.length) return [];
+      const { data } = await supabase.from('characters').select('id,name,role,age,color,one_line,description').in('id', ids);
+      return (data || []).map(c => ({ id:c.id, name:c.name || '', role:c.role || '', age:c.age || '', color:c.color || '', oneLine:c.one_line || '', description:c.description || '' }));
+    } catch (e) { console.debug('[wm] fetchCharactersForPiece:', e.message); return []; }
+  };
   // Pull published pieces now so WM.stories is complete before pages react to wm:ready
   try { await WM.fetchPublished(); } catch (e) {}
 

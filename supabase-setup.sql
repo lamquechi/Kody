@@ -229,6 +229,9 @@ drop policy if exists "Author manages characters" on characters;
 create policy "Author manages characters" on characters
   for all using (auth.uid() = author_id or is_admin())
   with check (auth.uid() = author_id or is_admin());
+-- Readers can see characters linked to pieces (the reader's character cards).
+drop policy if exists "Public reads characters" on characters;
+create policy "Public reads characters" on characters for select using (true);
 
 -- Studio events (reminders / writing sessions / notes on the Calendar).
 create table if not exists studio_events (

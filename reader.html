@@ -132,6 +132,19 @@
   .rtoast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);z-index:60;background:var(--text);color:var(--page);font-family:var(--disp);font-style:italic;font-size:14px;padding:10px 18px;border-radius:3px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
   .rtoast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* clickable character names → info popover */
+  .char-ref{border-bottom:1px dashed var(--accent);cursor:pointer;transition:background .2s}
+  .char-ref:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+  .char-pop{position:fixed;z-index:70;display:none;width:304px;max-width:88vw;background:var(--page);color:var(--text);border:1px solid var(--edge);border-radius:5px;box-shadow:0 26px 64px -26px rgba(0,0,0,.62);padding:18px 20px}
+  .char-pop .cp-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .char-pop .cp-av{width:38px;height:38px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-style:italic;font-size:18px;color:#fff}
+  .char-pop .cp-name{font-family:var(--disp);font-weight:500;font-size:20px;line-height:1.12}
+  .char-pop .cp-role{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+  .char-pop .cp-x{margin-left:auto;background:none;border:none;font-size:20px;line-height:1;color:var(--faint);cursor:pointer;padding:0}
+  .char-pop .cp-x:hover{color:var(--accent)}
+  .char-pop .cp-line{font-family:var(--disp);font-style:italic;font-size:15px;color:var(--accent);line-height:1.45;margin-bottom:8px}
+  .char-pop .cp-desc{font-family:var(--body);font-size:14px;line-height:1.55;color:var(--text)}
+
   /* end-of-piece card */
   .copy.ending{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
   .copy.ending .end-mark{font-family:var(--disp);color:var(--accent);letter-spacing:.3em;font-size:18px;margin-bottom:8px}
@@ -202,6 +215,11 @@
   </div>
 </div>
 <div class="rtoast" id="rtoast" role="status" aria-live="polite"></div>
+<div class="char-pop" id="charPop" role="dialog" aria-label="Character">
+  <div class="cp-head"><span class="cp-av"></span><div><div class="cp-name"></div><div class="cp-role"></div></div><button class="cp-x" aria-label="Close">×</button></div>
+  <div class="cp-line"></div>
+  <div class="cp-desc"></div>
+</div>
 
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
@@ -347,7 +365,7 @@
     var b=idx-1; if(b>=bodyPages.length) return '<div class="blank"></div>';
     if(bodyPages[b]===' end') return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— ⁂ —</div>';
     return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'
-         + '<div class="copy">'+bodyPages[b]+'</div>'
+         + '<div class="copy">'+linkChars(bodyPages[b])+'</div>'
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
@@ -430,6 +448,48 @@
   var sameMotif = (typeof WM!=='undefined' && WM.getStoriesByMotif && story.motif) ? WM.getStoriesByMotif(story.motif).filter(function(s){return s.id!==story.id;}) : [];
   var MORE = sameMotif.length ? sameMotif.slice(0,3) : ((typeof WM!=='undefined' && WM.getRelatedStories) ? WM.getRelatedStories(story.id,3) : []);
   var motifLabel = (typeof WM!=='undefined' && WM.motifs && WM.motifs[story.motif]) ? WM.motifs[story.motif].name : '';
+
+  /* ── characters: clickable names → an info card ── */
+  var CHARS={}, byName={}, charNames=[];
+  function indexChars(list){ (list||[]).forEach(function(c){ if(c&&c.id&&c.name){ CHARS[c.id]=c; byName[c.name]=c; } }); charNames=Object.keys(byName).sort(function(a,b){return b.length-a.length;}); }
+  (function(){
+    var ids=[]; try{ ids=(WM.pieceMeta.get(story.id).characters)||[]; }catch(e){}
+    if(Array.isArray(story.characters)) ids=ids.concat(story.characters);
+    ids=ids.filter(function(v,i){return v&&ids.indexOf(v)===i;});
+    var local=[]; try{ (WM.characters.all()||[]).forEach(function(c){ if(ids.indexOf(c.id)>=0) local.push(c); }); }catch(e){}
+    indexChars(local);
+    if(!charNames.length && typeof WM!=='undefined' && WM.fetchCharactersForPiece){
+      WM.fetchCharactersForPiece(story.id).then(function(list){ if(list&&list.length){ indexChars(list); build(true); } });
+    }
+  })();
+  function escRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+  function linkChars(html){
+    if(!charNames.length) return html;
+    var re;
+    try{ re=new RegExp('(^|[^\\p{L}\\p{M}])('+charNames.map(escRe).join('|')+')(?![\\p{L}\\p{M}])','gu'); }
+    catch(e){ re=new RegExp('(^|[^A-Za-zÀ-ỹ])('+charNames.map(escRe).join('|')+')(?![A-Za-zÀ-ỹ])','g'); }
+    return html.replace(/>([^<]+)</g,function(m,text){
+      return '>'+text.replace(re,function(mm,pre,nm){ var c=byName[nm]; return c?pre+'<span class="char-ref" data-char="'+c.id+'">'+nm+'</span>':mm; })+'<';
+    });
+  }
+  var charPop=document.getElementById('charPop');
+  function showCharPop(id, el){
+    var c=CHARS[id]; if(!c||!charPop) return;
+    charPop.querySelector('.cp-name').textContent=c.name||'';
+    charPop.querySelector('.cp-role').textContent=[c.role,c.age].filter(Boolean).join(' · ');
+    var av=charPop.querySelector('.cp-av'); av.style.background=c.color||'var(--accent)'; av.textContent=(c.name||'?').trim().charAt(0);
+    var line=charPop.querySelector('.cp-line'); line.textContent=c.oneLine||''; line.style.display=c.oneLine?'':'none';
+    var desc=charPop.querySelector('.cp-desc'); desc.textContent=c.description||''; desc.style.display=c.description?'':'none';
+    charPop.style.display='block';
+    var r=el.getBoundingClientRect(), pw=charPop.offsetWidth, ph=charPop.offsetHeight;
+    var left=Math.min(Math.max(12, r.left+r.width/2-pw/2), innerWidth-pw-12);
+    var top=r.bottom+10; if(top+ph>innerHeight-12) top=Math.max(12, r.top-ph-10);
+    charPop.style.left=left+'px'; charPop.style.top=top+'px';
+  }
+  function hideCharPop(){ if(charPop) charPop.style.display='none'; }
+  if(charPop){ charPop.querySelector('.cp-x').addEventListener('click', hideCharPop); }
+  document.addEventListener('click', function(e){ if(charPop && charPop.style.display==='block' && !(e.target.closest&&(e.target.closest('.char-pop')||e.target.closest('.char-ref')))) hideCharPop(); });
+  addEventListener('keydown', function(e){ if(e.key==='Escape') hideCharPop(); });
   function ENDCARD(){
     var saved = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
     return '<div class="copy ending">'
@@ -471,6 +531,7 @@
     setTimeout(closeMark,1100); setTimeout(function(){ if(msg) msg.textContent=''; },1400);
   });
   book.addEventListener('click', function(e){
+    var cr=e.target.closest('[data-char]'); if(cr){ e.stopPropagation(); showCharPop(cr.dataset.char, cr); return; }
     var a=e.target.closest('[data-act]'); if(a){ e.stopPropagation(); var act=a.dataset.act; if(act==='mark')openMark(); else if(act==='share')doShare(); else toggleSave(); return; }
     var n=e.target.closest('[data-next]'); if(n){ e.stopPropagation(); location.href='reader.html?id='+encodeURIComponent(n.dataset.next); }
   });
