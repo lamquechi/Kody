@@ -557,6 +557,15 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     has(storyId) { return this.all().includes(storyId); }
   };
 
+  /* ─── READ LOG · pieces this reader has finished ───────── */
+  const READ_KEY = 'wm.read';
+  const readlog = {
+    all() { try { return JSON.parse(localStorage.getItem(READ_KEY)) || []; } catch { return []; } },
+    has(id) { return this.all().includes(id); },
+    mark(id) { const a = this.all(); if (!a.includes(id)) { a.unshift(id); localStorage.setItem(READ_KEY, JSON.stringify(a.slice(0, 500))); } },
+    unmark(id) { localStorage.setItem(READ_KEY, JSON.stringify(this.all().filter(x => x !== id))); }
+  };
+
   /* ─── DRAFTS (localStorage) ───────────────────────────── */
   const DRAFTS_KEY = 'wm.drafts';
 
@@ -796,7 +805,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
     getStory, getStoriesByMotif, getRelatedStories,
     getParam, renderMarkdown, escapeHtml, wordCount, readingMinutes,
     identity, site, drafts,
-    reader, marks, shelf,
+    reader, marks, shelf, readlog,
     pieceMeta, characters, schedule, motifMeta, pieces, seo, removed
   };
 })();

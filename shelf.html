@@ -160,9 +160,10 @@
     }
     main.innerHTML = pieces.map(function(s){
       var vi=s.lang==='vi';
+      var isRead = !!(typeof WM!=='undefined' && WM.readlog && WM.readlog.has && WM.readlog.has(s.id));
       return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'">'
         + '<div class="ln">'+(s.folio||'✦')+'</div>'
-        + '<div class="body" data-open="'+s.id+'" tabindex="0" role="link"><h3'+(vi?' lang="vi"':'')+'>'+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p></div>'
+        + '<div class="body" data-open="'+s.id+'" tabindex="0" role="link"><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p></div>'
         + '<div class="side"><div class="meta">'+(FORMS[s.form]||s.form)+'<br>'+(s.readTime||'')+' min<br><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span></div>'
         + '<button class="rm" data-remove="'+s.id+'">♥ Remove</button></div>'
         + '</article>';
