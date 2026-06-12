@@ -390,23 +390,23 @@
   function pageHTML(idx){
     if(idx==null||idx<0) return '<div class="blank"></div>';
     if(idx===0) return TITLE;
-    var b=idx-1; if(b>=bodyPages.length) return '<div class="blank"></div>';
-    if(bodyPages[b]===' end') return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— ⁂ —</div>';
+    if(idx===endIdx) return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— ⁂ —</div>';
+    var b=idx-1; if(b<0||b>=bodyPages.length) return '<div class="blank"></div>';
     return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'
          + '<div class="copy">'+linkChars(bodyPages[b])+'</div>'
          + '<div class="num">— '+(b+1)+' —</div>';
   }
 
   /* ── spreads + flip ── */
-  var spreads,i=0,two,busy=false,total=0;
+  var spreads,i=0,two,busy=false,total=0,endIdx=0;
   var POSKEY='wm.reader.pos.'+story.id, firstBuild=true;
   var totalMin = story.readTime || Math.max(1, Math.round((typeof WM!=='undefined'&&WM.wordCount?WM.wordCount(story.body):((story.body||'').split(/\s+/).filter(Boolean).length))/200));
   function build(keep){
     two=matchMedia('(min-width:860px)').matches;
     book.classList.toggle('one',!two);
     bodyPages = paginate();
-    bodyPages.push(' end');                 // a closing colophon page
-    total = 1 + bodyPages.length;
+    endIdx = 1 + bodyPages.length;          // the colophon sits right after the last page
+    total = endIdx + 1;                     // title + body pages + colophon
     if(two){ spreads=[[null,0]]; for(var k=1;k<total;k+=2) spreads.push([k, k+1<total?k+1:null]); }
     else   { spreads=[]; for(var k2=0;k2<total;k2++) spreads.push([null,k2]); }
     if(!keep||i==null){ i=0; if(firstBuild){ var fr=parseFloat(localStorage.getItem(POSKEY)||'0'); if(fr>0.02 && spreads.length>1){ i=Math.min(spreads.length-1, Math.round(fr*(spreads.length-1))); if(i>0 && !reduce) setTimeout(function(){ toastReader('Resumed where you left off'); },450); } } }
