@@ -14,14 +14,14 @@
 <meta name="description" content="A quiet reading room — turn the pages of short fiction and tản văn.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ── reading themes (day / sepia / night) ── */
   body.day  { --desk:#E7DECB; --page:#F7F2E8; --page2:#F1EADB; --text:#1B160F; --muted:#665943; --faint:#93845E; --accent:#B0432B; --edge:#E2D7C1; --spine:rgba(0,0,0,.12); }
   body.sepia{ --desk:#241D12; --page:#ECDFC0; --page2:#E5D7B4; --text:#2A2317; --muted:#675838; --faint:#897A52; --accent:#9A5A2E; --edge:#D8C8A2; --spine:rgba(0,0,0,.16); }
   body.night{ --desk:#0C0910; --page:#17140D; --page2:#1C180F; --text:#ECE2CE; --muted:#A89C84; --faint:#867B5D; --accent:#D9714D; --edge:#241E14; --spine:rgba(0,0,0,.55); }
 
-  :root{ --disp:"Newsreader",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  :root{ --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
     --cine:cubic-bezier(.16,1,.3,1); --turn:cubic-bezier(.42,0,.2,1); --fs:20px; --lh:1.8; }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -562,7 +562,7 @@
 
   /* ── reading type: typeface + page width (persisted; re-paginates) ── */
   (function(){
-    var FONTS={ serif:'"Spectral",Georgia,serif', book:'"Newsreader",Georgia,serif', sans:'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' };
+    var FONTS={ serif:'"Spectral",Georgia,serif', book:'"Fraunces",Georgia,serif', sans:'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' };
     var WIDTHS={ narrow:'820px', normal:'940px', wide:'1080px' };
     var panel=document.getElementById('typePanel'), btn=document.getElementById('typeBtn');
     var fontSeg=document.getElementById('fontSeg'), widthSeg=document.getElementById('widthSeg'), root=document.documentElement;
