@@ -158,12 +158,23 @@
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:100;background:var(--ink);color:var(--paper);font-family:var(--disp);font-style:italic;font-size:15px;padding:13px 22px;border-radius:3px;opacity:0;pointer-events:none;transition:all .35s var(--silk);box-shadow:0 18px 40px -20px rgba(0,0,0,.5)}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* focus mode — distraction-free writing */
+  /* focus mode — distraction-free, typewriter-centered writing */
   body.focus-mode .meta,body.focus-mode .tools,body.focus-mode .howto,body.focus-mode .details,body.focus-mode .pane.preview{display:none}
   body.focus-mode .desk{grid-template-columns:1fr}
-  body.focus-mode .pane.write{border-right:none;max-width:760px;margin:0 auto;padding-top:46px}
-  body.focus-mode .body-in{min-height:66vh;font-size:19px;line-height:1.85}
+  body.focus-mode .pane.write{border-right:none;max-width:740px;margin:0 auto;padding-top:46px;padding-bottom:46vh;position:relative}
+  body.focus-mode .body-in{min-height:0;font-size:19px;line-height:1.95;overflow:hidden;resize:none}
   body.focus-mode .title-in{font-size:clamp(30px,4vw,44px)}
+
+  /* recover-unsaved banner */
+  .restore-note{position:relative;z-index:6;flex:0 0 auto;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;text-align:center;padding:9px 16px;
+    color:var(--ink);background:color-mix(in srgb,var(--green) 13%,var(--paper-2));border-bottom:1px solid var(--rule)}
+  .restore-note.show{display:flex}
+  .restore-note b{font-weight:500;color:var(--green);font-family:var(--disp);font-style:italic;text-transform:none;letter-spacing:0;font-size:13px}
+  .restore-note button{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;padding:6px 12px;background:none;border:1px solid var(--rule);color:var(--ink-soft);transition:all .2s}
+  .restore-note button.go{border-color:var(--green);color:var(--green)}
+  .restore-note button.go:hover{background:var(--green);color:var(--paper)}
+  .restore-note button:hover{border-color:var(--scarlet);color:var(--scarlet)}
 
   @media(max-width:860px){
     .desk{grid-template-columns:1fr}
@@ -182,6 +193,7 @@
 <script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode');if(v!=='light'&&v!=='dark'){v='light';}document.body.classList.toggle('dark',v==='dark');document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <div class="ribbon-note" id="offlineNote">Working locally — sign in for this piece to sync to the live site.</div>
+<div class="restore-note" id="restoreNote"><span>Unsaved writing from <b id="restoreWhen">earlier</b> was found on this device.</span><button class="go" id="restoreYes">Restore it</button><button id="restoreNo">Discard</button></div>
 
 <header class="bar">
   <a href="hub.html" class="back" title="Back to the studio">‹ The Studio<small>the writing desk</small></a>
@@ -231,11 +243,11 @@
       <button data-md="bold" title="Bold (Ctrl/⌘ B)"><b>B</b></button>
       <button data-md="em" title="Italic (Ctrl/⌘ I)"><i>I</i></button>
       <span class="tdiv"></span>
-      <button data-md="h2" title="Chapter heading">H₂</button>
-      <button data-md="h3" title="Section heading">H₃</button>
+      <button data-md="h2" title="Chapter heading (Ctrl/⌘ 1)">H₂</button>
+      <button data-md="h3" title="Section heading (Ctrl/⌘ 2)">H₃</button>
       <button data-md="quote" title="Pull-quote">❝</button>
-      <button data-md="list" title="List">• List</button>
-      <button data-md="link" title="Link">↗ Link</button>
+      <button data-md="list" title="List — Enter continues it">• List</button>
+      <button data-md="link" title="Link (Ctrl/⌘ K)">↗ Link</button>
       <button data-md="divider" title="Scene break">✦</button>
       <span class="gap"></span>
       <div class="wc-wrap"><span class="wc" id="wc">0 words · 0 min</span><span class="wc-bar" id="wcBar" style="display:none"><span></span></span></div>
@@ -367,12 +379,17 @@
 
   function collect(){ return { title:els.title.value.trim()||'Untitled', body:els.body.value, form:els.form.value, lang:els.lang.value, motif:els.motif.value||null, status:els.status.value }; }
   function collectMeta(){ return { progress:els.progress.value||'', wordGoal:parseInt(els.goal.value,10)||0, dueAt:tsFromYmd(els.due.value), scheduledAt:tsFromYmd(els.sched.value), focusKeyword:els.kw.value.trim(), metaDescription:els.desc.value.trim(), synopsis:els.syn.value.trim(), characters:Array.from(charSel) }; }
+  // local safety net: a synchronous backup of unsaved title/body, keyed per piece
+  function backupKey(){ return 'wm.editor.backup.'+(pieceId||'new'); }
+  function writeBackup(){ try{ localStorage.setItem(backupKey(), JSON.stringify({title:els.title.value, body:els.body.value, t:Date.now()})); }catch(e){} }
+  function clearBackup(){ try{ localStorage.removeItem('wm.editor.backup.new'); localStorage.removeItem(backupKey()); }catch(e){} }
   function doSave(announce){
     if(!pieceId){ pieceId=uniqueId(slugify(els.title.value)||''); history.replaceState(null,'','editor.html?id='+pieceId); }
     if(WM.removed && WM.removed.has(pieceId)) WM.removed.remove(pieceId);   // un-tombstone on re-create
     const data=collect();
     WM.drafts.save(pieceId,data);
     WM.pieceMeta.set(pieceId,collectMeta());
+    clearBackup();
     markSaved(data.status==='published');
     if(announce) toast(data.status==='published'?'Published to the library.':'Saved.');
   }
@@ -383,7 +400,7 @@
   function relTime(ts){ var s=(Date.now()-ts)/1000; if(s<6)return 'just now'; if(s<60)return Math.floor(s)+'s ago'; if(s<3600)return Math.floor(s/60)+'m ago'; return Math.floor(s/3600)+'h ago'; }
   function tickSaved(){ if(savedAt) setStatus(savedLabel+' · '+relTime(savedAt),'saved'); }
   function markSaved(published){ savedAt=Date.now(); savedLabel=published?'Published':'Saved'; tickSaved(); clearInterval(savedTimer); savedTimer=setInterval(tickSaved,12000); }
-  function markDirty(){ dirty=true; savedAt=0; clearInterval(savedTimer); setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
+  function markDirty(){ dirty=true; savedAt=0; clearInterval(savedTimer); writeBackup(); setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
 
   ['title','body'].forEach(k=>els[k].addEventListener('input',markDirty));
   ['form','lang','motif','progress'].forEach(k=>els[k].addEventListener('change',markDirty));
@@ -395,37 +412,100 @@
   $('publishBtn').addEventListener('click',()=>{ const nowPub=els.status.value==='published'; els.status.value=nowPub?'draft':'published'; syncPublishLabel(); clearTimeout(saveTimer); doSave(true); dirty=false; renderPreview(); });
 
   // markdown toolbar + keyboard shortcuts
+  // undo-safe insertion: execCommand('insertText') keeps the browser's native Undo/Redo intact
+  function insertText(ta, text){
+    ta.focus();
+    let ok=false;
+    try{ ok=document.execCommand && document.execCommand('insertText', false, text); }catch(e){ ok=false; }
+    if(!ok){ const s=ta.selectionStart, e=ta.selectionEnd; ta.setRangeText(text, s, e, 'end'); }  // fallback (loses undo)
+  }
   function applyMd(type){
-    const ta=els.body,s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e); let out=sel, caret=null;
+    const ta=els.body, sel=ta.value.slice(ta.selectionStart, ta.selectionEnd); let out=sel, back=0;
     if(type==='bold')        out='**'+(sel||'word')+'**';
     else if(type==='em')     out='*'+(sel||'word')+'*';
     else if(type==='h2')     out='\n## '+(sel||'Chapter')+'\n\n';
     else if(type==='h3')     out='\n### '+(sel||'Section')+'\n\n';
     else if(type==='quote')  out='\n> '+(sel||'A line worth lingering on.')+'\n';
     else if(type==='list')   out='\n- '+(sel||'first thing')+'\n- \n';
-    else if(type==='link'){  const t=sel||'linked words'; out='['+t+'](https://)'; caret=s+out.length-1; }
+    else if(type==='link'){  out='['+(sel||'linked words')+'](https://)'; back=1; }  // caret lands just before ')'
     else if(type==='divider')out='\n✦\n';
-    ta.value=ta.value.slice(0,s)+out+ta.value.slice(e);
-    ta.focus(); const pos=caret!=null?caret:s+out.length; ta.setSelectionRange(pos,pos);
+    insertText(ta, out);
+    if(back){ const p=ta.selectionStart-back; ta.setSelectionRange(p,p); }
     markDirty();
   }
-  document.querySelectorAll('.tools button[data-md]').forEach(btn=>btn.addEventListener('click',()=>applyMd(btn.dataset.md)));
+  // mousedown+preventDefault keeps the caret in the textarea so execCommand can target it
+  document.querySelectorAll('.tools button[data-md]').forEach(btn=>btn.addEventListener('mousedown',e=>{ e.preventDefault(); applyMd(btn.dataset.md); }));
   els.body.addEventListener('keydown',e=>{
+    // Enter continues a bullet list (or breaks out of an empty item)
+    if(e.key==='Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && els.body.selectionStart===els.body.selectionEnd){
+      const ta=els.body, pos=ta.selectionStart, ls=ta.value.lastIndexOf('\n',pos-1)+1, line=ta.value.slice(ls,pos), m=line.match(/^(\s*)([-*])(\s+)(.*)$/);
+      if(m){ e.preventDefault();
+        if(m[4].trim()===''){ ta.setSelectionRange(ls,pos); insertText(ta,'\n'); }   // empty item → exit the list
+        else insertText(ta, '\n'+m[1]+m[2]+m[3]);
+        markDirty(); return;
+      }
+    }
     if(!(e.ctrlKey||e.metaKey)) return;
     const k=e.key.toLowerCase();
     if(k==='b'){ e.preventDefault(); applyMd('bold'); }
     else if(k==='i'){ e.preventDefault(); applyMd('em'); }
+    else if(k==='k'){ e.preventDefault(); applyMd('link'); }
+    else if(k==='1'){ e.preventDefault(); applyMd('h2'); }
+    else if(k==='2'){ e.preventDefault(); applyMd('h3'); }
   });
 
   // preview toggle (desktop hide / mobile show)
   $('previewToggle').addEventListener('click',()=>{ if(matchMedia('(max-width:860px)').matches){ document.body.classList.toggle('show-preview'); $('previewToggle').classList.toggle('on',document.body.classList.contains('show-preview')); } else { document.body.classList.toggle('preview-off'); $('previewToggle').classList.toggle('on',!document.body.classList.contains('preview-off')); } });
 
+  // ── typewriter centering (focus mode) + auto-grow ──
+  const writePane=document.querySelector('.pane.write'), previewPane=$('preview');
+  let twMirror=null, twRaf=0;
+  function caretYInTextarea(ta){
+    if(!twMirror){ twMirror=document.createElement('div'); twMirror.setAttribute('aria-hidden','true'); twMirror.style.cssText='position:absolute;visibility:hidden;left:-9999px;top:0;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;box-sizing:border-box'; document.body.appendChild(twMirror); }
+    const cs=getComputedStyle(ta);
+    ['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textTransform','paddingTop','paddingRight','paddingBottom','paddingLeft'].forEach(p=>{ twMirror.style[p]=cs[p]; });
+    twMirror.style.width=ta.clientWidth+'px';
+    twMirror.textContent=ta.value.slice(0, ta.selectionStart);
+    const mk=document.createElement('span'); mk.textContent=''; twMirror.appendChild(mk);
+    return mk.offsetTop;
+  }
+  function autoGrow(){ if(!document.body.classList.contains('focus-mode')) return; const ta=els.body; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+  function typewriter(){ if(!document.body.classList.contains('focus-mode')) return; try{ const ta=els.body, y=ta.offsetTop+caretYInTextarea(ta); writePane.scrollTop=Math.max(0, y-writePane.clientHeight/2); }catch(e){} }
+  function twTick(){ if(!document.body.classList.contains('focus-mode')) return; cancelAnimationFrame(twRaf); twRaf=requestAnimationFrame(()=>{ autoGrow(); typewriter(); }); }
+  els.body.addEventListener('input', twTick);
+  els.body.addEventListener('keyup', e=>{ if(/^(Arrow|Enter|Backspace|Delete|Home|End|Page)/.test(e.key)) twTick(); });
+  els.body.addEventListener('click', twTick);
+  addEventListener('resize', ()=>{ if(document.body.classList.contains('focus-mode')) twTick(); }, {passive:true});
+
+  // ── scroll-synced preview (split view only) ──
+  let syncing=false;
+  writePane.addEventListener('scroll', ()=>{
+    if(syncing || document.body.classList.contains('focus-mode') || document.body.classList.contains('preview-off') || matchMedia('(max-width:860px)').matches) return;
+    const sMax=writePane.scrollHeight-writePane.clientHeight, dMax=previewPane.scrollHeight-previewPane.clientHeight;
+    if(sMax>4 && dMax>0){ syncing=true; previewPane.scrollTop=(writePane.scrollTop/sMax)*dMax; requestAnimationFrame(()=>{ syncing=false; }); }
+  }, {passive:true});
+
   // focus mode + ⌘S save + Esc to exit focus
-  $('focusBtn').addEventListener('click',function(){ var on=document.body.classList.toggle('focus-mode'); this.classList.toggle('on',on); this.textContent=on?'Exit focus':'Focus'; if(on) els.body.focus(); });
+  function enterFocus(on){ document.body.classList.toggle('focus-mode',on); const fb=$('focusBtn'); fb.classList.toggle('on',on); fb.textContent=on?'Exit focus':'Focus'; if(on){ els.body.focus(); twTick(); } else { els.body.style.height=''; writePane.scrollTop=0; } }
+  $('focusBtn').addEventListener('click',()=>enterFocus(!document.body.classList.contains('focus-mode')));
   document.addEventListener('keydown',function(e){
     if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); clearTimeout(saveTimer); doSave(true); dirty=false; }
-    else if(e.key==='Escape' && document.body.classList.contains('focus-mode')){ document.body.classList.remove('focus-mode'); var fb=$('focusBtn'); fb.classList.remove('on'); fb.textContent='Focus'; }
+    else if(e.key==='Escape' && document.body.classList.contains('focus-mode')){ enterFocus(false); }
   });
+
+  // recover unsaved writing found on this device
+  function checkBackup(){
+    try{
+      const raw=localStorage.getItem(backupKey()); if(!raw) return;
+      const b=JSON.parse(raw); if(!b) return;
+      if((b.body||'')===els.body.value && (b.title||'')===els.title.value){ clearBackup(); return; }
+      const note=$('restoreNote'); if(!note) return;
+      const when=$('restoreWhen'); if(when) when.textContent=relTime(b.t||Date.now());
+      note.classList.add('show');
+      $('restoreYes').onclick=()=>{ els.title.value=b.title||''; els.body.value=b.body||''; note.classList.remove('show'); renderPreview(); markDirty(); };
+      $('restoreNo').onclick=()=>{ clearBackup(); note.classList.remove('show'); };
+    }catch(e){}
+  }
 
   window.addEventListener('beforeunload',e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
 
@@ -433,7 +513,7 @@
     const online=!!detail.online;
     if(online && !WM.user){ const here='editor.html'+(pieceId?('?id='+pieceId):''); location.href='login.html?redirect='+encodeURIComponent(here); return; }
     if(!online) $('offlineNote').classList.add('show');
-    load(); renderPreview(); syncPublishLabel(); setStatus(pieceId?'Loaded':'New piece','saved');
+    load(); renderPreview(); syncPublishLabel(); setStatus(pieceId?'Loaded':'New piece','saved'); checkBackup();
   }
   if(typeof WM!=='undefined' && WM.online!==undefined) guard({online:WM.online});
   else window.addEventListener('wm:ready',e=>guard(e.detail),{once:true});
