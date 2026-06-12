@@ -36,14 +36,14 @@
   .chrome .back .arrow{display:inline-block;margin-right:6px;transition:transform .25s var(--cine)}
   .chrome .back:hover .arrow{transform:translateX(-4px)}
   .chrome .mid{font-family:var(--disp);font-style:italic;text-transform:none;letter-spacing:.01em;font-size:15px;color:var(--text);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tools{display:flex;align-items:center;gap:14px}
+  .tools{display:flex;align-items:center;gap:14px;min-width:0}
   .tools .seg{display:inline-flex;border:1px solid var(--edge);border-radius:100px;overflow:hidden}
   .tools .seg button{padding:6px 11px;color:var(--muted)}
   .tools .seg button.on{background:var(--accent);color:var(--page)}
 
   /* ── stage + book ── */
   .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:62px 18px 84px;perspective:2400px}
-  .book{position:relative;width:min(940px,95vw);height:min(74vh,820px);transform-style:preserve-3d}
+  .book{position:relative;width:min(var(--bookw,940px),95vw);height:min(74vh,820px);transform-style:preserve-3d}
   .book.one{width:min(560px,94vw)}
   .book::after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:30px;background:radial-gradient(60% 100% at 50% 0,rgba(0,0,0,.30),transparent 72%);z-index:0}
 
@@ -68,7 +68,7 @@
   .head{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between;margin-bottom:clamp(16px,2.6vw,30px);flex:0 0 auto}
   .num{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--faint);flex:0 0 auto;padding-top:12px}
   .copy{font-size:var(--fs);line-height:var(--lh);flex:1 1 auto;min-height:0;overflow:hidden}
-  .copy p{margin-bottom:1.02em}.copy p:last-child{margin-bottom:0}.copy em{font-style:italic}.copy strong{font-weight:600}
+  .copy p{margin-bottom:1.02em;font-family:var(--readfont,var(--body))}.copy p:last-child{margin-bottom:0}.copy em{font-style:italic}.copy strong{font-weight:600}
   .copy .pull{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(20px,2.3vw,27px);line-height:1.34;color:var(--accent);border-left:2px solid var(--accent);padding-left:18px;margin:4px 0 1.02em}
   .copy .chap{margin-bottom:clamp(18px,2.6vw,30px)}
   .copy .chap .cnum{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
@@ -145,6 +145,23 @@
   .char-pop .cp-line{font-family:var(--disp);font-style:italic;font-size:15px;color:var(--accent);line-height:1.45;margin-bottom:8px}
   .char-pop .cp-desc{font-family:var(--body);font-size:14px;line-height:1.55;color:var(--text)}
 
+  /* select a line → mark / share */
+  .sel-bar{position:fixed;z-index:65;display:none;gap:2px;background:var(--text);border-radius:100px;padding:4px;box-shadow:0 14px 32px -12px rgba(0,0,0,.55)}
+  .sel-bar button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--page);background:none;border:none;cursor:pointer;padding:7px 14px;border-radius:100px;transition:background .2s}
+  .sel-bar button:hover{background:rgba(150,150,150,.22)}
+
+  /* reading settings panel (size + typeface + width) */
+  .type-panel{position:fixed;top:56px;right:22px;z-index:45;display:none;background:var(--page);color:var(--text);border:1px solid var(--edge);border-radius:7px;box-shadow:0 24px 60px -22px rgba(0,0,0,.6);padding:16px 18px 14px;width:284px;max-width:92vw}
+  .type-panel.open{display:block}
+  .type-panel .tp-title{font-family:var(--disp);font-style:italic;font-size:17px;color:var(--text);margin-bottom:12px}
+  .type-panel .tp-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:11px 0}
+  .type-panel .tp-k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .type-panel .seg{display:inline-flex;border:1px solid var(--edge);border-radius:100px;overflow:hidden}
+  .type-panel .seg button{font-family:var(--mono);font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;padding:7px 13px;transition:background .2s,color .2s}
+  .type-panel .seg button:hover{color:var(--accent)}
+  .type-panel .seg button.on{background:var(--accent);color:var(--page)}
+  .type-panel .seg button.on:hover{color:var(--page)}
+
   /* end-of-piece card */
   .copy.ending{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
   .copy.ending .end-mark{font-family:var(--disp);color:var(--accent);letter-spacing:.3em;font-size:18px;margin-bottom:8px}
@@ -159,7 +176,7 @@
   .copy.ending .end-lib{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none}
   .copy.ending .end-lib:hover{color:var(--accent)}
 
-  @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:10px} }
+  @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:11px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch} .tools::-webkit-scrollbar{display:none} .type-panel{right:12px} }
   @media (prefers-reduced-motion: reduce){ .flipping .flip{transition:none} .progress{transition:none} }
 
   a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--scarlet,var(--accent,#B8472E));outline-offset:2px;border-radius:2px}
@@ -172,13 +189,23 @@
   <a href="library.html" class="back"><span class="arrow">←</span>Library</a>
   <div class="mid" id="chromeTitle">…</div>
   <div class="tools">
-    <span class="seg" id="size"><button data-s="0">A−</button><button data-s="1" class="on">A</button><button data-s="2">A+</button></span>
     <span class="seg" id="theme"><button data-t="day" class="on">Day</button><button data-t="sepia">Sepia</button><button data-t="night">Night</button></span>
+    <button id="typeBtn" title="Text size, typeface & width">Aa</button>
     <button id="markBtn" title="Leave a mark">✎ Mark</button>
     <button id="saveBtn" title="Save to shelf">♡ Save</button>
     <button id="shareBtn" title="Share this piece">↗ Share</button>
     <button id="tocBtn">☰ Contents</button>
   </div>
+</div>
+
+<div class="type-panel" id="typePanel" role="dialog" aria-label="Reading settings">
+  <div class="tp-title">Reading</div>
+  <div class="tp-row"><span class="tp-k">Text size</span>
+    <span class="seg" id="size"><button data-s="0">A−</button><button data-s="1" class="on">A</button><button data-s="2">A+</button></span></div>
+  <div class="tp-row"><span class="tp-k">Typeface</span>
+    <span class="seg" id="fontSeg"><button data-f="serif" class="on">Serif</button><button data-f="book">Book</button><button data-f="sans">Sans</button></span></div>
+  <div class="tp-row"><span class="tp-k">Page width</span>
+    <span class="seg" id="widthSeg"><button data-w="narrow">Narrow</button><button data-w="normal" class="on">Normal</button><button data-w="wide">Wide</button></span></div>
 </div>
 
 <div class="zone prev" id="zPrev"></div>
@@ -220,6 +247,7 @@
   <div class="cp-line"></div>
   <div class="cp-desc"></div>
 </div>
+<div class="sel-bar" id="selBar"><button data-sel="mark">✎ Keep</button><button data-sel="copy">⧉ Copy</button><button data-sel="share">↗ Share</button></div>
 
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
@@ -497,6 +525,61 @@
   if(charPop){ charPop.querySelector('.cp-x').addEventListener('click', hideCharPop); }
   document.addEventListener('click', function(e){ if(charPop && charPop.style.display==='block' && !(e.target.closest&&(e.target.closest('.char-pop')||e.target.closest('.char-ref')))) hideCharPop(); });
   addEventListener('keydown', function(e){ if(e.key==='Escape') hideCharPop(); });
+
+  /* ── select a line → keep / copy / share ── */
+  (function(){
+    var selBar=document.getElementById('selBar'); if(!selBar) return;
+    var lastText='';
+    function inCopy(node){ if(!node) return false; var el=node.nodeType===1?node:node.parentElement; return !!(el && el.closest && el.closest('.copy') && !el.closest('.ending')); }
+    function hideSel(){ selBar.style.display='none'; lastText=''; }
+    function showSel(){
+      var sel=window.getSelection&&window.getSelection(); if(!sel||sel.isCollapsed||!sel.rangeCount){ hideSel(); return; }
+      var txt=(sel.toString()||'').replace(/\s+/g,' ').trim();
+      if(txt.length<2 || !inCopy(sel.anchorNode) || !inCopy(sel.focusNode)){ hideSel(); return; }
+      lastText=txt;
+      var r=sel.getRangeAt(0).getBoundingClientRect();
+      selBar.style.display='flex';
+      var bw=selBar.offsetWidth, bh=selBar.offsetHeight;
+      var left=Math.min(Math.max(10, r.left+r.width/2-bw/2), innerWidth-bw-10);
+      var top=r.top-bh-8; if(top<10) top=r.bottom+8;
+      selBar.style.left=left+'px'; selBar.style.top=top+'px';
+    }
+    document.addEventListener('mouseup', function(){ setTimeout(showSel,10); });
+    document.addEventListener('touchend', function(){ setTimeout(showSel,10); }, {passive:true});
+    document.addEventListener('selectionchange', function(){ var sel=window.getSelection&&window.getSelection(); if(!sel||sel.isCollapsed) hideSel(); });
+    selBar.addEventListener('mousedown', function(e){ e.preventDefault(); });   // keep the selection alive
+    selBar.addEventListener('click', function(e){
+      var b=e.target.closest('[data-sel]'); if(!b||!lastText) return;
+      var act=b.dataset.sel, txt=lastText, quote='“'+txt+'” — '+story.title+', Kody Lâm';
+      if(act==='mark'){ try{ WM.marks.add({storyId:story.id, storyTitle:story.title, text:txt}); }catch(e){} toastReader('Kept to your marks ✦'); }
+      else if(act==='copy'){ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(quote).then(function(){toastReader('Copied ✦');},function(){window.prompt('Copy:',quote);}); else window.prompt('Copy:',quote); }
+      else if(act==='share'){ if(navigator.share) navigator.share({title:story.title+' — Kody Lâm', text:'“'+txt+'”', url:location.href}).catch(function(){}); else if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(quote+' '+location.href).then(function(){toastReader('Copied to share ✦');},function(){}); else window.prompt('Copy:',quote); }
+      var s=window.getSelection&&window.getSelection(); if(s&&s.removeAllRanges) s.removeAllRanges();
+      hideSel();
+    });
+    window.addEventListener('scroll', hideSel, {passive:true});
+  })();
+
+  /* ── reading type: typeface + page width (persisted; re-paginates) ── */
+  (function(){
+    var FONTS={ serif:'"Spectral",Georgia,serif', book:'"Newsreader",Georgia,serif', sans:'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' };
+    var WIDTHS={ narrow:'820px', normal:'940px', wide:'1080px' };
+    var panel=document.getElementById('typePanel'), btn=document.getElementById('typeBtn');
+    var fontSeg=document.getElementById('fontSeg'), widthSeg=document.getElementById('widthSeg'), root=document.documentElement;
+    function seg(el,val,attr){ if(!el) return; el.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset[attr]===val); }); }
+    var savedF, savedW;
+    try{ savedF=localStorage.getItem('wm.reader.font'); savedW=localStorage.getItem('wm.reader.width'); }catch(e){}
+    if(!FONTS[savedF]) savedF='serif'; if(!WIDTHS[savedW]) savedW='normal';
+    root.style.setProperty('--readfont', FONTS[savedF]); seg(fontSeg, savedF, 'f');
+    root.style.setProperty('--bookw', WIDTHS[savedW]); seg(widthSeg, savedW, 'w');
+    function applyFont(f){ if(!FONTS[f]) return; root.style.setProperty('--readfont', FONTS[f]); seg(fontSeg,f,'f'); try{localStorage.setItem('wm.reader.font',f);}catch(e){} build(true); }
+    function applyWidth(w){ if(!WIDTHS[w]) return; root.style.setProperty('--bookw', WIDTHS[w]); seg(widthSeg,w,'w'); try{localStorage.setItem('wm.reader.width',w);}catch(e){} build(true); }
+    if(fontSeg) fontSeg.addEventListener('click', function(e){ var b=e.target.closest('[data-f]'); if(b) applyFont(b.dataset.f); });
+    if(widthSeg) widthSeg.addEventListener('click', function(e){ var b=e.target.closest('[data-w]'); if(b) applyWidth(b.dataset.w); });
+    if(btn&&panel) btn.addEventListener('click', function(e){ e.stopPropagation(); var open=panel.classList.toggle('open'); btn.classList.toggle('on',open); });
+    document.addEventListener('click', function(e){ if(panel&&panel.classList.contains('open') && !(e.target.closest&&(e.target.closest('#typePanel')||e.target.closest('#typeBtn')))){ panel.classList.remove('open'); if(btn)btn.classList.remove('on'); } });
+    addEventListener('keydown', function(e){ if(e.key==='Escape' && panel&&panel.classList.contains('open')){ panel.classList.remove('open'); if(btn)btn.classList.remove('on'); } });
+  })();
   function ENDCARD(){
     var saved = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
     return '<div class="copy ending">'
