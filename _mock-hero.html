@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Banner hero demo — Kody · Lâm Quế Chi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500;1,6..96,600&family=EB+Garamond:wght@500;600&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5EFE3; --paper-2:#EBE3D2; --ink:#1F1C17;
+    --text:#1F1C17; --text-soft:#5A5142; --text-faint:#8A7C62;
+    --son:#A33B2B; --gold:#B98F3A; --rule:#D8CCB4;
+    --scrim-1:#F5EFE3; --scrim-mid:rgba(245,239,227,.86); --scrim-soft:rgba(245,239,227,.32); --scrim-0:rgba(245,239,227,0);
+    --disp:"Bodoni Moda",Georgia,serif; --gara:"EB Garamond",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
+  }
+  body.night{
+    --paper:#1F1C17; --paper-2:#272219; --ink:#F5EFE3;
+    --text:#F0E8D8; --text-soft:#B6AA92; --text-faint:#8A7C62;
+    --son:#CB5C44; --gold:#C9A24B; --rule:#39322668;
+    --scrim-1:#1B1813; --scrim-mid:rgba(27,24,19,.84); --scrim-soft:rgba(27,24,19,.3); --scrim-0:rgba(27,24,19,0);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--body);background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s;overflow-x:hidden}
+
+  .demo-note{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-align:center;padding:9px 16px;line-height:1.7}
+  .demo-note b{color:var(--gold)}
+
+  /* ── top bar: the brand lockup ── */
+  .top{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:26px clamp(20px,4vw,52px)}
+  .lockup{display:inline-flex;align-items:center;gap:16px;text-decoration:none;color:var(--text)}
+  .lockup .seal{width:46px;height:46px;flex:0 0 auto;border-radius:50%;box-shadow:0 8px 20px -10px rgba(0,0,0,.5)}
+  .lockup .wm{display:inline-flex;align-items:center;gap:13px}
+  .lockup .k{font-family:var(--disp);font-style:italic;font-weight:500;font-size:32px;line-height:.9}
+  .lockup .bar{width:1px;height:30px;background:var(--gold)}
+  .lockup .lqc{font-family:var(--gara);font-weight:500;font-size:10.5px;letter-spacing:.3em;line-height:1.28;color:var(--text-soft)}
+  .nav{display:flex;align-items:center;gap:24px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft)}
+  .nav a{color:inherit;text-decoration:none;transition:color .2s}
+  .nav a:hover{color:var(--son)}
+  .moon{cursor:pointer;width:32px;height:32px;border:1px solid var(--rule);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);background:none}
+  .moon:hover{border-color:var(--son);color:var(--son)}
+
+  /* ── banner hero ── */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+  .hero .photo{position:absolute;inset:0;z-index:0;background-image:url('_demo-portrait.svg');background-size:cover;background-position:right center;transition:opacity .5s}
+  body.night .hero .photo{filter:saturate(.85) brightness(.82) contrast(1.05)}
+  .hero .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,var(--scrim-1) 0%,var(--scrim-1) 24%,var(--scrim-mid) 40%,var(--scrim-soft) 58%,var(--scrim-0) 76%)}
+  .hero .htext{position:relative;z-index:2;width:100%;max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,52px)}
+  .hero .inner{max-width:600px}
+  .hero .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--son);margin-bottom:26px}
+  .hero h1{font-family:var(--disp);font-weight:500;font-size:clamp(40px,6vw,86px);line-height:1.0;letter-spacing:-0.005em;max-width:11ch}
+  .hero h1 .em{font-style:italic;color:var(--son);position:relative;white-space:nowrap}
+  .hero h1 .em .ul{position:absolute;left:-2%;right:-2%;bottom:-.14em;width:104%;height:.3em;overflow:visible}
+  .hero h1 .em .ul path{fill:none;stroke:var(--son);stroke-width:3;stroke-linecap:round}
+  .hero .lede{margin-top:30px;max-width:430px;font-family:var(--body);font-style:italic;font-weight:300;font-size:21px;line-height:1.55;color:var(--text-soft)}
+  .hero .cta{margin-top:34px;display:inline-flex;align-items:center;gap:11px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--son);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:5px;transition:gap .3s}
+  .hero .cta:hover{gap:20px}
+
+  /* end-stamp sample, pinned bottom-left to show the brand mark */
+  .stamp{position:absolute;left:clamp(20px,4vw,52px);bottom:46px;z-index:3;display:flex;align-items:center;gap:12px;opacity:.9}
+  .stamp .ln{width:46px;height:1px;background:var(--rule)}
+  .stamp .ko{font-family:var(--disp);font-style:italic;font-size:22px;color:var(--text)}
+  .stamp .sep{width:1px;height:20px;background:var(--son)}
+
+  @media(max-width:760px){
+    .nav a{display:none}
+    .lockup .lqc{display:none}
+    .hero .scrim{background:linear-gradient(180deg,var(--scrim-mid) 0%,var(--scrim-soft) 52%,var(--scrim-1) 92%)}
+    .hero .htext{align-self:flex-end;padding-bottom:84px}
+    .hero h1{font-size:clamp(38px,11vw,60px)}
+    .stamp{display:none}
+  }
+</style>
+</head>
+<body>
+  <header class="top">
+    <a class="lockup" href="#" aria-label="Kody · Lâm Quế Chi">
+      <svg class="seal" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><clipPath id="c1"><circle cx="50" cy="50" r="50"/></clipPath></defs>
+        <circle cx="50" cy="50" r="50" fill="#1F1C17"/>
+        <g clip-path="url(#c1)"><g transform="rotate(-18 50 50)"><rect x="-15" y="35" width="130" height="30" fill="#F5EFE3"/></g></g>
+        <text x="50" y="19" text-anchor="middle" fill="rgba(245,239,227,0.75)" font-family="'EB Garamond',serif" font-size="5.4" letter-spacing="1.7">LÂM QUẾ CHI</text>
+        <g transform="rotate(-18 50 50)"><text x="50" y="56.5" text-anchor="middle" fill="#1F1C17" font-family="'Bodoni Moda',serif" font-style="italic" font-weight="500" font-size="20">Kody</text></g>
+        <text x="73" y="89" text-anchor="middle" fill="#A33B2B" font-size="9">✦</text>
+      </svg>
+      <span class="wm"><span class="k">Kody</span><span class="bar"></span><span class="lqc">LÂM<br>QUẾ<br>CHI</span></span>
+    </a>
+    <nav class="nav">
+      <a>Library</a><a>Motifs</a><a>Shelf</a><a>About</a>
+      <button class="moon" id="toggle" title="Day / Night" aria-label="Toggle day or night">☾</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="photo"></div>
+    <div class="scrim"></div>
+    <div class="htext"><div class="inner">
+      <div class="eyebrow">Folio I · a bilingual commonplace · MMXXVI</div>
+      <h1>A small archive of rain, rooms, and <span class="em">unsent<svg class="ul" viewBox="0 0 200 14" preserveAspectRatio="none"><path pathLength="1" d="M5,9 C48,3 104,12 150,6 S196,4 196,8"/></svg></span> words</h1>
+      <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
+      <a class="cta" href="#">Begin with Folio I →</a>
+    </div></div>
+    <div class="stamp" aria-hidden="true"><span class="ln"></span><span class="ko">ko</span><span class="sep"></span><span class="ko">dy</span><span class="ln"></span></div>
+  </section>
+
+  <div class="demo-note">DEMO · không phải trang thật — ảnh là <b>placeholder</b> (ảnh thật của bạn sẽ đẹp hơn). Bấm ☾ để xem nền giấy / nền mực. Duyệt xong mình mới áp lên index.</div>
+
+  <script>
+    var t=document.getElementById('toggle');
+    t.addEventListener('click',function(){ var n=document.body.classList.toggle('night'); t.textContent=n?'☀':'☾'; });
+  </script>
+</body>
+</html>
