@@ -273,6 +273,24 @@
   function start(story){
   document.title = story.title + ' — Kody Lâm';
   document.getElementById('chromeTitle').textContent = story.title;
+  setStorySEO(story);
+  /* per-story SEO: title/description/canonical/OG + Article structured data */
+  function setStorySEO(s){
+    try{
+      var BASE='https://lamquechi.github.io/Kody', url=BASE+'/reader.html?id='+encodeURIComponent(s.id);
+      var desc=String(s.description||s.excerpt||'').replace(/[*_`>#\[\]]/g,'').replace(/\s+/g,' ').trim().slice(0,160);
+      function set(sel,val){ var m=document.head.querySelector(sel); if(!m){ m=document.createElement(sel.charAt(0)==='l'?'link':'meta'); var a=sel.match(/\[(name|property|rel)="([^"]+)"\]/); if(a) m.setAttribute(a[1],a[2]); document.head.appendChild(m); } m.setAttribute(sel.charAt(0)==='l'?'href':'content',val); }
+      if(desc){ set('meta[name="description"]',desc); set('meta[property="og:description"]',desc); set('meta[name="twitter:description"]',desc); }
+      set('link[rel="canonical"]',url);
+      set('meta[property="og:title"]',s.title+' — Kody Lâm');
+      set('meta[property="og:url"]',url);
+      set('meta[property="og:type"]','article');
+      set('meta[name="twitter:title"]',s.title+' — Kody Lâm');
+      var ld={"@context":"https://schema.org","@type":"Article","headline":s.title,"description":desc,"inLanguage":s.lang||'en',"url":url,"mainEntityOfPage":url,"author":{"@type":"Person","name":"Kody Lâm","alternateName":"Lâm Quế Chi"},"publisher":{"@type":"Person","name":"Kody Lâm"},"isPartOf":{"@type":"WebSite","name":"Kody Lâm","url":BASE+'/'}};
+      var t=s.publishedAt||s.published_at; if(t){ var d=new Date(t); if(!isNaN(d)) ld.datePublished=d.toISOString(); }
+      var sld=document.getElementById('ldStory'); if(!sld){ sld=document.createElement('script'); sld.type='application/ld+json'; sld.id='ldStory'; document.head.appendChild(sld); } sld.textContent=JSON.stringify(ld);
+    }catch(e){}
+  }
   /* count one read once the backend is ready */
   function doCount(){ try{ if(WM.countRead) WM.countRead(story.id); }catch(e){} }
   if(typeof WM!=='undefined' && WM.online!==undefined) doCount(); else window.addEventListener('wm:ready', doCount, {once:true});
