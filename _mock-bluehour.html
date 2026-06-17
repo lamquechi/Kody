@@ -4,71 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Blue Hour (warm) — demo · Kody</title>
+<title>Blue Hour — demo · Kody</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Libre+Caslon+Text:ital@1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#15110B; --ink2:#0C0906; --ribbon-bg:#1A140C;
-    --cream:#ECE4D3; --bright:#F6F0E1; --soft:rgba(236,228,211,.66); --faint:rgba(236,228,211,.4);
-    --scarlet:#CB5C44; --gold:#C9A24B;
+    --bg:#07090E; --bg2:#0B1019;
+    --cream:#ECE4D3; --bright:#F4EEDF; --soft:rgba(236,228,211,.64); --faint:rgba(236,228,211,.4);
+    --accent:#E0A85E;        /* warm afterglow — replaces the blue, for any coloured TEXT */
+    --gold:#C9A24B;
     --serif:"Newsreader",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,monospace; --logo:"Libre Caslon Text",Georgia,serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--ink)}
+  html,body{background:var(--bg)}
   body{font-family:var(--serif);color:var(--cream);-webkit-font-smoothing:antialiased}
-  ::selection{background:rgba(203,92,68,.32);color:var(--bright)}
+  ::selection{background:rgba(224,168,94,.28);color:var(--bright)}
 
-  .hero{position:relative;width:100%;height:clamp(640px,100vh,1100px);min-height:640px;overflow:hidden;background:var(--ink)}
+  .hero{position:relative;width:100%;height:clamp(640px,100vh,1100px);min-height:640px;overflow:hidden;background:var(--bg)}
 
   /* z0 · your photo (you, on the right). Empty until hero.jpg exists. */
   .hero .photo{position:absolute;inset:0;z-index:0;background-image:url('hero.jpg');background-size:cover;background-position:right center;
     transform-origin:72% 30%;animation:bhDrift 38s ease-in-out infinite}
 
-  /* z1 · warm dusk atmosphere (the backdrop behind the type) */
-  .hero .atmos{position:absolute;inset:0;z-index:1;pointer-events:none;background:
-    radial-gradient(60% 64% at 16% 96%, rgba(196,104,56,.34) 0%, rgba(196,104,56,0) 60%),
-    radial-gradient(74% 90% at 88% 6%, rgba(201,162,75,.26) 0%, rgba(201,162,75,0) 58%),
-    radial-gradient(46% 44% at 66% 36%, rgba(214,188,140,.10) 0%, rgba(214,188,140,0) 72%),
-    linear-gradient(176deg, #1C150D 0%, #251B0F 42%, #160F09 76%, #0C0805 100%);
-    transform-origin:70% 30%;animation:bhDrift 38s ease-in-out infinite}
+  /* z1 · blue-hour atmosphere (kept exactly: dark blue-black, amber afterglow) */
+  .hero .atmos{position:absolute;inset:0;z-index:1;pointer-events:none;transform-origin:72% 28%;animation:bhDrift 38s ease-in-out infinite;background:
+    radial-gradient(54% 54% at 13% 94%, rgba(170,106,54,.24) 0%, rgba(170,106,54,0) 62%),
+    radial-gradient(76% 96% at 87% 3%, rgba(88,118,162,.44) 0%, rgba(88,118,162,0) 58%),
+    radial-gradient(44% 42% at 67% 32%, rgba(128,150,186,.16) 0%, rgba(128,150,186,0) 72%),
+    linear-gradient(176deg, #0A0D15 0%, #101824 42%, #0B1019 74%, #06080D 100%)}
 
-  /* z2 · grade: scrim (left-weighted) + vignette + grain */
+  /* z2 · scrim (left-weighted) + vignette + grain */
   .hero .scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
-    linear-gradient(96deg, rgba(18,14,9,.96) 0%, rgba(18,14,9,.85) 24%, rgba(18,14,9,.45) 50%, rgba(18,14,9,.1) 76%, rgba(18,14,9,0) 100%)}
+    linear-gradient(96deg, rgba(7,9,14,.94) 0%, rgba(7,9,14,.82) 24%, rgba(7,9,14,.42) 50%, rgba(7,9,14,.08) 76%, rgba(7,9,14,0) 100%)}
   .hero .vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:
-    linear-gradient(180deg, rgba(12,9,6,.5) 0%, rgba(12,9,6,0) 20%, rgba(12,9,6,0) 58%, rgba(12,9,6,.9) 100%),
-    radial-gradient(122% 104% at 48% 40%, rgba(8,6,4,0) 44%, rgba(8,6,4,.42) 78%, rgba(8,6,4,.8) 100%)}
-  .hero .grain{position:absolute;inset:-12%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;animation:bhGrain .5s steps(4) infinite;
+    linear-gradient(180deg, rgba(5,6,10,.55) 0%, rgba(5,6,10,0) 20%, rgba(5,6,10,0) 60%, rgba(5,6,10,.9) 100%),
+    radial-gradient(122% 104% at 48% 40%, rgba(5,6,10,0) 44%, rgba(5,6,10,.46) 78%, rgba(5,6,10,.8) 100%)}
+  .hero .grain{position:absolute;inset:-12%;z-index:2;pointer-events:none;opacity:.06;mix-blend-mode:overlay;animation:bhGrain .5s steps(4) infinite;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-  /* the portrait hint — where your photo will sit */
-  .photo-hint{position:absolute;z-index:2;right:clamp(28px,6vw,96px);bottom:128px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(236,228,211,.32);writing-mode:vertical-rl;transform:rotate(180deg)}
+  .photo-hint{position:absolute;z-index:2;right:clamp(28px,6vw,96px);bottom:128px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(236,228,211,.3);writing-mode:vertical-rl;transform:rotate(180deg)}
 
   /* z3 · chrome + type */
   .masthead{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px clamp(22px,4vw,56px) 0;opacity:0;animation:bhFade .9s ease .1s both}
-  .klogo{height:34px;width:auto;display:block}
-  .klogo text{fill:var(--bright)}
-  .klogo path{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round}
+  /* logo: real HTML text (never clips) + a swash line beneath */
+  .wm{position:relative;display:inline-block;line-height:1;text-decoration:none;padding-bottom:8px}
+  .wm .kw{font-family:var(--logo);font-style:italic;font-weight:700;font-size:33px;color:var(--bright);letter-spacing:.01em}
+  .wm .ksw{position:absolute;left:1%;right:-5%;bottom:0;width:104%;height:11px;overflow:visible}
+  .wm .ksw path{fill:none;stroke:var(--gold);stroke-width:2.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .nav{display:flex;align-items:center;gap:30px}
   .nav a{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--soft);text-decoration:none;transition:color .25s}
-  .nav a:hover{color:var(--gold)}
+  .nav a:hover{color:var(--bright)}
   .nav .lang{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--faint)}
 
   .gutter{position:absolute;top:108px;bottom:54px;left:clamp(22px,4vw,56px);width:1px;z-index:3;pointer-events:none;
     background:linear-gradient(180deg,rgba(236,228,211,0) 0%,rgba(236,228,211,.16) 14%,rgba(236,228,211,.16) 86%,rgba(236,228,211,0) 100%)}
   .rulebar{position:absolute;top:88px;left:calc(clamp(22px,4vw,56px) + 30px);right:clamp(22px,4vw,56px);z-index:3;pointer-events:none;opacity:0;animation:bhFade .9s ease .3s both}
   .rulebar .row{display:flex;align-items:baseline;justify-content:space-between;gap:24px;border-bottom:1px solid rgba(236,228,211,.2);padding-bottom:18px}
-  .rulebar span{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.4em;color:rgba(236,228,211,.66)}
+  .rulebar span{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.4em;color:rgba(236,228,211,.62)}
 
-  .lockup{position:absolute;left:calc(clamp(22px,4vw,56px) + 30px);right:clamp(22px,4vw,56px);bottom:clamp(56px,8vh,84px);z-index:3;max-width:1040px}
-  .lockup .eye{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--scarlet);margin-bottom:20px;opacity:0;animation:bhRise 1s cubic-bezier(.2,.7,.2,1) .4s both}
-  .lockup h1{margin:0;font-family:var(--serif);color:var(--bright);line-height:.92;text-shadow:0 6px 50px rgba(0,0,0,.5)}
-  .lockup h1 .big{display:block;font-weight:500;font-size:clamp(56px,8.6vw,148px);letter-spacing:-.022em;opacity:0;animation:bhRise 1.1s cubic-bezier(.2,.7,.2,1) .55s both}
-  .lockup h1 .sub{display:block;font-style:italic;font-weight:300;font-size:clamp(28px,3.9vw,60px);line-height:1.05;margin-top:.08em;color:rgba(244,238,223,.9);opacity:0;animation:bhRise 1.1s cubic-bezier(.2,.7,.2,1) .78s both}
-  .lockup h1 .sub em{font-style:italic;color:var(--scarlet)}
-  .lockup .lede{margin:30px 0 0;max-width:520px;font-family:var(--serif);font-weight:300;font-size:21px;line-height:1.62;color:rgba(236,228,211,.82);text-shadow:0 2px 26px rgba(0,0,0,.4);opacity:0;animation:bhRise 1s cubic-bezier(.2,.7,.2,1) 1s both}
+  .lockup{position:absolute;left:calc(clamp(22px,4vw,56px) + 30px);right:clamp(22px,4vw,56px);bottom:clamp(58px,8vh,88px);z-index:3;max-width:980px}
+  .lockup .eye{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:22px;opacity:0;animation:bhRise 1s cubic-bezier(.2,.7,.2,1) .4s both}
+  .lockup h1{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(38px,5.2vw,84px);line-height:1.06;letter-spacing:-.014em;color:var(--bright);text-shadow:0 6px 50px rgba(0,0,0,.5);opacity:0;animation:bhRise 1.1s cubic-bezier(.2,.7,.2,1) .55s both}
+  .lockup h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+  .lockup .lede{margin:28px 0 0;max-width:520px;font-family:var(--serif);font-weight:300;font-size:20px;line-height:1.62;color:var(--soft);text-shadow:0 2px 26px rgba(0,0,0,.4);opacity:0;animation:bhRise 1s cubic-bezier(.2,.7,.2,1) .85s both}
 
   .scrolly{position:absolute;left:50%;bottom:24px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);transform:translateX(-50%);animation:bhFloat 2.8s ease-in-out infinite}
 
@@ -78,30 +77,30 @@
   @keyframes bhGrain{0%{transform:translate(0,0)}25%{transform:translate(-4%,3%)}50%{transform:translate(3%,-4%)}75%{transform:translate(-3%,-2%)}100%{transform:translate(0,0)}}
   @keyframes bhFloat{0%,100%{transform:translateX(-50%) translateY(0);opacity:.4}50%{transform:translateX(-50%) translateY(7px);opacity:.9}}
 
-  /* the slow, artistic quote ribbon (the centre line lifts into focus) */
-  .ribbon{overflow:hidden;border-top:1px solid rgba(236,228,211,.12);border-bottom:1px solid rgba(236,228,211,.12);background:var(--ribbon-bg);padding:34px 0;white-space:nowrap;position:relative}
+  /* the slow, artistic quote ribbon — centre line lifts into focus */
+  .ribbon{overflow:hidden;border-top:1px solid rgba(236,228,211,.12);border-bottom:1px solid rgba(236,228,211,.12);background:var(--bg2);padding:34px 0;white-space:nowrap;position:relative}
   .ribbon::before,.ribbon::after{content:"";position:absolute;top:0;bottom:0;width:18vw;z-index:2;pointer-events:none}
-  .ribbon::before{left:0;background:linear-gradient(90deg,var(--ribbon-bg),transparent)}
-  .ribbon::after{right:0;background:linear-gradient(270deg,var(--ribbon-bg),transparent)}
-  .ribbon .run{display:inline-block;animation:bhSlide 104s linear infinite;font-family:var(--serif);font-style:italic;font-weight:300;font-size:24px;color:rgba(236,228,211,.36)}
+  .ribbon::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent)}
+  .ribbon::after{right:0;background:linear-gradient(270deg,var(--bg2),transparent)}
+  .ribbon .run{display:inline-block;animation:bhSlide 104s linear infinite;font-family:var(--serif);font-style:italic;font-weight:300;font-size:24px;color:rgba(236,228,211,.34)}
   .ribbon .run span{margin:0 30px;transition:opacity .8s,color .8s,transform .8s}
-  .ribbon .run span[lang=vi]{color:rgba(201,162,75,.5)}
+  .ribbon .run span[lang=vi]{color:rgba(224,168,94,.5)}
   .ribbon .run span.lit{opacity:1;color:var(--bright);transform:scale(1.05)}
-  .ribbon .run span[lang=vi].lit{color:var(--gold)}
-  .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal;font-size:13px;opacity:.5;vertical-align:middle}
+  .ribbon .run span[lang=vi].lit{color:var(--accent)}
+  .ribbon .run b{color:var(--accent);font-weight:400;font-style:normal;font-size:13px;opacity:.5;vertical-align:middle}
   .ribbon:hover .run{animation-play-state:paused}
   @keyframes bhSlide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  .colophon{border-top:1px solid rgba(236,228,211,.1)}
+  .colophon{border-top:1px solid rgba(236,228,211,.1);background:var(--bg)}
   .colophon .in{max-width:1180px;margin:0 auto;padding:24px clamp(22px,4vw,56px) 40px;display:flex;align-items:baseline;justify-content:space-between;gap:24px}
   .colophon span{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--faint)}
   .colophon em{font-family:var(--serif);font-style:italic;font-weight:300;font-size:16px;color:rgba(236,228,211,.5)}
 
-  @media(prefers-reduced-motion:reduce){*{animation:none!important}.lockup .eye,.lockup h1 .big,.lockup h1 .sub,.lockup .lede,.masthead,.rulebar{opacity:1!important;transform:none!important;filter:none!important}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}.lockup .eye,.lockup h1,.lockup .lede,.masthead,.rulebar{opacity:1!important;transform:none!important;filter:none!important}}
   @media(max-width:780px){.nav a{display:none}.nav .lang{display:inline}.ribbon .run{font-size:19px}}
 
-  .note{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#0A0805;color:var(--cream);font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-align:center;padding:9px 16px;line-height:1.7;border-top:1px solid rgba(236,228,211,.12)}
-  .note b{color:var(--gold)}
+  .note{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#04050A;color:var(--cream);font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-align:center;padding:9px 16px;line-height:1.7;border-top:1px solid rgba(236,228,211,.12)}
+  .note b{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -114,8 +113,9 @@
     <div class="photo-hint">— bạn sẽ ở đây —</div>
 
     <header class="masthead">
-      <a href="#" aria-label="Kody">
-        <svg class="klogo" viewBox="0 18 268 168" aria-hidden="true"><text x="10" y="115" font-family="'Libre Caslon Text',Georgia,serif" font-style="italic" font-weight="700" font-size="120">Kody</text><path d="M250,150 C158,168 64,160 40,144 C28,136 44,130 60,136"/></svg>
+      <a class="wm" href="#" aria-label="Kody">
+        <span class="kw">Kody</span>
+        <svg class="ksw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"/></svg>
       </a>
       <nav class="nav"><a>Library</a><a>Motifs</a><a>Shelf</a><a>About</a><span class="lang">EN · VI</span></nav>
     </header>
@@ -125,10 +125,7 @@
 
     <div class="lockup">
       <div class="eye">Folio I · the blue hour</div>
-      <h1>
-        <span class="big">A small archive</span>
-        <span class="sub">of rain, rooms, &amp; <em>unsent</em> words</span>
-      </h1>
+      <h1>A small archive of rain,<br>rooms, &amp; <em>unsent</em> words</h1>
       <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet weather people carry through the city.</p>
     </div>
     <div class="scrolly">scroll ↓</div>
@@ -143,10 +140,9 @@
 
   <footer class="colophon"><div class="in"><span>© MMXXVI · KODY LÂM QUẾ CHI</span><em>viết trong giờ xanh — written at the blue hour</em></div></footer>
 
-  <div class="note">DEMO · concept "Blue Hour" cho Kody — <b>giữ màu ấm</b> (không xanh), font Newsreader + IBM Plex Mono. Ảnh chân dung sẽ thay vào chỗ "bạn sẽ ở đây". Duyệt xong mình mới áp lên trang thật.</div>
+  <div class="note">DEMO · "Blue Hour" cho Kody — giữ <b>nền đen như bản gốc</b>, chỉ chữ không dùng xanh. Ảnh chân dung sẽ thay chỗ "bạn sẽ ở đây". Duyệt xong mình mới áp lên trang thật.</div>
 
   <script>
-  /* the centre quote lifts into focus as the ribbon drifts */
   (function(){
     var run=document.querySelector('.ribbon .run'); if(!run) return;
     if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
