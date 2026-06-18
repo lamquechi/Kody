@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=12">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=13">
 <title>The Studio — Kody Lâm</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
@@ -40,7 +40,7 @@
   .shell{position:relative;z-index:2;display:grid;grid-template-columns:236px 1fr;min-height:100vh}
   .side{border-right:1px solid var(--rule);background:var(--paper);transition:background .5s,border-color .5s;display:flex;flex-direction:column;padding:24px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
   .brand{display:flex;align-items:center;gap:11px;text-decoration:none;margin-bottom:4px}
-  .brand .mk{width:34px;height:34px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:16px;display:flex;align-items:center;justify-content:center;transform:rotate(-7deg);flex:0 0 auto}
+  .brand .mk{width:34px;height:34px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;transform:rotate(-7deg);flex:0 0 auto}
   .brand .nm{font-family:var(--disp);font-weight:500;font-size:18px}
   .brand .nm small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint);margin-top:1px}
   .new-piece{margin:20px 0 8px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ink);color:var(--paper);border:none;border-radius:2px;padding:12px;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;transition:all .22s var(--silk)}
@@ -361,7 +361,7 @@
   /* gate */
   .gate{position:fixed;inset:0;z-index:200;background:var(--paper);display:none;align-items:center;justify-content:center;text-align:center;padding:30px;flex-direction:column;gap:18px}
   .gate.show{display:flex}
-  .gate .seal{width:48px;height:48px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:21px;display:flex;align-items:center;justify-content:center;transform:rotate(-7deg)}
+  .gate .seal{width:48px;height:48px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;transform:rotate(-7deg)}
   .gate h2{font-family:var(--disp);font-weight:400;font-size:30px}
   .gate p{font-family:var(--disp);font-style:italic;color:var(--ink-soft);max-width:420px}
 
@@ -394,7 +394,7 @@
 
 <!-- gate (non-author) -->
 <div class="gate" id="gate">
-  <div class="seal"><svg viewBox="0 0 58 48" style="width:26px;height:auto;display:block" aria-hidden="true"><text x="3" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">K</text><text x="27" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">L</text></svg></div>
+  <div class="seal">K</div>
   <h2 id="gateTitle">A private studio</h2>
   <p id="gateMsg">This room belongs to the author of the site.</p>
   <div style="display:flex;gap:10px"><a href="index.html" class="btn btn-ghost">← Home</a><button class="btn btn-ink" id="gateSignOut">Sign out</button></div>
@@ -407,7 +407,7 @@
   <!-- ════ SIDEBAR ════ -->
   <aside class="side" id="side">
     <a href="index.html" class="brand" title="View the site">
-      <span class="mk"><svg viewBox="0 0 58 48" style="width:22px;height:auto;display:block" aria-hidden="true"><text x="3" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">K</text><text x="27" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">L</text></svg></span>
+      <span class="mk">K</span>
       <span class="nm" data-site="name">Kody Lâm<small>The Studio</small></span>
     </a>
     <button class="new-piece" id="newPiece">✎ New piece</button>

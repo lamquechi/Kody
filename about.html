@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=12">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=13">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kody Lâm">
 <meta property="og:title" content="About — Kody Lâm">
@@ -16,8 +16,8 @@
 <meta name="description" content="A bilingual writer working in short fiction, tản văn, and lyrical fragments. Rain, rooms, and unsent words.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
@@ -43,7 +43,7 @@
   body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--lamp)}
 
   .spine{position:fixed;left:0;top:0;bottom:0;width:62px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:44px 0 26px;z-index:60;background:var(--paper);transition:background .5s,border-color .5s}
-  .spine .mk{font-family:var(--disp);font-style:italic;font-weight:500;font-size:27px;color:var(--scarlet);text-decoration:none;transition:transform .4s ease}
+  .spine .mk{position:relative;display:inline-block;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;line-height:1;color:var(--scarlet);text-decoration:none;padding-bottom:6px;transition:transform .4s ease}
   .spine:hover .mk{transform:translateY(-3px) rotate(-4deg)}
   .spine .vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:0.34em;text-transform:uppercase;color:var(--ink-faint)}
   .spine .stamp{width:26px;height:26px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:12px;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:.85}
@@ -53,7 +53,7 @@
   .reading{max-width:720px;margin:0 auto;padding:0 56px}
 
   .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:12.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-soft)}
-  .brand-m{display:none;margin-right:auto;font-family:var(--disp);font-style:italic;font-size:19px;color:var(--scarlet);text-transform:none;letter-spacing:0;text-decoration:none}
+  .brand-m{display:none;margin-right:auto;position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:21px;line-height:1;color:var(--scarlet);text-transform:none;letter-spacing:0;text-decoration:none;padding-bottom:5px}.brand-m .mksw{position:absolute;left:0;right:-5%;bottom:0;width:105%;height:8px;overflow:visible}.brand-m .mksw path{fill:none;stroke:var(--scarlet);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .top a{color:inherit;text-decoration:none;transition:.2s;position:relative}.top a:hover{color:var(--scarlet)}
   .top a.cur{color:var(--ink)}
   .top a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--scarlet);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
@@ -131,7 +131,7 @@
   footer .big{font-family:var(--disp);font-style:italic;font-size:32px;color:var(--ink)}
   footer .col{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.9}
   footer .col a{color:inherit;text-decoration:none}footer .col a:hover{color:var(--scarlet)}
-  footer .sig{font-family:var(--disp);font-style:italic;font-size:26px;color:var(--scarlet);transform:rotate(-3deg)}
+  footer .sig{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:24px;color:var(--scarlet);transform:rotate(-3deg)}
 
   .cursor-ring{position:fixed;top:0;left:0;width:24px;height:24px;border:1px solid var(--scarlet);border-radius:50%;pointer-events:none;z-index:400;transform:translate(-50%,-50%);opacity:0;transition:width .22s ease,height .22s,opacity .35s,background .22s}
   .cursor-ring.big{width:52px;height:52px;background:rgba(184,71,46,0.05)}
@@ -157,6 +157,8 @@
   .langsel button:hover{color:var(--scarlet)}
   .langsel button.active{color:var(--ink)}
   .langsel .sep{color:var(--ink-faint);font-size:10px}
+  .spine .mk .mksw{position:absolute;left:0;right:-6%;bottom:1px;width:106%;height:9px;overflow:visible}
+  .spine .mk .mksw path{fill:none;stroke:var(--scarlet);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
 </style>
 <script type="application/ld+json">
 {
@@ -181,14 +183,14 @@
 <script>/* no-flash theme */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
 <aside class="spine">
-  <a href="index.html" class="mk" title="Home"><svg viewBox="0 0 58 48" style="width:30px;height:auto;display:block" aria-hidden="true"><text x="3" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">K</text><text x="27" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">L</text></svg></a>
+  <a href="index.html" class="mk" title="Home">Kody<svg class="mksw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></a>
   <div class="vert">Kody Lâm · About the writer</div>
   <div class="stamp">✦</div>
 </aside>
 
 <div class="wrap">
   <div class="top">
-    <a href="index.html" class="brand-m">Kody Lâm</a>
+    <a href="index.html" class="brand-m">Kody<svg class="mksw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></a>
     <a href="library.html">Library</a><a href="motifs.html">Motifs</a><a href="shelf.html">Shelf</a><a href="about.html" class="cur">About</a>
     <span class="langsel"><button data-lang="en">EN</button><span class="sep">·</span><button data-lang="vi">VI</button></span>
     <button class="moon" id="themeToggle" title="Light / Dark" aria-label="Toggle light or dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
@@ -268,7 +270,7 @@
     <footer>
       <div class="big">Kody Lâm</div>
       <div class="col">About the writer · MMXXVI<br><a href="index.html">Home</a> · <a href="library.html">Library</a> · <a href="motifs.html">Motifs</a></div>
-      <div class="sig">— K.L.</div>
+      <div class="sig">Kody</div>
     </footer>
   </div>
 </div>

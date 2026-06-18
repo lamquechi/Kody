@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=12">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=13">
 <title>The writer's entrance — Kody Lâm</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ════ PALETTE — light (the day desk) ════ */
   :root{
@@ -47,10 +47,11 @@
   body.dark .theme-icon-sun{display:none}
   body.dark .theme-icon-moon{display:inline}
 
-  /* home corner */
-  .home{position:fixed;top:22px;left:24px;z-index:30;font-family:var(--disp);font-style:italic;font-weight:500;font-size:24px;color:var(--scarlet);text-decoration:none;transition:transform .4s ease;display:inline-flex;align-items:center;gap:9px}
-  .home:hover{transform:translateY(-2px) rotate(-4deg)}
-  .home span{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint)}
+  /* home corner — the Kody wordmark */
+  .home{position:fixed;top:20px;left:24px;z-index:30;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:22px;color:var(--scarlet);text-decoration:none;transition:transform .4s ease;display:inline-block;line-height:1;padding-bottom:6px}
+  .home:hover{transform:translateY(-2px)}
+  .home .mksw{position:absolute;left:0;right:-5%;bottom:0;width:105%;height:9px;overflow:visible}
+  .home .mksw path{fill:none;stroke:var(--scarlet);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
 
   /* ════ THE DOOR ════ */
   .door{position:relative;z-index:10;width:100%;max-width:432px;
@@ -61,7 +62,7 @@
   .door::before{content:"";position:absolute;left:14px;top:14px;right:14px;bottom:14px;border:1px solid var(--rule-soft);pointer-events:none}
 
   .seal{width:46px;height:46px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);
-    font-family:var(--disp);font-style:italic;font-size:20px;display:flex;align-items:center;justify-content:center;
+    font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:21px;display:flex;align-items:center;justify-content:center;
     margin:0 auto 16px;transform:rotate(-7deg);transition:transform .5s var(--silk)}
   .door:hover .seal{transform:rotate(0)}
   .brand{text-align:center;font-family:var(--disp);font-size:20px;font-weight:500;letter-spacing:.01em;margin-bottom:4px}
@@ -113,13 +114,13 @@
 <body>
 <script>/* no-flash theme: set the saved mode before first paint (see wm-theme.js) */try{(function(){var v=localStorage.getItem('wm.theme')||localStorage.getItem('wm.reader.mode'),velvet=document.documentElement.getAttribute('data-world')==='velvet';if(v!=='light'&&v!=='dark'){v=velvet?'dark':'light';}var c=document.body.classList;if(velvet){c.toggle('light-mode',v==='light');c.remove('dark');}else{c.toggle('dark',v==='dark');c.remove('light-mode');}document.body.setAttribute('data-mode',v);})();}catch(e){}</script>
 
-<a href="index.html" class="home" title="Back to the site"><svg viewBox="0 0 58 48" style="width:24px;height:auto;display:block" aria-hidden="true"><text x="3" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">K</text><text x="27" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">L</text></svg><span>Kody Lâm</span></a>
+<a href="index.html" class="home" title="Back to the site">Kody<svg class="mksw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></a>
 <button class="moon" id="themeToggle" title="Light / Dark" aria-label="Toggle light or dark mode">
   <span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span>
 </button>
 
 <main class="door">
-  <div class="seal" aria-hidden="true"><svg viewBox="0 0 58 48" style="width:24px;height:auto;display:block" aria-hidden="true"><text x="3" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">K</text><text x="27" y="40" font-style="normal" font-family="Fraunces,Georgia,serif" font-weight="600" font-size="46" fill="currentColor">L</text></svg></div>
+  <div class="seal" aria-hidden="true">K</div>
   <div class="brand">Kody Lâm</div>
   <div class="eyebrow">— The writer's entrance —</div>
 
