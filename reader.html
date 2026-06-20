@@ -163,21 +163,20 @@
   .type-panel .seg button.on{background:var(--accent);color:var(--page)}
   .type-panel .seg button.on:hover{color:var(--page)}
 
-  /* end-of-piece card */
+  /* end-of-piece card — the book's closing; just content, quietly */
   .copy.ending{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0}
-  .copy.ending .end-stamp{display:inline-flex;align-items:center;gap:11px;margin-bottom:12px}
-  .copy.ending .end-stamp .kd{font-family:var(--disp);font-style:italic;font-size:24px;line-height:1;color:var(--text)}
-  .copy.ending .end-stamp .bar{width:1px;height:19px;background:var(--accent)}
-  .copy.ending .end-stamp .ln{width:32px;height:1px;background:var(--edge)}
-  .copy.ending .end-q{font-family:var(--disp);font-style:italic;font-size:clamp(14px,1.7vw,17px);line-height:1.4;color:var(--text);max-width:32ch;margin:12px 0 4px;
+  .copy.ending .end-stamp{display:inline-flex;align-items:center;gap:9px;margin-bottom:18px}
+  .copy.ending .end-stamp .kd{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:23px;line-height:1;color:var(--text)}
+  .copy.ending .end-stamp .bar{width:2px;height:21px;background:var(--accent);border-radius:1px}
+  .copy.ending .end-stamp .ln{width:30px;height:1px;background:var(--edge)}
+  .copy.ending .end-q{font-family:var(--disp);font-style:italic;font-size:clamp(15px,1.9vw,20px);line-height:1.44;color:var(--text);max-width:34ch;margin:0 0 8px;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .copy.ending .end-by{font-family:var(--disp);font-style:italic;color:var(--muted);font-size:14px;margin-bottom:15px}
-  .copy.ending .end-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
-  .copy.ending .end-actions button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--edge);border-radius:100px;padding:9px 14px;cursor:pointer;transition:.2s}
-  .copy.ending .end-actions button:hover{border-color:var(--accent);color:var(--accent)}
-  .copy.ending .end-next{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;line-height:1.5}
-  .copy.ending .end-next a{display:block;font-family:var(--disp);font-style:italic;text-transform:none;letter-spacing:0;font-size:17px;line-height:1.5;color:var(--accent);cursor:pointer;text-decoration:none}
-  .copy.ending .end-lib{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+  .copy.ending .end-by{font-family:var(--disp);font-style:italic;color:var(--muted);font-size:15px;margin-bottom:34px}
+  .copy.ending .end-next{margin-bottom:24px}
+  .copy.ending .end-next .rn-k{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-bottom:13px}
+  .copy.ending .end-next a{display:block;font-family:var(--disp);font-style:italic;font-size:19px;line-height:1.75;color:var(--muted);cursor:pointer;text-decoration:none;transition:color .2s}
+  .copy.ending .end-next a:hover{color:var(--accent)}
+  .copy.ending .end-lib{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);text-decoration:none;transition:color .2s}
   .copy.ending .end-lib:hover{color:var(--accent)}
 
   @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:11px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch} .tools::-webkit-scrollbar{display:none} .type-panel{right:12px} }
@@ -603,14 +602,12 @@
     addEventListener('keydown', function(e){ if(e.key==='Escape' && panel&&panel.classList.contains('open')){ panel.classList.remove('open'); if(btn)btn.classList.remove('on'); } });
   })();
   function ENDCARD(){
-    var saved = !!(WM.shelf && WM.shelf.has && WM.shelf.has(story.id));
     return '<div class="copy ending">'
       + '<div class="end-stamp"><span class="ln"></span><span class="kd">ko</span><span class="bar"></span><span class="kd">dy</span><span class="ln"></span></div>'
       + (story.excerpt?'<div class="end-q">"'+inline(story.excerpt)+'"</div>':'')
       + '<div class="end-by">Kody Lâm</div>'
-      + '<div class="end-actions"><button data-act="mark">✎ Leave a mark</button><button data-act="save">'+(saved?'♥ Saved':'♡ Save to shelf')+'</button><button data-act="share">↗ Share</button></div>'
-      + (MORE.length?'<div class="end-next"><span>'+(sameMotif.length?('More in '+inline(motifLabel)):'Read next')+'</span>'+MORE.map(function(s){return '<a data-next="'+s.id+'">'+s.title+' →</a>';}).join('')+'</div>':'')
-      + '<a class="end-lib" href="library.html">← Back to the Library</a>'
+      + (MORE.length?'<div class="end-next"><span class="rn-k">'+(sameMotif.length?('more in '+inline(motifLabel)):'read next')+'</span>'+MORE.map(function(s){return '<a data-next="'+s.id+'">'+s.title+'</a>';}).join('')+'</div>':'')
+      + '<a class="end-lib" href="library.html">← back to the library</a>'
       + '</div>';
   }
   function reflectSave(){
