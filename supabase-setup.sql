@@ -209,6 +209,7 @@ alter table pieces add column if not exists meta_description text;        -- sea
 alter table pieces add column if not exists focus_keyword    text;        -- focus phrase (SEO)
 alter table pieces add column if not exists synopsis         text;        -- private note-to-self
 alter table pieces add column if not exists characters       jsonb default '[]'::jsonb;  -- linked character ids
+alter table pieces add column if not exists continued        boolean default false;      -- "to be continued" — piece is ongoing (more parts coming)
 
 -- Characters (the company of a body of work) — private to the author.
 create table if not exists characters (

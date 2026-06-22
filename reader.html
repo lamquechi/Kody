@@ -75,6 +75,7 @@
   .copy .chap .cnum{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
   .copy .chap .ctitle{font-family:var(--disp);font-weight:400;font-size:clamp(21px,2.5vw,28px);line-height:1.08;color:var(--text)}
   .copy .chap + p::first-letter{font-family:var(--disp);float:left;font-size:3.2em;line-height:.82;padding:6px 10px 0 0;color:var(--accent);font-style:italic}
+  .copy .sect{font-family:var(--disp);font-weight:500;font-style:italic;font-size:clamp(17px,2vw,21px);line-height:1.18;color:var(--text);margin:clamp(16px,2.4vw,26px) 0 6px}
   .opening{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;text-align:center}
   .opening .folio{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
   .opening h1{font-family:var(--disp);font-weight:400;font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-0.02em;margin-bottom:20px}
@@ -173,6 +174,10 @@
   .copy.ending .end-q{font-family:var(--disp);font-style:italic;font-size:clamp(15px,1.9vw,20px);line-height:1.44;color:var(--text);max-width:34ch;margin:0 0 8px;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .copy.ending .end-by{font-family:var(--disp);font-style:italic;color:var(--muted);font-size:15px}
+  /* "to be continued" closing */
+  .copy.ending .end-tbc{margin-bottom:10px}
+  .copy.ending .end-tbc .tbc-txt{font-family:var(--disp);font-style:italic;font-size:22px;line-height:1;color:var(--accent)}
+  .copy.ending .end-note{font-family:var(--disp);font-style:italic;font-size:14px;line-height:1.5;color:var(--muted);max-width:34ch;margin-bottom:26px}
 
   /* "read next" tray — a separate shelf on the desk, OUTSIDE the book */
   .endsheet{position:fixed;left:0;right:0;bottom:0;z-index:34;background:var(--desk);border-top:1px solid var(--edge);
@@ -273,7 +278,7 @@
 
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
-<script src="wm-supabase.js?v=8"></script>
+<script src="wm-supabase.js?v=9"></script>
 <script src="wm-i18n.js?v=8"></script>
 <script>
 (function(){
@@ -329,6 +334,7 @@
     lines.forEach(function(ln){
       var t=ln.trim();
       if(t===''){ flush(); return; }
+      if(t.slice(0,4)==='### '){ flush(); blocks.push({type:'section', title: inline(t.slice(4).trim()) }); return; }
       if(t.slice(0,3)==='## '){ flush(); blocks.push({type:'chapter', title: inline(t.slice(3).trim()) }); return; }
       if(t.charAt(0)==='>'){ flush(); blocks.push({type:'quote', html: inline(t.replace(/^>\s?/,'').trim()) }); return; }
       para.push(t);
@@ -359,8 +365,9 @@
 
   /* ── title page ── */
   var motifName = (typeof WM!=='undefined' && WM.motifs && WM.motifs[story.motif]) ? WM.motifs[story.motif].name : (story.motif||'');
+  var continued = !!(story.continued || (function(){ try{ return !!(WM.pieceMeta.get(story.id)||{}).continued; }catch(e){ return false; } })());
   var TITLE = '<div class="copy opening">'
-    + '<div class="folio">Folio '+(story.folio||'')+' · '+(FORMS[story.form]||story.form||'')+' · '+(story.readTime||'')+' min</div>'
+    + '<div class="folio">Folio '+(story.folio||'')+' · '+(FORMS[story.form]||story.form||'')+' · '+(story.readTime||'')+' min'+(continued?' · <span class="tbc">to be continued</span>':'')+'</div>'
     + '<h1>'+(story.titleHTML||story.title)+'</h1>'
     + '<div class="rule"></div>'
     + '<div class="by">Kody Lâm</div>'
@@ -405,7 +412,11 @@
       marks.push({ num:ch.num, title:ch.title, page: pages.length+1 });
       if(SHOW_HEADINGS) cur += chapHead(ch);
       ch.blocks.forEach(function(bl){
-        if(bl.type==='quote'){
+        if(bl.type==='section'){
+          var sh='<div class="sect">'+bl.title+'</div>';
+          if(!fits(cur+sh+'<p>x</p>') && cur) push();   // keep the heading with what follows
+          cur += sh;
+        } else if(bl.type==='quote'){
           var q='<div class="pull">'+bl.html+'</div>';
           if(!fits(cur+q) && cur) push();
           cur += q;
@@ -430,7 +441,7 @@
   function pageHTML(idx){
     if(idx==null||idx<0) return '<div class="blank"></div>';
     if(idx===0) return TITLE;
-    if(idx===endIdx) return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— ⁂ —</div>';
+    if(idx===endIdx) return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'+ENDCARD()+'<div class="num">— '+(continued?'⋯':'⁂')+' —</div>';
     var b=idx-1; if(b<0||b>=bodyPages.length) return '<div class="blank"></div>';
     return '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div>'
          + '<div class="copy">'+linkChars(bodyPages[b])+'</div>'
@@ -529,7 +540,7 @@
   var endsheet=document.getElementById('endsheet'), sheetBuilt=false, sheetDismissed=false;
   function buildEndSheet(){
     if(sheetBuilt || !endsheet || !MORE.length) return; sheetBuilt=true;
-    var k=document.getElementById('esK'); if(k) k.textContent=(sameMotif.length?('Read next · more in '+motifLabel):'Read next · other pieces from the archive');
+    var k=document.getElementById('esK'); if(k) k.textContent=(continued?'While you wait · read another from the archive':(sameMotif.length?('Read next · more in '+motifLabel):'Read next · other pieces from the archive'));
     var row=document.getElementById('esRow'); if(!row) return;
     row.innerHTML=MORE.map(function(s){
       var meta=((FORMS[s.form]||s.form||'')+' · '+(s.readTime||'—')+' min');
@@ -643,8 +654,11 @@
     addEventListener('keydown', function(e){ if(e.key==='Escape' && panel&&panel.classList.contains('open')){ panel.classList.remove('open'); if(btn)btn.classList.remove('on'); } });
   })();
   function ENDCARD(){
+    var mark = continued
+      ? '<div class="end-stamp end-tbc"><span class="ln"></span><span class="tbc-txt">to be continued</span><span class="ln"></span></div><div class="end-note">the next part is on its way — read another while you wait</div>'
+      : '<div class="end-stamp"><span class="ln"></span><span class="kw">Kody<svg class="sw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></span><span class="ln"></span></div>';
     return '<div class="copy ending">'
-      + '<div class="end-stamp"><span class="ln"></span><span class="kw">Kody<svg class="sw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></span><span class="ln"></span></div>'
+      + mark
       + (story.excerpt?'<div class="end-q">"'+inline(story.excerpt)+'"</div>':'')
       + '<div class="end-by">Kody Lâm</div>'
       + '</div>';

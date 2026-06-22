@@ -254,6 +254,7 @@
             form: r.form,
             lang: r.lang,
             motif: r.motif,
+            continued: !!r.continued,
             themeVariant: r.theme_variant,
             updatedAt: r.updated_at ? new Date(r.updated_at).getTime() : Date.now()
           };
@@ -266,6 +267,7 @@
           if (r.meta_description != null) m.metaDescription = r.meta_description;
           if (r.focus_keyword != null) m.focusKeyword = r.focus_keyword;
           if (r.synopsis != null) m.synopsis = r.synopsis;
+          if (r.continued != null) m.continued = !!r.continued;
           if (Array.isArray(r.characters)) m.characters = r.characters;
           if (Object.keys(m).length) metaObj[r.id] = m;
         });
@@ -324,6 +326,7 @@
         meta_description: meta.metaDescription || null,
         focus_keyword: meta.focusKeyword || null,
         synopsis: meta.synopsis || null,
+        continued: !!meta.continued,
         characters: meta.characters || []
       };
       let q = supabase.from('pieces').update(payload).eq('id', id);
