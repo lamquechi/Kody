@@ -22,7 +22,7 @@
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
     --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#897A60;
-    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A;
+    --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A; --swash:#A33B2B;
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply; --lamp:transparent;
     --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
@@ -33,7 +33,7 @@
   body.dark{
     --paper:#0F1115; --paper-2:#16191E; --paper-3:#1E222A;
     --ink:#ECE6D8; --ink-soft:#A6A595; --ink-faint:#83857B;
-    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2;
+    --scarlet:#E5784E; --green:#7BAA95; --blue:#85ABC2; --swash:#C9A24B;
     --rule:#272C33; --rule-soft:#1E2228;
     --grain-op:0.06; --grain-blend:screen;
     --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
@@ -48,7 +48,7 @@
   body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--lamp)}
 
   .spine{position:fixed;left:0;top:0;bottom:0;width:62px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:44px 0 26px;z-index:60;background:var(--paper);transition:background .5s,border-color .5s}
-  .spine .mk{position:relative;display:inline-block;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;line-height:1;color:var(--scarlet);text-decoration:none;padding-bottom:6px;transition:transform .4s ease}
+  .spine .mk{position:relative;display:inline-block;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:19px;line-height:1;color:var(--ink);text-decoration:none;padding-bottom:11px;transition:transform .4s ease}
   .spine:hover .mk{transform:translateY(-3px) rotate(-4deg)}
   .spine .vert{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:0.34em;text-transform:uppercase;color:var(--ink-faint)}
   .spine .stamp{width:26px;height:26px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-family:var(--disp);font-style:italic;font-size:11px;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:.85}
@@ -57,7 +57,7 @@
   .inner{max-width:1100px;margin:0 auto;padding:0 56px}
 
   .top{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:30px 56px 0;font-family:var(--mono);font-size:12.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-soft)}
-  .brand-m{display:none;margin-right:auto;position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:21px;line-height:1;color:var(--scarlet);text-transform:none;letter-spacing:0;text-decoration:none;padding-bottom:5px}.brand-m .mksw{position:absolute;left:0;right:-5%;bottom:0;width:105%;height:8px;overflow:visible}.brand-m .mksw path{fill:none;stroke:var(--scarlet);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .brand-m{display:none;margin-right:auto;position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:21px;line-height:1;color:var(--ink);text-transform:none;letter-spacing:0;text-decoration:none;padding-bottom:10px}.brand-m .mksw{position:absolute;left:0;right:-6%;bottom:0;width:106%;height:7px;overflow:visible}.brand-m .mksw path{fill:none;stroke:var(--swash);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .top a{color:inherit;text-decoration:none;transition:.2s;position:relative}.top a:hover{color:var(--scarlet)}
   .top a.cur{color:var(--ink)}
   .top a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--scarlet);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
@@ -137,8 +137,8 @@
   .langsel button:hover{color:var(--scarlet)}
   .langsel button.active{color:var(--ink)}
   .langsel .sep{color:var(--ink-faint);font-size:10px}
-  .spine .mk .mksw{position:absolute;left:0;right:-6%;bottom:1px;width:106%;height:9px;overflow:visible}
-  .spine .mk .mksw path{fill:none;stroke:var(--scarlet);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .spine .mk .mksw{position:absolute;left:0;right:-6%;bottom:1px;width:106%;height:8px;overflow:visible}
+  .spine .mk .mksw path{fill:none;stroke:var(--swash);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
 </style>
 </head>
 <body>
