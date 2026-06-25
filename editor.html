@@ -99,6 +99,7 @@
   .chaprail .clink .ct{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .chaprail .clink.sub{padding-left:26px;font-size:14px;color:var(--ink-faint)}
   .chaprail .clink.sub .cn{color:var(--ink-faint);font-size:12px}
+  .chaprail .clink.lead .ct{font-style:italic;color:var(--ink-faint)}
 
   .body-in{width:100%;min-height:48vh;background:none;border:none;outline:none;resize:vertical;
     font-family:var(--body);font-size:18px;line-height:1.8;color:var(--ink)}
@@ -400,25 +401,33 @@
     renderChapters();
   }
 
-  // ── live Contents — turns ## / ### into a chapter outline you can jump to ──
+  // ── live Contents — mirrors the reader's numbering (Roman; a leading untitled part counts as Chapter I) ──
+  function romanNum(n){ return ['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][n]||(''+n); }
   function renderChapters(){
     const rail=$('chapRail'); if(!rail) return;
-    const lines=els.body.value.split('\n'); let items=[], n=0, pos=0;
+    const lines=els.body.value.split('\n'); let items=[], pos=0, sawCh=false, lead=false;
     for(let i=0;i<lines.length;i++){
       const ln=lines[i];
-      if(/^###\s+\S/.test(ln)) items.push({lvl:3,label:'§',text:ln.replace(/^###\s+/,'').trim(),at:pos});
-      else if(/^##\s+\S/.test(ln)){ n++; items.push({lvl:2,label:String(n),text:ln.replace(/^##\s+/,'').trim(),at:pos}); }
+      if(/^###\s+\S/.test(ln)){ items.push({lvl:3,text:ln.replace(/^###\s+/,'').trim(),at:pos}); if(!sawCh) lead=true; }
+      else if(/^##\s+\S/.test(ln)){ items.push({lvl:2,text:ln.replace(/^##\s+/,'').trim(),at:pos}); sawCh=true; }
+      else if(!sawCh && ln.trim()!=='') lead=true;   // any block before the first chapter = the reader's Chapter I
       pos+=ln.length+1;
     }
-    const chapN=items.filter(x=>x.lvl===2).length;
     if(!items.length){
       rail.className='chaprail empty';
       rail.innerHTML='<div class="crh">Chapters</div><div class="hint">Writing something long? Press <b>⊹ Chapter</b> to divide it into parts — readers get a numbered Contents and can move between them. Use <b>§ Section</b> for smaller breaks inside a chapter.</div>';
       return;
     }
+    const chapN=items.filter(x=>x.lvl===2).length, secN=items.length-chapN;
+    const cnt = chapN>0 ? (chapN+' chapter'+(chapN===1?'':'s')) : (secN+' section'+(secN===1?'':'s'));
     rail.className='chaprail';
-    let html='<div class="crh">Contents <span class="n">· '+chapN+' chapter'+(chapN===1?'':'s')+'</span></div><ol>';
-    items.forEach(it=>{ html+='<li><button type="button" class="clink'+(it.lvl===3?' sub':'')+'" data-at="'+it.at+'"><span class="cn">'+it.label+'</span><span class="ct">'+WM.escapeHtml(it.text||'Untitled')+'</span></button></li>'; });
+    let cn = lead ? 1 : 0;
+    let html='<div class="crh">Contents <span class="n">· '+cnt+'</span></div><ol>';
+    if(lead && chapN>0) html+='<li><button type="button" class="clink lead" data-at="0"><span class="cn">'+romanNum(1)+'</span><span class="ct">opening</span></button></li>';
+    items.forEach(it=>{
+      const label = it.lvl===2 ? romanNum(++cn) : '§';
+      html+='<li><button type="button" class="clink'+(it.lvl===3?' sub':'')+'" data-at="'+it.at+'"><span class="cn">'+label+'</span><span class="ct">'+WM.escapeHtml(it.text||'Untitled')+'</span></button></li>';
+    });
     rail.innerHTML=html+'</ol>';
     rail.querySelectorAll('.clink').forEach(b=>b.addEventListener('click',()=>{
       const at=parseInt(b.dataset.at,10)||0;
