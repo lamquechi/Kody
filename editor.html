@@ -100,6 +100,11 @@
   .chaprail .clink.sub{padding-left:26px;font-size:14px;color:var(--ink-faint)}
   .chaprail .clink.sub .cn{color:var(--ink-faint);font-size:12px}
   .chaprail .clink.lead .ct{font-style:italic;color:var(--ink-faint)}
+  .chaprail .cadd-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+  .chaprail .cadd{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--green);background:none;border:1px dashed color-mix(in srgb,var(--green) 45%,var(--rule));border-radius:2px;padding:8px 13px;cursor:pointer;transition:all .18s}
+  .chaprail .cadd:hover{border-style:solid;background:color-mix(in srgb,var(--green) 10%,transparent)}
+  .chaprail .cadd.sec{color:var(--ink-soft);border-color:var(--rule)}
+  .chaprail .cadd.sec:hover{border-color:var(--ink-soft);background:color-mix(in srgb,var(--ink-soft) 8%,transparent)}
 
   .body-in{width:100%;min-height:48vh;background:none;border:none;outline:none;resize:vertical;
     font-family:var(--body);font-size:18px;line-height:1.8;color:var(--ink)}
@@ -413,28 +418,43 @@
       else if(!sawCh && ln.trim()!=='') lead=true;   // any block before the first chapter = the reader's Chapter I
       pos+=ln.length+1;
     }
+    const addRow='<div class="cadd-row"><button type="button" class="cadd" id="caddCh">＋ Add chapter</button><button type="button" class="cadd sec" id="caddSec">＋ Section</button></div>';
     if(!items.length){
       rail.className='chaprail empty';
-      rail.innerHTML='<div class="crh">Chapters</div><div class="hint">Writing something long? Press <b>⊹ Chapter</b> to divide it into parts — readers get a numbered Contents and can move between them. Use <b>§ Section</b> for smaller breaks inside a chapter.</div>';
-      return;
+      rail.innerHTML='<div class="crh">Chapters</div><div class="hint">Divide a long piece into chapters — readers get a numbered Contents and can jump between them. Add the first one whenever you like:</div>'+addRow;
+    } else {
+      const chapN=items.filter(x=>x.lvl===2).length, secN=items.length-chapN;
+      const cnt = chapN>0 ? (chapN+' chapter'+(chapN===1?'':'s')) : (secN+' section'+(secN===1?'':'s'));
+      rail.className='chaprail';
+      let cn = lead ? 1 : 0;
+      let html='<div class="crh">Contents <span class="n">· '+cnt+'</span></div><ol>';
+      if(lead && chapN>0) html+='<li><button type="button" class="clink lead" data-at="0"><span class="cn">'+romanNum(1)+'</span><span class="ct">opening</span></button></li>';
+      items.forEach(it=>{
+        const label = it.lvl===2 ? romanNum(++cn) : '§';
+        html+='<li><button type="button" class="clink'+(it.lvl===3?' sub':'')+'" data-at="'+it.at+'"><span class="cn">'+label+'</span><span class="ct">'+WM.escapeHtml(it.text||'Untitled')+'</span></button></li>';
+      });
+      rail.innerHTML=html+'</ol>'+addRow;
+      rail.querySelectorAll('.clink').forEach(b=>b.addEventListener('click',()=>{
+        const at=parseInt(b.dataset.at,10)||0;
+        els.body.focus();
+        try{ els.body.setSelectionRange(at,at); }catch(e){}
+        try{ const lineNo=els.body.value.slice(0,at).split('\n').length, lh=parseFloat(getComputedStyle(els.body).lineHeight)||29; els.body.scrollTop=Math.max(0,(lineNo-1)*lh-32); }catch(e){}
+      }));
     }
-    const chapN=items.filter(x=>x.lvl===2).length, secN=items.length-chapN;
-    const cnt = chapN>0 ? (chapN+' chapter'+(chapN===1?'':'s')) : (secN+' section'+(secN===1?'':'s'));
-    rail.className='chaprail';
-    let cn = lead ? 1 : 0;
-    let html='<div class="crh">Contents <span class="n">· '+cnt+'</span></div><ol>';
-    if(lead && chapN>0) html+='<li><button type="button" class="clink lead" data-at="0"><span class="cn">'+romanNum(1)+'</span><span class="ct">opening</span></button></li>';
-    items.forEach(it=>{
-      const label = it.lvl===2 ? romanNum(++cn) : '§';
-      html+='<li><button type="button" class="clink'+(it.lvl===3?' sub':'')+'" data-at="'+it.at+'"><span class="cn">'+label+'</span><span class="ct">'+WM.escapeHtml(it.text||'Untitled')+'</span></button></li>';
-    });
-    rail.innerHTML=html+'</ol>';
-    rail.querySelectorAll('.clink').forEach(b=>b.addEventListener('click',()=>{
-      const at=parseInt(b.dataset.at,10)||0;
-      els.body.focus();
-      try{ els.body.setSelectionRange(at,at); }catch(e){}
-      try{ const lineNo=els.body.value.slice(0,at).split('\n').length, lh=parseFloat(getComputedStyle(els.body).lineHeight)||29; els.body.scrollTop=Math.max(0,(lineNo-1)*lh-32); }catch(e){}
-    }));
+    const ac=$('caddCh'); if(ac) ac.addEventListener('click',()=>appendHeading('## ','New chapter'));
+    const as=$('caddSec'); if(as) as.addEventListener('click',()=>appendHeading('### ','New section'));
+  }
+  // append a chapter/section heading at the end of the piece, title pre-selected for instant typing
+  function appendHeading(mark, placeholder){
+    const ta=els.body; ta.focus();
+    const v=ta.value, end=v.length;
+    const sep = v==='' ? '' : (/\n\n$/.test(v) ? '' : /\n$/.test(v) ? '\n' : '\n\n');
+    ta.setSelectionRange(end,end);
+    insertText(ta, sep+mark+placeholder);
+    const e2=ta.value.length, s2=e2-placeholder.length;
+    try{ ta.setSelectionRange(s2,e2); }catch(e){}   // select the title so the first keystroke renames it
+    markDirty();
+    requestAnimationFrame(()=>{ try{ ta.scrollTop=ta.scrollHeight; }catch(e){} });
   }
 
   function setStatus(text,kind){ els.statusEl.textContent=text; els.statusEl.className='status '+(kind||''); }
