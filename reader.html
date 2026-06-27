@@ -168,9 +168,9 @@
   .copy.ending{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0}
   .copy.ending .end-stamp{display:inline-flex;align-items:center;gap:14px;margin-bottom:20px}
   .copy.ending .end-stamp .ln{width:30px;height:1px;background:var(--edge)}
-  .copy.ending .end-stamp .kw{position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:26px;line-height:1;color:var(--text);padding-bottom:18px}
-  .copy.ending .end-stamp .kw .sw{position:absolute;left:0;right:-6%;bottom:2px;width:106%;height:7px;overflow:visible}
-  .copy.ending .end-stamp .kw .sw path{fill:none;stroke:var(--swash);stroke-width:1.8;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .copy.ending .end-stamp .kw{position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:26px;line-height:1;color:var(--text);padding-bottom:0.69em}
+  .copy.ending .end-stamp .kw .sw{position:absolute;left:8%;bottom:0.44em;width:68%;height:0.21em;overflow:visible}
+  .copy.ending .end-stamp .kw .sw path{fill:none;stroke:var(--swash);stroke-width:1.3;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .copy.ending .end-q{font-family:var(--disp);font-style:italic;font-size:clamp(15px,1.9vw,20px);line-height:1.44;color:var(--text);max-width:34ch;margin:0 0 8px;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .copy.ending .end-by{font-family:var(--disp);font-style:italic;color:var(--muted);font-size:15px}
@@ -186,7 +186,7 @@
   .endsheet.show{transform:translateY(0)}
   .endsheet .es-x{position:absolute;top:10px;right:16px;background:none;border:none;color:var(--faint);font-size:20px;line-height:1;cursor:pointer;padding:4px}
   .endsheet .es-x:hover{color:var(--accent)}
-  .endsheet .es-k{text-align:center;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:15px}
+  .endsheet .es-k{text-align:center;font-family:var(--mono);font-weight:600;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:15px}
   .endsheet .es-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:0 auto 15px}
   .endsheet .es-card{flex:1 1 270px;max-width:340px;display:flex;align-items:baseline;gap:12px;border:1px solid var(--edge);border-radius:7px;padding:13px 16px;background:var(--page);text-decoration:none;cursor:pointer;transition:border-color .2s,transform .2s}
   .endsheet .es-card:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -540,7 +540,7 @@
   var endsheet=document.getElementById('endsheet'), sheetBuilt=false, sheetDismissed=false;
   function buildEndSheet(){
     if(sheetBuilt || !endsheet || !MORE.length) return; sheetBuilt=true;
-    var k=document.getElementById('esK'); if(k) k.textContent=(continued?'While you wait · read another from the archive':(sameMotif.length?('Read next · more in '+motifLabel):'Read next · other pieces from the archive'));
+    var k=document.getElementById('esK'); if(k) k.textContent=(continued?'While you wait':(sameMotif.length?('More in '+motifLabel):'Read next'));
     var row=document.getElementById('esRow'); if(!row) return;
     row.innerHTML=MORE.map(function(s){
       var meta=((FORMS[s.form]||s.form||'')+' · '+(s.readTime||'—')+' min');
@@ -656,7 +656,7 @@
   function ENDCARD(){
     var mark = continued
       ? '<div class="end-stamp end-tbc"><span class="ln"></span><span class="tbc-txt">to be continued</span><span class="ln"></span></div><div class="end-note">the next part is on its way — read another while you wait</div>'
-      : '<div class="end-stamp"><span class="ln"></span><span class="kw">Kody<svg class="sw" viewBox="0 0 120 14" preserveAspectRatio="none" aria-hidden="true"><path d="M115,5 C78,13 30,11 11,5 C5,2 12,1 19,4"></path></svg></span><span class="ln"></span></div>';
+      : '<div class="end-stamp"><span class="ln"></span><span class="kw">Kody<svg class="sw" viewBox="36 135 215 28" preserveAspectRatio="none" aria-hidden="true"><path d="M250,152 C158,170 64,162 40,146 C28,138 44,132 60,138"></path></svg></span><span class="ln"></span></div>';
     return '<div class="copy ending">'
       + mark
       + (story.excerpt?'<div class="end-q">"'+inline(story.excerpt)+'"</div>':'')
