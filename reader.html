@@ -83,6 +83,15 @@
   .opening .by{font-family:var(--disp);font-style:italic;font-size:18px;color:var(--muted)}
   .opening .rule{width:60px;height:1px;background:var(--accent);margin:22px auto}
   .opening .meta{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:20px}
+  /* reader status — is this piece complete, or to be continued */
+  .opening .rstat{align-self:center;display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;padding:7px 16px;border-radius:30px;border:1px solid var(--edge)}
+  .opening .rstat .rs-dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+  .opening .rstat.done{color:var(--muted)}
+  .opening .rstat.done .rs-dot{background:var(--muted)}
+  .opening .rstat.cont{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 42%,var(--edge))}
+  .opening .rstat.cont .rs-dot{background:var(--accent)}
+  @media(prefers-reduced-motion:no-preference){ .opening .rstat.cont .rs-dot{animation:rsPulse 2.4s ease-in-out infinite} }
+  @keyframes rsPulse{0%,100%{opacity:1}50%{opacity:.3}}
   .blank{background:var(--page2)}
 
   /* ── turn zones + bar + progress + toc ── */
@@ -366,11 +375,15 @@
   /* ── title page ── */
   var motifName = (typeof WM!=='undefined' && WM.motifs && WM.motifs[story.motif]) ? WM.motifs[story.motif].name : (story.motif||'');
   var continued = !!(story.continued || (function(){ try{ return !!(WM.pieceMeta.get(story.id)||{}).continued; }catch(e){ return false; } })());
+  var statusChip = continued
+    ? '<div class="rstat cont"><span class="rs-dot"></span>To be continued</div>'
+    : '<div class="rstat done"><span class="rs-dot"></span>Complete</div>';
   var TITLE = '<div class="copy opening">'
-    + '<div class="folio">Folio '+(story.folio||'')+' · '+(FORMS[story.form]||story.form||'')+' · '+(story.readTime||'')+' min'+(continued?' · <span class="tbc">to be continued</span>':'')+'</div>'
+    + '<div class="folio">Folio '+(story.folio||'')+' · '+(FORMS[story.form]||story.form||'')+' · '+(story.readTime||'')+' min</div>'
     + '<h1>'+(story.titleHTML||story.title)+'</h1>'
     + '<div class="rule"></div>'
     + '<div class="by">Kody Lâm</div>'
+    + statusChip
     + '<div class="meta">'+(motifName?('Motif · '+motifName+' &nbsp;·&nbsp; '):'')+'turn with the edges, arrows, or a swipe</div></div>';
 
   /* ── elements ── */

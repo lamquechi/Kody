@@ -136,9 +136,14 @@
   .det-h:first-child{margin-top:8px}
   .det-note{font-family:var(--disp);font-style:italic;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink-faint)}
   .det-grid{display:flex;flex-wrap:wrap;gap:14px}
-  .tbc-toggle{display:flex;align-items:flex-start;gap:10px;margin-top:14px;cursor:pointer;font-family:var(--body);font-size:14.5px;line-height:1.5;color:var(--ink-soft)}
-  .tbc-toggle input{margin-top:3px;width:16px;height:16px;accent-color:var(--scarlet);cursor:pointer;flex:0 0 auto}
-  .tbc-toggle b{font-weight:600;color:var(--scarlet);font-style:normal}
+  .rstat-seg{display:inline-flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin-top:4px}
+  .rstat-seg button{font-family:var(--mono);font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:10px 16px;background:none;border:none;border-right:1px solid var(--rule);cursor:pointer;color:var(--ink-faint);transition:all .2s}
+  .rstat-seg button:last-child{border-right:none}
+  .rstat-seg button:hover{color:var(--ink-soft);background:var(--paper-2)}
+  .rstat-seg button.on{background:var(--ink);color:var(--paper)}
+  .rstat-seg button[data-cont="1"].on{background:var(--scarlet)}
+  .rstat-hint{font-family:var(--disp);font-style:italic;font-size:13.5px;color:var(--ink-faint);margin-top:9px}
+  .pv-tags .pv-cont{color:var(--scarlet)}
   .fld{display:flex;flex-direction:column;gap:6px;flex:1;min-width:150px}
   .fld.wide{flex:2;min-width:240px}
   .fld label{font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);display:flex;justify-content:space-between}
@@ -305,7 +310,12 @@
         <div class="fld"><label>Deadline</label><input type="date" id="dDue"></div>
         <div class="fld"><label>Planned publish</label><input type="date" id="dSched"></div>
       </div>
-      <label class="tbc-toggle"><input type="checkbox" id="dContinued"><span><b>To be continued</b> — show readers this piece is ongoing (more to come), and invite them to read another meanwhile.</span></label>
+      <h4 class="det-h">Reader status <span class="det-note">— shown at the top of the piece so readers know if it's finished</span></h4>
+      <div class="rstat-seg" id="dStatusSeg" role="group" aria-label="Reader status">
+        <button type="button" data-cont="0" class="on">✓ Complete</button>
+        <button type="button" data-cont="1">⋯ To be continued</button>
+      </div>
+      <p class="rstat-hint" id="dStatusHint">Readers see this piece as finished.</p>
       <h4 class="det-h">Findability <span class="seo-chip" id="seoChipB"></span></h4>
       <div class="det-grid">
         <div class="fld"><label>Focus phrase</label><input id="dKw" placeholder="the one phrase to be found by"></div>
@@ -338,7 +348,7 @@
   const $ = id => document.getElementById(id);
   const els = {
     title:$('title'), body:$('body'), form:$('mForm'), lang:$('mLang'),
-    motif:$('mMotif'), status:$('mStatus'), progress:$('mProgress'), continued:$('dContinued'),
+    motif:$('mMotif'), status:$('mStatus'), progress:$('mProgress'),
     wc:$('wc'), wcBar:$('wcBar'), statusEl:$('status'),
     pvTitle:$('pvTitle'), pvTags:$('pvTags'), pvBody:$('pvBody'), toast:$('toast'),
     goal:$('dGoal'), due:$('dDue'), sched:$('dSched'), kw:$('dKw'), desc:$('dDesc'),
@@ -379,7 +389,7 @@
         els.status.value=(src.status==='published')?'published':'draft';
       }
       const m=WM.pieceMeta.get(pieceId);
-      els.progress.value=m.progress||''; els.continued.checked=!!m.continued;
+      els.progress.value=m.progress||''; setContinued(!!m.continued);
       els.goal.value=m.wordGoal||''; els.due.value=ymd(m.dueAt); els.sched.value=ymd(m.scheduledAt);
       els.kw.value=m.focusKeyword||''; els.desc.value=m.metaDescription||''; els.syn.value=m.synopsis||'';
       charSel=new Set(m.characters||[]); renderCharPicker();
@@ -393,7 +403,7 @@
     els.pvTitle.textContent=t||'Untitled'; els.pvTitle.classList.toggle('placeholder',!t);
     const motifName=els.motif.value?(WM.motifs[els.motif.value]?.name||els.motif.value):'';
     const tags=[WM.FORM_LABEL[els.form.value]||els.form.value, els.lang.value.toUpperCase(), motifName].filter(Boolean);
-    els.pvTags.innerHTML=tags.join('<span class="dot">✦</span>');
+    els.pvTags.innerHTML=tags.join('<span class="dot">✦</span>')+(getContinued()?'<span class="dot">✦</span><span class="pv-cont">To be continued</span>':'');
     const md=els.body.value.trim();
     els.pvBody.innerHTML=md?WM.renderMarkdown(md):'<p class="pv-empty">The page fills as you write…</p>';
     const words=WM.wordCount(md);
@@ -461,7 +471,7 @@
   function toast(msg){ els.toast.textContent=msg; els.toast.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>els.toast.classList.remove('show'),2200); }
 
   function collect(){ return { title:els.title.value.trim()||'Untitled', body:els.body.value, form:els.form.value, lang:els.lang.value, motif:els.motif.value||null, status:els.status.value }; }
-  function collectMeta(){ return { progress:els.progress.value||'', continued:els.continued.checked, wordGoal:parseInt(els.goal.value,10)||0, dueAt:tsFromYmd(els.due.value), scheduledAt:tsFromYmd(els.sched.value), focusKeyword:els.kw.value.trim(), metaDescription:els.desc.value.trim(), synopsis:els.syn.value.trim(), characters:Array.from(charSel) }; }
+  function collectMeta(){ return { progress:els.progress.value||'', continued:getContinued(), wordGoal:parseInt(els.goal.value,10)||0, dueAt:tsFromYmd(els.due.value), scheduledAt:tsFromYmd(els.sched.value), focusKeyword:els.kw.value.trim(), metaDescription:els.desc.value.trim(), synopsis:els.syn.value.trim(), characters:Array.from(charSel) }; }
   // local safety net: a synchronous backup of unsaved title/body, keyed per piece
   function backupKey(){ return 'wm.editor.backup.'+(pieceId||'new'); }
   function writeBackup(){ try{ localStorage.setItem(backupKey(), JSON.stringify({title:els.title.value, body:els.body.value, t:Date.now()})); }catch(e){} }
@@ -486,7 +496,14 @@
   function markDirty(){ dirty=true; savedAt=0; clearInterval(savedTimer); writeBackup(); setStatus('Unsaved…','dirty'); renderPreview(); clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ if(dirty){ setStatus('Saving…','saving'); doSave(false); dirty=false; } },1200); }
 
   ['title','body'].forEach(k=>els[k].addEventListener('input',markDirty));
-  ['form','lang','motif','progress','continued'].forEach(k=>els[k].addEventListener('change',markDirty));
+  ['form','lang','motif','progress'].forEach(k=>els[k].addEventListener('change',markDirty));
+  // reader-status segmented control (Complete / To be continued)
+  function getContinued(){ var b=document.querySelector('#dStatusSeg button.on'); return !!(b && b.dataset.cont==='1'); }
+  function setContinued(v){
+    document.querySelectorAll('#dStatusSeg button').forEach(function(b){ b.classList.toggle('on',(b.dataset.cont==='1')===!!v); });
+    var h=$('dStatusHint'); if(h) h.textContent = v ? 'Readers see “To be continued” — with an invite to read another meanwhile.' : 'Readers see this piece as finished.';
+  }
+  document.querySelectorAll('#dStatusSeg button').forEach(function(b){ b.addEventListener('click',function(){ setContinued(b.dataset.cont==='1'); markDirty(); }); });
   ['goal','due','sched','kw','syn'].forEach(k=>els[k].addEventListener('input',markDirty));
   els.desc.addEventListener('input',()=>{ els.descCount.textContent=(els.desc.value||'').length+'/160'; markDirty(); });
   els.status.addEventListener('change',()=>{ syncPublishLabel(); markDirty(); });
