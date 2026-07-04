@@ -317,31 +317,12 @@
   <div class="inner">
     <div class="body-grid" id="library">
       <div class="col-main">
-        <div class="sec-k reveal">The index · seven pieces</div>
+        <div class="sec-k reveal" id="indexEyebrow">The index · latest work</div>
         <h2 class="sec-h reveal">Each one a <em>room</em> of its own — choose the one that's lit for you tonight.</h2>
 
-        <article class="entry-row reveal" data-story-id="the-city-after-rain">
-          <div class="ln">001</div>
-          <div><h3>The City After Rain</h3><p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p></div>
-          <div class="meta">Fiction<br>5 min<br><span class="lang">EN</span></div>
-        </article>
-        <article class="entry-row reveal" data-story-id="letters-to-the-reservoir">
-          <div class="ln">002</div>
-          <div><h3>Letters to the Reservoir</h3><p>"Some memories do not vanish. They settle, like water held behind concrete, waiting for weather."</p></div>
-          <div class="meta">Short<br>3 min<br><span class="lang">EN</span></div>
-        </article>
-        <article class="entry-row reveal" data-story-id="in-a-room-of-small-lights">
-          <div class="ln">003</div>
-          <div><h3>In a Room of Small Lights</h3><p>"A room lit by small lamps asks for a different honesty than daylight does."</p></div>
-          <div class="meta">Tản văn<br>4 min<br><span class="lang">EN</span></div>
-        </article>
-        <article class="entry-row vi reveal" data-story-id="mot-nua-cua-im-lang">
-          <div class="ln">007</div>
-          <div><h3 lang="vi">Một Nửa Của Im Lặng</h3><p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p></div>
-          <div class="meta">Tản văn<br>4 min<br><span class="lang">VI</span></div>
-        </article>
+        <div id="indexList" aria-live="polite"></div>
 
-        <a href="library.html" class="see-all reveal" id="seeAll">Enter the full archive — seven pieces ↗</a>
+        <a href="library.html" class="see-all reveal" id="seeAll">Enter the full archive ↗</a>
       </div>
 
       <aside class="col-margin">
@@ -460,22 +441,48 @@
 
   /* ── navigation: entry rows + "Start here" → reader ── */
   (function(){
-    document.querySelectorAll('[data-story-id]').forEach(function(row){
-      row.setAttribute('tabindex','0'); row.setAttribute('role','link');
-      var id = row.getAttribute('data-story-id');
-      // reader-status badge — only for ongoing (to-be-continued) pieces
-      try{
-        var cont=false;
-        try{ var st=(typeof WM!=='undefined'&&WM.getStory)?WM.getStory(id):null; if(st&&st.continued) cont=true; }catch(e){}
-        if(!cont){ try{ cont=!!((WM.pieceMeta.get(id)||{}).continued); }catch(e){} }
-        if(cont){ var h=row.querySelector('h3'); if(h&&h.parentNode){ var b=document.createElement('div'); b.className='e-status'; b.textContent='⋯ To be continued'; h.parentNode.appendChild(b); } }
-      }catch(e){}
-      function go(){ window.location.href = 'reader.html?id=' + id; }
-      row.addEventListener('click', go);
-      row.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
-    });
+    var CAP = 6;   // the front page never sprawls — at most CAP pieces; the rest live in the archive
+    var listEl = document.getElementById('indexList');
+    var FORMS = {fiction:'Fiction','tan-van':'Tản văn',short:'Short',interactive:'Interactive'};
+    function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function isCont(s){ if(s&&s.continued) return true; try{ return !!((WM.pieceMeta.get(s.id)||{}).continued); }catch(e){ return false; } }
+    function pad3(n){ n=String(n); while(n.length<3){ n='0'+n; } return n; }
+    function revealIn(scope){
+      var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches, els = scope.querySelectorAll('.reveal');
+      if(reduce || !('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12, rootMargin:'0px 0px -8% 0px'});
+      els.forEach(function(el){ io.observe(el); });
+    }
+    function build(animate){
+      var all = (typeof WM!=='undefined' && WM.stories) ? WM.stories.slice() : [];
+      var n = all.length, shown = all.slice(0, CAP);
+      if(listEl){
+        listEl.innerHTML = shown.map(function(s,i){
+          var vi = s.lang==='vi', isRead=false;
+          try{ isRead=!!(WM.readlog&&WM.readlog.has&&WM.readlog.has(s.id)); }catch(e){}
+          var num = s.folio || pad3(i+1);
+          return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'">'
+            + '<div class="ln">'+esc(num)+'</div>'
+            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">⋯ To be continued</div>':'')+'</div>'
+            + '<div class="meta">'+esc(FORMS[s.form]||s.form)+'<br>'+esc(s.readTime||'')+' min<br><span class="lang">'+esc((s.lang||'').toUpperCase())+'</span></div>'
+            + '</article>';
+        }).join('');
+        listEl.querySelectorAll('[data-story-id]').forEach(function(row){
+          row.setAttribute('tabindex','0'); row.setAttribute('role','link');
+          var id = row.getAttribute('data-story-id');
+          function go(){ window.location.href = 'reader.html?id=' + id; }
+          row.addEventListener('click', go);
+          row.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+        });
+        if(animate) revealIn(listEl);
+      }
+      var eb = document.getElementById('indexEyebrow'); if(eb && n) eb.textContent = 'The index · '+n+' piece'+(n===1?'':'s');
+      var sa = document.getElementById('seeAll'); if(sa) sa.textContent = (n>CAP ? ('Enter the full archive — all '+n+' pieces ↗') : ('Enter the full archive ↗'));
+    }
+    build(true);
+    window.addEventListener('wm:ready', function(){ build(false); });
     var sh = document.getElementById('startHere');
-    if (sh) sh.addEventListener('click', function(e){ e.stopPropagation(); window.location.href = 'reader.html?id=the-city-after-rain'; });
+    if (sh) sh.addEventListener('click', function(e){ e.stopPropagation(); var f=(typeof WM!=='undefined'&&WM.stories&&WM.stories[0])?WM.stories[0].id:'the-city-after-rain'; window.location.href = 'reader.html?id=' + f; });
   })();
 </script>
 
