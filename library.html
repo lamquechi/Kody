@@ -110,6 +110,8 @@
   .feat .go{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--scarlet);display:inline-flex;align-items:center;gap:10px;transition:gap .3s}
   .feat .card.vi .go{color:var(--blue)}
   .feat .card:hover .go{gap:18px}
+  .feat .card .feat-status{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:-10px;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--scarlet);border:1px solid color-mix(in srgb,var(--scarlet) 32%,var(--rule));border-radius:20px;padding:4px 11px}
+  .feat .card.vi .feat-status{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 32%,var(--rule))}
 
   /* index rows */
   .row{display:grid;grid-template-columns:54px 1fr auto;gap:28px;align-items:baseline;padding:26px 0;border-top:1px solid var(--rule);cursor:pointer;position:relative;transition:padding-left .35s cubic-bezier(.2,.7,.3,1)}
@@ -122,12 +124,14 @@
   .row:hover h3{color:var(--scarlet)}
   .row.vi:hover h3{color:var(--blue)}
   .row p{margin-top:7px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--ink-soft);max-width:540px}
-  .row .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-faint);text-align:right;line-height:1.8}
+  .row .meta{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);text-align:right;line-height:1.8}
   .row .meta .lng-tag{color:var(--scarlet)}
   .row.vi .meta .lng-tag{color:var(--blue)}
   .row::after{content:"✦";position:absolute;left:-3px;top:28px;color:var(--scarlet);font-size:12px;opacity:0;transform:translateX(-8px);transition:opacity .35s,transform .35s}
   .row:hover::after{opacity:1;transform:translateX(0)}
   .row.vi::after{color:var(--blue)}
+  .row .r-status{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--scarlet);border:1px solid color-mix(in srgb,var(--scarlet) 32%,var(--rule));border-radius:20px;padding:4px 11px}
+  .row.vi .r-status{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 32%,var(--rule))}
   .empty{display:none;text-align:center;padding:54px 0;color:var(--ink-faint)}
   .empty.show{display:block}
   .empty .o{font-family:var(--disp);color:var(--scarlet);letter-spacing:0.4em;margin-bottom:12px}
@@ -298,13 +302,15 @@
   function motifName(m){ return (typeof WM!=='undefined' && WM.motifs && WM.motifs[m]) ? WM.motifs[m].name : m; }
 
   function fmtReads(n){ return n ? (n>=1000?(n/1000).toFixed(1)+'K':n)+' reads' : 'new'; }
+  function pieceContinued(s){ if(s && s.continued) return true; try{ return !!(WM.pieceMeta.get(s.id)||{}).continued; }catch(e){ return false; } }
   function rowHTML(s){
     var vi = s.lang==='vi';
     var isSaved = !!(typeof WM!=='undefined' && WM.shelf && WM.shelf.has && WM.shelf.has(s.id));
     var isRead = !!(typeof WM!=='undefined' && WM.readlog && WM.readlog.has && WM.readlog.has(s.id));
+    var cont = pieceContinued(s);
     return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'" data-cat="'+s.form+'" data-lng="'+s.lang+'" data-saved="'+(isSaved?'1':'0')+'" data-search="'+((s.title+' '+(s.excerpt||'')+' '+s.motif+' '+s.form).toLowerCase().replace(/"/g,''))+'" data-min="'+(s.readTime||0)+'" data-motif="'+s.motif+'">'
       + '<div class="ln">'+(s.folio||'')+'</div>'
-      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p></div>'
+      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'+(cont?'<div class="r-status">⋯ To be continued</div>':'')+'</div>'
       + '<div class="meta">'+(FORMS[s.form]||s.form)+'<br>'+(s.readTime||'')+' min · '+fmtReads(s.reads)+'<br><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span>'+(isSaved?' · <span style="color:var(--scarlet)">♥ saved</span>':'')+'</div>'
       + '</article>';
   }
