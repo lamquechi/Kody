@@ -273,6 +273,58 @@ create policy "Admin deletes messages" on messages for delete using (is_admin())
 
 
 -- ═══════════════════════════════════════════════════════════════
+-- SECURITY HARDENING · access & permissions  (added after an audit)
+-- ───────────────────────────────────────────────────────────────
+-- Additive and safe to re-run. Fixes three access-control gaps:
+--   1) a signed-in reader could promote THEMSELVES to admin by updating
+--      their own profile's `role`  (privilege escalation — critical);
+--   2) profiles were world-readable, exposing every user's email to
+--      anyone holding the public anon key;
+--   3) reader "marks" were world-readable by anyone.
+-- Paste into Supabase → SQL Editor → Run. No client changes needed.
+-- ═══════════════════════════════════════════════════════════════
+
+-- 1) PRIVILEGE ESCALATION — only an existing admin may change a `role`.
+--    A non-admin's attempt to change role (incl. their own) is silently
+--    reverted, so ordinary profile edits (name, bio, tagline…) still work.
+create or replace function guard_profile_role() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if (new.role is distinct from old.role) and not is_admin() then
+    new.role := old.role;   -- keep the previous role; ignore the change
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists profiles_guard_role on profiles;
+create trigger profiles_guard_role
+  before update on profiles
+  for each row execute function guard_profile_role();
+
+-- ...and don't let a fresh client-side insert smuggle in a non-reader role.
+-- (The signup trigger runs as definer and still makes the first user admin.)
+drop policy if exists "Users can insert own profile" on profiles;
+create policy "Users can insert own profile" on profiles
+  for insert with check (auth.uid() = id and (role = 'reader' or is_admin()));
+
+-- 2) EMAIL EXPOSURE — profiles are no longer world-readable. The site never
+--    reads another person's profile (public bylines come from site_config);
+--    each user reads only their own row, and admins read all.
+drop policy if exists "Public can read profiles" on profiles;
+drop policy if exists "Owner or admin reads profile" on profiles;
+create policy "Owner or admin reads profile" on profiles
+  for select using (auth.uid() = id or is_admin());
+
+-- 3) MARKS PRIVACY — a reader's notes are for the author. Admin reads all;
+--    a signed-in reader may read back only their own (cross-device); nobody
+--    can browse everyone's marks. (Anyone may still LEAVE a mark.)
+drop policy if exists "Public reads marks" on marks;
+drop policy if exists "Author or owner reads marks" on marks;
+create policy "Author or owner reads marks" on marks
+  for select using (is_admin() or auth.uid() = reader_id);
+
+
+-- ═══════════════════════════════════════════════════════════════
 -- DONE.
 -- Next steps:
 --   1. Settings → API → copy "Project URL" and "anon public" (publishable) key
