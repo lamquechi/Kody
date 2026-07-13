@@ -102,6 +102,8 @@
   .piece:hover h3{color:var(--mc)}
   .piece p{font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--ink-soft);margin-bottom:14px}
   .piece .mt{display:flex;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .motif-more{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mc);text-decoration:none;transition:gap .3s}
+  .motif-more:hover{gap:16px}
 
   .closing{border-top:1px solid var(--rule);text-align:center;padding:70px 56px}
   .closing .o{font-family:var(--disp);color:var(--scarlet);letter-spacing:0.4em;font-size:15px;margin-bottom:16px}
@@ -214,19 +216,20 @@
   }).join('');
 
   // sections
-  var sec=document.getElementById('sections');
+  var sec=document.getElementById('sections'), MOTIF_CAP=6;
   sec.innerHTML = keys.map(function(k){
     var mo=motifs[k]||{name:k,subtitle:''}; var list=piecesOf(k);
-    var cards = list.map(function(s){
+    var cards = list.slice(0, MOTIF_CAP).map(function(s){
       var min=(s.readTime||'')+' min';
       return '<a class="piece" data-id="'+s.id+'"><span class="tg">'+(FORMS[s.form]||s.form)+' · '+min+'</span>'
         + '<h3'+(s.lang==='vi'?' lang="vi"':'')+'>'+s.title+'</h3>'
         + '<p'+(s.lang==='vi'?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'
         + '<div class="mt"><span>'+(s.lang||'').toUpperCase()+'</span><span>·</span><span>'+(s.reads!=null?s.reads+' reads':'NEW')+'</span></div></a>';
     }).join('');
+    var more = list.length>MOTIF_CAP ? '<a class="motif-more" href="library.html">+ '+(list.length-MOTIF_CAP)+' more in the archive →</a>' : '';
     return '<section class="motif reveal" id="m-'+k+'" style="--mc:var('+MVAR[k]+',var(--scarlet))">'
       + '<div class="motif-head"><div class="motif-orb"></div><div class="tx"><h2><em>'+(mo.name||k)+'</em></h2><div class="lat">— '+((mo.subtitle||'').toUpperCase())+' —</div></div><div class="ct"><b>'+list.length+'</b>'+(list.length!==1?'pieces':'piece')+'</div></div>'
-      + '<div class="pieces">'+cards+'</div></section>';
+      + '<div class="pieces">'+cards+'</div>'+more+'</section>';
   }).join('');
 
   // navigation
