@@ -132,6 +132,8 @@
   .row.vi::after{color:var(--blue)}
   .row .r-status{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--scarlet);border:1px solid color-mix(in srgb,var(--scarlet) 32%,var(--rule));border-radius:20px;padding:4px 11px}
   .row.vi .r-status{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 32%,var(--rule))}
+  .show-more{display:block;margin:32px auto 0;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);background:none;border:1px solid var(--rule);border-radius:100px;padding:12px 26px;cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+  .show-more:hover{border-color:var(--scarlet);color:var(--scarlet);background:var(--paper-2)}
   .empty{display:none;text-align:center;padding:54px 0;color:var(--ink-faint)}
   .empty.show{display:block}
   .empty .o{font-family:var(--disp);color:var(--scarlet);letter-spacing:0.4em;margin-bottom:12px}
@@ -273,6 +275,7 @@
       <div class="reveal"><div class="sec-k">The full index</div><h2 class="sec-h">Each one a kind of <em>weather</em>.</h2><p class="sec-sub">Seven pieces in total. Each marked by its form, motif, and quiet length — choose the room that matches tonight.</p></div>
 
       <div id="list"></div>
+      <button class="show-more" id="showMore" style="display:none"></button>
       <div class="empty" id="empty"><div class="o">· · ·</div><p>No pieces match. Try another word, or clear the filters.</p></div>
     </main>
 
@@ -297,7 +300,7 @@
   stories.forEach(function(s,idx){ s._i=idx; });
 
   var listEl=document.getElementById('list'), emptyEl=document.getElementById('empty');
-  var state={ q:'', cat:'all', lng:'all', sort:'latest', savedOnly:false };
+  var state={ q:'', cat:'all', lng:'all', sort:'latest', savedOnly:false, pageSize:10, shown:10 };
 
   function motifName(m){ return (typeof WM!=='undefined' && WM.motifs && WM.motifs[m]) ? WM.motifs[m].name : m; }
 
@@ -322,19 +325,24 @@
     else arr.sort(function(a,b){ return a._i-b._i; });
     listEl.innerHTML = arr.map(rowHTML).join('');
     bindRows();
-    applyFilters();
+    refilter();
   }
   function applyFilters(){
-    var rows=listEl.querySelectorAll('.row'), vis=0, q=state.q.toLowerCase();
+    var rows=listEl.querySelectorAll('.row'), matched=0, shownCount=0, q=state.q.toLowerCase();
     rows.forEach(function(r){
       var mq = !q || r.getAttribute('data-search').indexOf(q)>=0 || r.querySelector('h3').textContent.toLowerCase().indexOf(q)>=0;
       var mc = state.cat==='all' || r.getAttribute('data-cat')===state.cat;
       var ml = state.lng==='all' || r.getAttribute('data-lng')===state.lng;
       var msv = !state.savedOnly || r.getAttribute('data-saved')==='1';
-      var show = mq&&mc&&ml&&msv; r.style.display=show?'':'none'; if(show)vis++;
+      if(mq&&mc&&ml&&msv){ matched++; if(shownCount<state.shown){ r.style.display=''; shownCount++; } else r.style.display='none'; }
+      else r.style.display='none';
     });
-    emptyEl.classList.toggle('show', vis===0);
+    emptyEl.classList.toggle('show', matched===0);
+    var sm=document.getElementById('showMore'), rem=matched-shownCount;
+    if(sm){ if(rem>0){ sm.style.display=''; sm.textContent='Show more — '+rem+' more piece'+(rem===1?'':'s')+' ↓'; } else sm.style.display='none'; }
   }
+  // reset to the first page whenever the filter/search/sort changes
+  function refilter(){ state.shown=state.pageSize; applyFilters(); }
   function bindRows(){
     listEl.querySelectorAll('.row').forEach(function(r){
       r.setAttribute('tabindex','0'); r.setAttribute('role','link');
@@ -344,11 +352,12 @@
     });
   }
 
-  document.getElementById('q').addEventListener('input',function(e){ state.q=e.target.value.trim(); applyFilters(); });
-  document.querySelectorAll('#chips .chip').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#chips .chip').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.cat=c.getAttribute('data-cat'); applyFilters(); }); });
-  document.querySelectorAll('#lngs .lng').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#lngs .lng').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.lng=c.getAttribute('data-lng'); applyFilters(); }); });
+  document.getElementById('q').addEventListener('input',function(e){ state.q=e.target.value.trim(); refilter(); });
+  document.querySelectorAll('#chips .chip').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#chips .chip').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.cat=c.getAttribute('data-cat'); refilter(); }); });
+  document.querySelectorAll('#lngs .lng').forEach(function(c){ c.addEventListener('click',function(){ document.querySelectorAll('#lngs .lng').forEach(function(x){x.classList.remove('on');}); c.classList.add('on'); state.lng=c.getAttribute('data-lng'); refilter(); }); });
   document.getElementById('sort').addEventListener('change',function(e){ state.sort=e.target.value; renderList(); });
-  (function(){ var sc=document.getElementById('savedChip'); if(sc) sc.addEventListener('click',function(){ state.savedOnly=!state.savedOnly; sc.classList.toggle('on',state.savedOnly); sc.setAttribute('aria-pressed',state.savedOnly?'true':'false'); applyFilters(); }); })();
+  (function(){ var sc=document.getElementById('savedChip'); if(sc) sc.addEventListener('click',function(){ state.savedOnly=!state.savedOnly; sc.classList.toggle('on',state.savedOnly); sc.setAttribute('aria-pressed',state.savedOnly?'true':'false'); refilter(); }); })();
+  (function(){ var sm=document.getElementById('showMore'); if(sm) sm.addEventListener('click',function(){ state.shown+=state.pageSize; applyFilters(); }); })();
 
   // featured cards
   document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.setAttribute('tabindex','0'); c.setAttribute('role','link'); function go(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } c.addEventListener('click', go); c.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } }); });
