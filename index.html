@@ -145,6 +145,8 @@
 
   .see-all{display:inline-flex;align-items:center;gap:12px;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--scarlet);text-decoration:none;transition:gap .3s}
   .see-all:hover{gap:20px}
+  .index-empty{font-family:var(--disp);font-style:italic;font-size:18px;line-height:1.6;color:var(--ink-soft);padding:30px 0;border-top:1px solid var(--rule)}
+  .index-empty a{color:var(--scarlet);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--scarlet) 45%,transparent)}
 
   /* margin notes — author's living margin */
   .col-margin .mnote{font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.5;color:var(--green);padding-left:16px;border-left:1px solid var(--green);margin-bottom:28px}
@@ -457,16 +459,21 @@
       var all = (typeof WM!=='undefined' && WM.stories) ? WM.stories.slice() : [];
       var n = all.length, shown = all.slice(0, CAP);
       if(listEl){
+        if(!shown.length){
+          listEl.innerHTML = '<p class="index-empty">The first piece is finding its words — <a href="library.html">open the archive</a> meanwhile.</p>';
+        } else {
         listEl.innerHTML = shown.map(function(s,i){
           var vi = s.lang==='vi', isRead=false;
           try{ isRead=!!(WM.readlog&&WM.readlog.has&&WM.readlog.has(s.id)); }catch(e){}
           var num = s.folio || pad3(i+1);
-          return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'">'
+          var delay = animate ? Math.min(i*70,340) : 0;
+          return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'" style="transition-delay:'+delay+'ms">'
             + '<div class="ln">'+esc(num)+'</div>'
             + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">⋯ To be continued</div>':'')+'</div>'
             + '<div class="meta">'+esc(FORMS[s.form]||s.form)+'<br>'+esc(s.readTime||'')+' min<br><span class="lang">'+esc((s.lang||'').toUpperCase())+'</span></div>'
             + '</article>';
         }).join('');
+        }
         listEl.querySelectorAll('[data-story-id]').forEach(function(row){
           row.setAttribute('tabindex','0'); row.setAttribute('role','link');
           var id = row.getAttribute('data-story-id');
