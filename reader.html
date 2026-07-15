@@ -158,6 +158,12 @@
   .sheet-foot button:hover{opacity:.88}
   .rtoast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);z-index:60;background:var(--text);color:var(--page);font-family:var(--disp);font-style:italic;font-size:14px;padding:10px 18px;border-radius:3px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
   .rtoast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* resume notice — stays until the reader dismisses it */
+  .rresume{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:61;display:none;align-items:center;gap:12px;background:var(--text);color:var(--page);font-family:var(--disp);font-style:italic;font-size:14.5px;padding:9px 9px 9px 20px;border-radius:100px;box-shadow:0 16px 38px -18px rgba(0,0,0,.55)}
+  .rresume.show{display:inline-flex;animation:rrIn .45s cubic-bezier(.2,.7,.3,1)}
+  @keyframes rrIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  .rresume .rr-x{background:none;border:none;color:var(--page);opacity:.55;font-size:16px;line-height:1;cursor:pointer;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;transition:opacity .2s,background .2s;font-style:normal}
+  .rresume .rr-x:hover{opacity:1;background:rgba(255,255,255,.16)}
 
   /* clickable character names → info popover */
   .char-ref{border-bottom:1px dashed var(--accent);cursor:pointer;transition:background .2s}
@@ -294,6 +300,7 @@
   </div>
 </div>
 <div class="rtoast" id="rtoast" role="status" aria-live="polite"></div>
+<div class="rresume" id="rresume" role="status"><span>Resumed where you left off</span><button class="rr-x" id="rresumeX" type="button" aria-label="Dismiss">✕</button></div>
 <div class="char-pop" id="charPop" role="dialog" aria-label="Character">
   <div class="cp-head"><span class="cp-av"></span><div><div class="cp-name"></div><div class="cp-role"></div></div><button class="cp-x" aria-label="Close">×</button></div>
   <div class="cp-line"></div>
@@ -310,6 +317,8 @@
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   var FORMS={fiction:'Fiction', short:'Short', 'tan-van':'Tản văn', poem:'Poem', essay:'Essay'};
   function toastReader(m){ var t=document.getElementById('rtoast'); if(!t) return; t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },1700); }
+  function showResume(){ var r=document.getElementById('rresume'); if(r) r.classList.add('show'); }
+  (function(){ var x=document.getElementById('rresumeX'); if(x) x.addEventListener('click',function(){ var r=document.getElementById('rresume'); if(r) r.classList.remove('show'); }); })();
 
   /* ── resolve the story ── */
   function pick(){
@@ -489,7 +498,7 @@
     total = endIdx + 1;                     // title + body pages + colophon
     if(two){ spreads=[[null,0]]; for(var k=1;k<total;k+=2) spreads.push([k, k+1<total?k+1:null]); }
     else   { spreads=[]; for(var k2=0;k2<total;k2++) spreads.push([null,k2]); }
-    if(!keep||i==null){ i=0; if(firstBuild){ var fr=parseFloat(localStorage.getItem(POSKEY)||'0'); if(fr>0.02 && spreads.length>1){ i=Math.min(spreads.length-1, Math.round(fr*(spreads.length-1))); if(i>0 && !reduce) setTimeout(function(){ toastReader('Resumed where you left off'); },450); } } }
+    if(!keep||i==null){ i=0; if(firstBuild){ var fr=parseFloat(localStorage.getItem(POSKEY)||'0'); if(fr>0.02 && spreads.length>1){ i=Math.min(spreads.length-1, Math.round(fr*(spreads.length-1))); if(i>0) setTimeout(function(){ showResume(); },450); } } }
     firstBuild=false;
     if(i>=spreads.length) i=spreads.length-1;
     render();
