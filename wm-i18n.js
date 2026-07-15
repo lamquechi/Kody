@@ -168,7 +168,57 @@
     'sign out': 'Đăng xuất',
     'save changes': 'Lưu thay đổi',
     'send reply': 'Gửi trả lời',
-    'filter': 'Lọc'
+    'filter': 'Lọc',
+
+    // ── Index · the front list + newsletter + footer ──
+    'the index': 'Mục lục',
+    'the index · latest work': 'Mục lục · tác phẩm mới',
+    'piece': 'bài', 'pieces': 'bài',
+    'enter the full archive': 'Vào kho lưu trữ đầy đủ',
+    'enter the full archive ↗': 'Vào kho lưu trữ đầy đủ ↗',
+    "each one a room of its own — choose the one that's lit for you tonight.":
+      'Mỗi bài là một <em>căn phòng</em> riêng — chọn căn phòng đang sáng đèn cho bạn đêm nay.',
+    'the first piece is finding its words — open the archive meanwhile.':
+      'Bài đầu tiên đang tìm lời — trong lúc đó, <a href="library.html">mở kho lưu trữ</a>.',
+    "a letter, only when there's something worth sending.":
+      'Một lá thư, chỉ khi có <em>điều gì</em> đáng gửi.',
+    'no schedule, no noise — just a note when a new piece is ready, perhaps once a month. leave anytime.':
+      'Không lịch trình, không ồn ào — chỉ một dòng nhắn khi có bài mới, có lẽ mỗi tháng một lần. Rời đi lúc nào cũng được.',
+    'once a month at most · unsubscribe anytime · no spam.':
+      'Nhiều nhất mỗi tháng một lá · hủy lúc nào cũng được · không spam.',
+    'the quiet letter · gửi bạn đọc': 'Lá thư tĩnh lặng · gửi bạn đọc',
+    'rain · rooms · unsent words': 'mưa · những căn phòng · những lời chưa gửi',
+    'set in fraunces & spectral': 'Chữ Fraunces &amp; Spectral',
+    'set in fraunces &amp; spectral': 'Chữ Fraunces &amp; Spectral',
+    'a bilingual commonplace · mmxxvi': 'Sổ tay song ngữ · MMXXVI',
+    '✎ studio': '✎ Xưởng viết',
+    'start here →': 'Bắt đầu ở đây →',
+
+    // ── Status / resume / tray ──
+    'complete': 'Hoàn thành',
+    'to be continued': 'Còn tiếp',
+    '⋯ to be continued': '⋯ Còn tiếp',
+    'resumed where you left off': 'Đã mở lại đúng chỗ bạn đang đọc',
+    'read next': 'Đọc tiếp theo',
+    'while you wait': 'Trong lúc chờ',
+    'more in': 'Thêm về',
+    'the next part is on its way — read another while you wait':
+      'phần tiếp theo đang trên đường tới — đọc bài khác trong lúc chờ nhé',
+    'turn with the edges, arrows, or a swipe': 'lật bằng mép trang, phím mũi tên, hoặc vuốt nhẹ',
+    '☰ contents': '☰ Mục lục',
+    'contents': 'Mục lục',
+
+    // ── Library controls ──
+    'saved': 'Đã lưu',
+    'interactive': 'Tương tác',
+    'featured · begin here': '<span class="dot"></span> Nổi bật · bắt đầu ở đây',
+    'show more': 'Xem thêm',
+    'more piece': 'bài nữa', 'more pieces': 'bài nữa',
+    'no pieces match. try another word, or clear the filters.':
+      'Không có bài nào khớp. Thử một từ khác, hoặc xóa bộ lọc.',
+    'in english': 'tiếng Anh', 'in vietnamese': 'tiếng Việt',
+    'read like a book': 'đọc như một cuốn sách',
+    'more in the archive': 'bài nữa trong kho lưu trữ'
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
@@ -181,7 +231,11 @@
     '.feat-cta', '.tab', '.chip', '.pill',
     '.settings-label', '.settings-panel h4',
     'label', '.panel-title', '.panel-sub', '.stat-label',
-    '.search-input', 'input[placeholder]', 'textarea[placeholder]'
+    '.search-input', 'input[placeholder]', 'textarea[placeholder]',
+    // chrome added for full EN↔VI coverage (text-only nodes; safe to swap)
+    '.sec-k', '.letter-text p', '.sub-fine', '.index-empty', '.empty p',
+    '.tag', '.rresume span', '.e-status', '.r-status', '.feat-status',
+    '.spine .vert', 'footer .fine', 'footer .foot-line'
   ].join(',');
 
   const WMref = window.WM || (window.WM = {});
@@ -189,6 +243,13 @@
   WMref.i18n = {
     lang: 'en',
     dict: VI,
+
+    // Translate one UI string (for JS-generated text). Falls back to English.
+    t: function (en) {
+      if (this.lang !== 'vi') return en;
+      const v = VI[norm(en)];
+      return v !== undefined ? v.replace(/<[^>]+>/g, '') : en;
+    },
 
     apply: function (lang) {
       const toVi = lang === 'vi';
@@ -228,6 +289,8 @@
       });
 
       try { localStorage.setItem('wm.lang', lang); } catch (e) {}
+      // Let pages re-render their JS-generated strings in the new language
+      try { window.dispatchEvent(new CustomEvent('wm:lang', { detail: { lang: lang } })); } catch (e) {}
     },
 
     init: function () {
@@ -263,8 +326,9 @@
     const st = document.createElement('style');
     st.textContent =
       '@keyframes wmFadeIn{from{opacity:0}to{opacity:1}}' +
-      'body{animation:wmFadeIn .55s cubic-bezier(.2,.7,.3,1) both}' +
-      'body.wm-leaving{opacity:0 !important;transition:opacity .32s cubic-bezier(.2,.7,.3,1)}';
+      'body{animation:wmFadeIn .34s ease both}' +
+      'body.wm-leaving{opacity:0 !important;transition:opacity .16s ease}' +
+      '@media(prefers-reduced-motion:reduce){body{animation:none}body.wm-leaving{transition:none}}';
     (document.head || document.documentElement).appendChild(st);
   } catch (e) {}
 
@@ -283,8 +347,31 @@
     e.preventDefault();
     const url = a.href;
     document.body.classList.add('wm-leaving');
-    setTimeout(function () { window.location.href = url; }, 300);
+    setTimeout(function () { window.location.href = url; }, 150);
   }, true);
+
+  // Speed: start fetching an internal page the moment its link is hovered/touched,
+  // so by click time it's usually already in cache.
+  const prefetched = {};
+  function prefetch(a) {
+    if (!internalLink(a)) return;
+    const href = a.href.split('#')[0];
+    if (prefetched[href]) return;
+    prefetched[href] = 1;
+    try {
+      const l = document.createElement('link');
+      l.rel = 'prefetch'; l.href = href; l.as = 'document';
+      document.head.appendChild(l);
+    } catch (e) {}
+  }
+  document.addEventListener('mouseover', function (e) {
+    const a = e.target.closest ? e.target.closest('a') : null;
+    if (a) prefetch(a);
+  }, { passive: true });
+  document.addEventListener('touchstart', function (e) {
+    const a = e.target.closest ? e.target.closest('a') : null;
+    if (a) prefetch(a);
+  }, { passive: true });
 
   // Restore visibility if returning via back/forward cache
   window.addEventListener('pageshow', function () {

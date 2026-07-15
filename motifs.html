@@ -189,7 +189,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=8"></script>
+<script src="wm-i18n.js?v=9"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
 (function(){
@@ -246,9 +246,9 @@
   (function(){
     if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
     var ring=document.createElement('div'); ring.className='cursor-ring'; document.body.appendChild(ring);
-    var rx=innerWidth/2,ry=innerHeight/2,cx=rx,cy=ry,raf;
-    function loop(){ cx+=(rx-cx)*0.18; cy+=(ry-cy)*0.18; ring.style.left=cx+'px'; ring.style.top=cy+'px'; raf=requestAnimationFrame(loop); }
-    addEventListener('mousemove',function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity=document.body.classList.contains('dark')?'0.6':'0.45'; if(!raf)loop(); },{passive:true});
+    var rx=innerWidth/2,ry=innerHeight/2,cx=rx,cy=ry,raf=0;
+    function loop(){ cx+=(rx-cx)*0.18; cy+=(ry-cy)*0.18; ring.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0) translate(-50%,-50%)'; if(Math.abs(rx-cx)<.4&&Math.abs(ry-cy)<.4){raf=0;return;} raf=requestAnimationFrame(loop); }
+    addEventListener('mousemove',function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity=document.body.classList.contains('dark')?'0.6':'0.45'; if(!raf)raf=requestAnimationFrame(loop); },{passive:true});
     addEventListener('mouseleave',function(){ ring.style.opacity='0'; });
     document.addEventListener('mouseover',function(e){ if(e.target.closest&&e.target.closest('a,button,.piece,.moon,.spine .mk')) ring.classList.add('big'); });
     document.addEventListener('mouseout',function(e){ if(e.target.closest&&e.target.closest('a,button,.piece,.moon,.spine .mk')) ring.classList.remove('big'); });

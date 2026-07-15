@@ -356,9 +356,9 @@
     <footer class="reveal">
       <div>
         <div class="big">Kody Lâm</div>
-        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">Rain · rooms · unsent words</div>
+        <div class="fine" style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px;">Rain · rooms · unsent words</div>
       </div>
-      <div class="col">Set in Fraunces &amp; Spectral<br>A bilingual commonplace · MMXXVI<br><a href="about.html">About</a> · <a href="hub.html" style="opacity:.55;">✎ Studio</a></div>
+      <div class="col"><span class="foot-line">Set in Fraunces &amp; Spectral</span><br><span class="foot-line">A bilingual commonplace · MMXXVI</span><br><a href="about.html">About</a> · <a href="hub.html" style="opacity:.55;">✎ Studio</a></div>
       <div class="sig">Kody</div>
     </footer>
   </div>
@@ -367,7 +367,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=8"></script>
+<script src="wm-i18n.js?v=9"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
   /* ── signature overture: hold a quote, then lift to reveal the hero ── */
@@ -431,13 +431,27 @@
       var ring = document.createElement('div');
       ring.className = 'cursor-ring';
       document.body.appendChild(ring);
-      var rx = innerWidth/2, ry = innerHeight/2, cx = rx, cy = ry, raf;
-      function loop(){ cx += (rx-cx)*0.18; cy += (ry-cy)*0.18; ring.style.left=cx+'px'; ring.style.top=cy+'px'; raf=requestAnimationFrame(loop); }
-      addEventListener('mousemove', function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity = document.body.classList.contains('dark') ? '0.6' : '0.45'; if(!raf) loop(); }, { passive:true });
+      var rx = innerWidth/2, ry = innerHeight/2, cx = rx, cy = ry, raf = 0;
+      // compositor-only movement (transform), and the loop parks itself once settled
+      function loop(){
+        cx += (rx-cx)*0.18; cy += (ry-cy)*0.18;
+        ring.style.transform = 'translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0) translate(-50%,-50%)';
+        if (Math.abs(rx-cx) < .4 && Math.abs(ry-cy) < .4){ raf = 0; return; }
+        raf = requestAnimationFrame(loop);
+      }
+      addEventListener('mousemove', function(e){ rx=e.clientX; ry=e.clientY; ring.style.opacity = document.body.classList.contains('dark') ? '0.6' : '0.45'; if(!raf) raf=requestAnimationFrame(loop); }, { passive:true });
       addEventListener('mouseleave', function(){ ring.style.opacity='0'; });
       var hot = 'a,button,.entry-row,.moon,.spine .mk,.stamp-begin';
       document.addEventListener('mouseover', function(e){ if (e.target.closest && e.target.closest(hot)) ring.classList.add('big'); });
       document.addEventListener('mouseout',  function(e){ if (e.target.closest && e.target.closest(hot)) ring.classList.remove('big'); });
+    }
+
+    // the motif ribbon only animates while on screen
+    var run = document.querySelector('.ribbon .run');
+    if (run && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function(en){
+        en.forEach(function(e){ run.style.animationPlayState = e.isIntersecting ? 'running' : 'paused'; });
+      }, {threshold: 0}).observe(run.parentNode);
     }
   })();
 
@@ -459,8 +473,11 @@
       var all = (typeof WM!=='undefined' && WM.stories) ? WM.stories.slice() : [];
       var n = all.length, shown = all.slice(0, CAP);
       if(listEl){
+        var T = function(s){ return (window.WM&&WM.i18n&&WM.i18n.t)?WM.i18n.t(s):s; };
         if(!shown.length){
-          listEl.innerHTML = '<p class="index-empty">The first piece is finding its words — <a href="library.html">open the archive</a> meanwhile.</p>';
+          listEl.innerHTML = '<p class="index-empty">'+(WM.i18n&&WM.i18n.lang==='vi'
+            ? 'Bài đầu tiên đang tìm lời — trong lúc đó, <a href="library.html">mở kho lưu trữ</a>.'
+            : 'The first piece is finding its words — <a href="library.html">open the archive</a> meanwhile.')+'</p>';
         } else {
         listEl.innerHTML = shown.map(function(s,i){
           var vi = s.lang==='vi', isRead=false;
@@ -469,7 +486,7 @@
           var delay = animate ? Math.min(i*70,340) : 0;
           return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'" style="transition-delay:'+delay+'ms">'
             + '<div class="ln">'+esc(num)+'</div>'
-            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">⋯ To be continued</div>':'')+'</div>'
+            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">'+T('⋯ To be continued')+'</div>':'')+'</div>'
             + '<div class="meta">'+esc(FORMS[s.form]||s.form)+'<br>'+esc(s.readTime||'')+' min<br><span class="lang">'+esc((s.lang||'').toUpperCase())+'</span></div>'
             + '</article>';
         }).join('');
@@ -483,11 +500,13 @@
         });
         if(animate) revealIn(listEl);
       }
-      var eb = document.getElementById('indexEyebrow'); if(eb && n) eb.textContent = 'The index · '+n+' piece'+(n===1?'':'s');
-      var sa = document.getElementById('seeAll'); if(sa) sa.textContent = (n>CAP ? ('Enter the full archive — all '+n+' pieces ↗') : ('Enter the full archive ↗'));
+      var T2 = function(s){ return (window.WM&&WM.i18n&&WM.i18n.t)?WM.i18n.t(s):s; };
+      var eb = document.getElementById('indexEyebrow'); if(eb && n) eb.textContent = T2('The index')+' · '+n+' '+T2(n===1?'piece':'pieces');
+      var sa = document.getElementById('seeAll'); if(sa) sa.textContent = (n>CAP ? (T2('Enter the full archive')+' — '+n+' '+T2('pieces')+' ↗') : (T2('Enter the full archive')+' ↗'));
     }
     build(true);
     window.addEventListener('wm:ready', function(){ build(false); });
+    window.addEventListener('wm:lang', function(){ build(false); });
     var sh = document.getElementById('startHere');
     if (sh) sh.addEventListener('click', function(e){ e.stopPropagation(); var f=(typeof WM!=='undefined'&&WM.stories&&WM.stories[0])?WM.stories[0].id:'the-city-after-rain'; window.location.href = 'reader.html?id=' + f; });
   })();
