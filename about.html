@@ -70,7 +70,7 @@
   .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--scarlet);margin-bottom:22px}
   .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(48px,8vw,116px);line-height:0.92;letter-spacing:-0.03em;color:var(--ink)}
   .hero h1.placeholder{color:var(--ink-faint);font-style:italic}
-  .hero .tagline{margin-top:24px;max-width:520px;font-family:var(--disp);font-style:italic;font-weight:300;font-size:21px;line-height:1.5;color:var(--ink-soft)}
+  .hero .tagline{margin-top:24px;max-width:520px;font-family:var(--body);font-style:italic;font-weight:400;font-size:21px;line-height:1.58;color:var(--ink-soft)}
   .hero .tagline.placeholder{color:var(--ink-faint)}
   .hero .meta{margin-top:26px;display:flex;flex-wrap:wrap;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint)}
   .hero .meta span::before{content:"· ";color:var(--scarlet)}
@@ -96,15 +96,15 @@
   .room-kind{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);line-height:1.7}
   .room-row h3{font-family:var(--disp);font-weight:500;font-size:clamp(20px,2.3vw,27px);line-height:1.1;margin-bottom:10px}
   .room-row h3 em{font-style:italic;color:var(--scarlet)}
-  .room-row p{font-family:var(--disp);font-style:italic;font-size:16px;line-height:1.55;color:var(--ink-soft);max-width:560px}
+  .room-row p{font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;line-height:1.58;color:var(--ink-soft);max-width:560px}
 
   .biblio{display:grid;grid-template-columns:72px 1fr auto auto;gap:26px;align-items:baseline;padding:22px 0;border-top:1px solid var(--rule)}
   .biblio .yr{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
-  .biblio .ti{font-family:var(--disp);font-size:21px;font-style:italic;color:var(--ink)}
+  .biblio .ti{font-family:var(--disp);font-weight:500;font-size:21px;font-style:italic;color:var(--ink)}
   .biblio .wh{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint)}
   .biblio a{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--scarlet);text-decoration:none;white-space:nowrap}
   .biblio a:hover{opacity:.7}
-  .biblio-empty{padding:22px 0;border-top:1px dashed var(--rule);font-family:var(--disp);font-style:italic;font-size:15px;color:var(--ink-faint)}
+  .biblio-empty{padding:22px 0;border-top:1px dashed var(--rule);font-family:var(--body);font-style:italic;font-weight:400;font-size:15.5px;color:var(--ink-soft)}
   .biblio-empty em{color:var(--ink-soft)}
 
   .process{background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);transition:background .5s,border-color .5s}
@@ -262,7 +262,7 @@
           <textarea id="cfMsg" placeholder="a short note…"></textarea>
           <button type="submit" id="cfBtn">Send →</button>
         </form>
-        <div class="cform-msg" id="cfStatus" role="status" aria-live="polite" style="font-family:var(--disp);font-style:italic;font-size:15px;margin-top:12px;min-height:1.1em"></div>
+        <div class="cform-msg" id="cfStatus" role="status" aria-live="polite" style="font-family:var(--body);font-style:italic;font-weight:400;font-size:15px;margin-top:12px;min-height:1.1em"></div>
         <div class="direct"><span>Or · <a href="index.html#subscribe">the quiet letter →</a></span><span><a href="index.html#subscribe">Newsletter</a></span></div>
       </div>
     </section>
