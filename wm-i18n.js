@@ -75,6 +75,10 @@
     'width': 'Chiều rộng',
     'night': 'Đêm',
     'sepia': 'Nâu vàng',
+    'day': 'Ngày',
+    '←library': '<span class="arrow">←</span>Thư viện',
+    '‹ prev': '‹ Trước',
+    'next ›': 'Sau ›',
     'narrow': 'Hẹp',
     'default': 'Mặc định',
     'wide': 'Rộng',
@@ -93,6 +97,14 @@
     'presence': 'Hiện diện',
     'a small archive of rain, rooms, and unsent words.':
       'Một kho lưu trữ nhỏ về mưa, những căn phòng, và những lời chưa kịp gửi.',
+    // index hero — explicit-key (data-i18n) so the headline keeps its swash SVG
+    'a small archive of rain, rooms, and unsent words':
+      '<span class="l">Một kho lưu trữ nhỏ</span> <span class="l">về mưa, những căn phòng,</span> <span class="l">và những lời <span class="ink">chưa gửi<svg class="uline" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M5,9 C48,3 104,12 150,6 S196,4 196,8"/></svg></span></span>',
+    'folio i · a bilingual commonplace · mmxxvi': 'Folio I · sổ tay song ngữ · MMXXVI',
+    'short fiction and tản văn about water, memory, rooms — and the quiet hours people carry through the city.':
+      'Truyện ngắn và tản văn về nước, ký ức, những căn phòng — và những giờ lặng người ta mang theo qua thành phố.',
+    '— for the readers who linger past the second paragraph.':
+      '— dành cho những người đọc còn nán lại sau đoạn thứ hai.',
     'rain-lit, intimate, cinematic.': 'Đẫm mưa, thân mật, đầy chất điện ảnh.',
     'one piece,one mood.': 'Một bài,<br>một không khí.',
     'one piece, one mood.': 'Một bài, một không khí.',
@@ -113,6 +125,9 @@
       'Mỗi ngôn ngữ một bài nổi bật — bắt đầu với thời tiết hợp căn phòng của bạn tối nay.',
     'seven pieces in total — five in english, two in vietnamese. each marked by its form, motif, and quiet length.':
       'Tổng cộng bảy bài — năm tiếng Anh, hai tiếng Việt. Mỗi bài ghi dấu bởi thể loại, mô-típ và độ dài tĩnh lặng.',
+    'a curated shelf — each piece marked by form, motif, and quiet length. letters meant to be read slowly, ideally past midnight.':
+      'Một kệ sách tuyển chọn — mỗi bài ghi dấu bởi thể loại, mô-típ và độ dài tĩnh lặng. Những lá thư nên đọc chậm, lý tưởng nhất là sau nửa đêm.',
+    '♡ saved': '♡ Đã lưu',
     'search a title, motif, or first line…': 'Tìm tiêu đề, mô-típ, hoặc câu mở đầu…',
 
     // ── About ──
@@ -235,7 +250,8 @@
     // chrome added for full EN↔VI coverage (text-only nodes; safe to swap)
     '.sec-k', '.letter-text p', '.sub-fine', '.index-empty', '.empty p',
     '.tag', '.rresume span', '.e-status', '.r-status', '.feat-status',
-    '.spine .vert', 'footer .fine', 'footer .foot-line'
+    '.spine .vert', 'footer .fine', 'footer .foot-line',
+    '.lede', '.scribble', '.sec-sub'
   ].join(',');
 
   const WMref = window.WM || (window.WM = {});
@@ -256,7 +272,22 @@
       this.lang = lang;
       document.documentElement.lang = lang;
 
+      // Explicit-key translations. Any [data-i18n] element has its whole
+      // innerHTML swapped for the VI value (which may itself be HTML). This is
+      // how decorated headlines translate — split lines, a swash SVG, a
+      // leading arrow — cases the text-matcher below deliberately skips.
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = norm(el.getAttribute('data-i18n'));
+        if (toVi && VI[k] !== undefined) {
+          if (el.dataset.i18nEn === undefined) el.dataset.i18nEn = el.innerHTML;
+          el.innerHTML = VI[k];
+        } else if (!toVi && el.dataset.i18nEn !== undefined) {
+          el.innerHTML = el.dataset.i18nEn;
+        }
+      });
+
       document.querySelectorAll(SELECTORS).forEach(el => {
+        if (el.hasAttribute('data-i18n')) return; // owned by the explicit pass above
         // Placeholder-bearing fields translate their placeholder, not text
         if (el.hasAttribute('placeholder')) {
           if (el.dataset.i18nPh === undefined) el.dataset.i18nPh = el.getAttribute('placeholder');
