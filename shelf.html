@@ -143,7 +143,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=11"></script>
+<script src="wm-i18n.js?v=12"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
 (function(){
@@ -158,7 +158,8 @@
     var ids = saved(), pieces = resolve(ids);
     countEl.innerHTML = pieces.length ? ('<b>'+pieces.length+'</b> piece'+(pieces.length===1?'':'s')+' kept') : '';
     if(!pieces.length){
-      main.innerHTML = '<div class="empty"><div class="o">· · ·</div><h2>Your shelf is <em>empty</em>.</h2><p>While reading, press <em>♡ Save</em> in the top bar and the piece will wait for you here.</p><a href="library.html">Browse the Library →</a></div>';
+      main.innerHTML = '<div class="empty"><div class="o">· · ·</div><h2>Your shelf is <em>empty</em>.</h2><p data-i18n="While reading, press ♡ Save in the top bar and the piece will wait for you here.">While reading, press <em>♡ Save</em> in the top bar and the piece will wait for you here.</p><a href="library.html">Browse the Library →</a></div>';
+      if(window.WM&&WM.i18n&&WM.i18n.apply)WM.i18n.apply(WM.i18n.lang,true);
       return;
     }
     main.innerHTML = pieces.map(function(s){

@@ -165,7 +165,7 @@
       <div class="entry">— A museum of weathers · MMXXVI</div>
       <h1>The <em>Motif</em> Archive</h1>
       <p class="lede">"Not a museum of objects, but of weathers — the recurring temperatures a writer keeps returning to, sometimes for years, without quite knowing why."</p>
-      <div class="stats"><span><b id="nMotifs">7</b> motifs</span><span><b id="nPieces">8</b> pieces</span><span>Read like a <b>book</b></span></div>
+      <div class="stats"><span><b id="nMotifs">7</b> <span data-i18n="motifs">motifs</span></span><span><b id="nPieces">8</b> <span data-i18n="pieces">pieces</span></span><span data-i18n="read like a book">Read like a <b>book</b></span></div>
     </header>
     <nav class="map" id="map" aria-label="Jump to a motif"></nav>
   </div>
@@ -189,7 +189,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=8"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=11"></script>
+<script src="wm-i18n.js?v=12"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
 (function(){
@@ -226,7 +226,7 @@
         + '<p'+(s.lang==='vi'?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'
         + '<div class="mt"><span>'+(s.lang||'').toUpperCase()+'</span><span>·</span><span>'+(s.reads!=null?s.reads+' reads':'NEW')+'</span></div></a>';
     }).join('');
-    var more = list.length>MOTIF_CAP ? '<a class="motif-more" href="library.html">+ '+(list.length-MOTIF_CAP)+' more in the archive →</a>' : '';
+    var more = list.length>MOTIF_CAP ? '<a class="motif-more" href="library.html">+ '+(list.length-MOTIF_CAP)+' '+(window.WM&&WM.i18n?WM.i18n.t('more in the archive'):'more in the archive')+' →</a>' : '';
     return '<section class="motif reveal" id="m-'+k+'" style="--mc:var('+MVAR[k]+',var(--scarlet))">'
       + '<div class="motif-head"><div class="motif-orb"></div><div class="tx"><h2><em>'+(mo.name||k)+'</em></h2><div class="lat">— '+((mo.subtitle||'').toUpperCase())+' —</div></div><div class="ct"><b>'+list.length+'</b>'+(list.length!==1?'pieces':'piece')+'</div></div>'
       + '<div class="pieces">'+cards+'</div>'+more+'</section>';

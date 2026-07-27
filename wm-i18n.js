@@ -240,8 +240,35 @@
     'no pieces match. try another word, or clear the filters.':
       'Không có bài nào khớp. Thử một từ khác, hoặc xóa bộ lọc.',
     'in english': 'tiếng Anh', 'in vietnamese': 'tiếng Việt',
-    'read like a book': 'đọc như một cuốn sách',
-    'more in the archive': 'bài nữa trong kho lưu trữ'
+    'read like a book': 'đọc như một cuốn <b>sách</b>',
+    'more in the archive': 'bài nữa trong kho lưu trữ',
+
+    // ── Motifs ──
+    '— a museum of weathers · mmxxvi': '— Bảo tàng của những kiểu thời tiết · MMXXVI',
+    '"not a museum of objects, but of weathers — the recurring temperatures a writer keeps returning to, sometimes for years, without quite knowing why."':
+      '"Không phải bảo tàng của đồ vật, mà của những kiểu thời tiết — những nhiệt độ người viết cứ quay về, đôi khi nhiều năm, mà không hẳn hiểu vì sao."',
+    'the archive grows by weather,not by schedule.':
+      'Kho lưu trữ lớn lên theo <em>thời tiết</em>,<br>không theo lịch trình.',
+    'a new motif appears only when a piece truly needs one. new pieces find their motif on the way out, never before.':
+      'Một mô-típ mới chỉ hiện ra khi một bài thật sự cần đến. Bài mới tìm thấy mô-típ của mình lúc rời đi, không bao giờ trước đó.',
+
+    // ── Shelf ──
+    'your shelf': 'Kệ <em>của bạn</em>',
+    '— kept for later · saved on this device': '— Để dành đọc sau · lưu trên thiết bị này',
+    'the pieces you pressed save on while reading — gathered here, waiting for a quieter hour.':
+      'Những bài bạn nhấn <em>lưu</em> khi đang đọc — tụ lại đây, chờ một giờ tĩnh lặng hơn.',
+    'your shelf is empty.': 'Kệ của bạn đang <em>trống</em>.',
+    'while reading, press ♡ save in the top bar and the piece will wait for you here.':
+      'Khi đọc, nhấn <em>♡ Lưu</em> ở thanh trên cùng, bài sẽ chờ bạn ở đây.',
+    'browse the library →': 'Xem thư viện →',
+
+    // ── 404 ──
+    'a missing folio': 'Một trang thất lạc',
+    'this page has been torn from the book.': 'Trang này đã bị <em>xé khỏi cuốn sách</em>.',
+    "maybe it was a draft that left before its time. maybe the link came from a future version that hasn't been written yet. either way, the rest of the library is still here.":
+      'Có lẽ đó là một bản nháp rời đi trước thời của nó. Có lẽ đường dẫn đến từ một phiên bản tương lai chưa được viết ra. Dù sao, phần còn lại của thư viện vẫn ở đây.',
+    '← return home': '← Về trang chủ',
+    'browse motifs': 'Xem mô-típ'
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
@@ -259,7 +286,7 @@
     '.sec-k', '.letter-text p', '.sub-fine', '.index-empty', '.empty p',
     '.tag', '.rresume span', '.e-status', '.r-status', '.feat-status',
     '.spine .vert', 'footer .fine', 'footer .foot-line',
-    '.lede', '.scribble', '.sec-sub'
+    '.lede', '.scribble', '.sec-sub', '.entry', '.note', '.closing p'
   ].join(',');
 
   const WMref = window.WM || (window.WM = {});
@@ -275,7 +302,7 @@
       return v !== undefined ? v.replace(/<[^>]+>/g, '') : en;
     },
 
-    apply: function (lang) {
+    apply: function (lang, silent) {
       const toVi = lang === 'vi';
       this.lang = lang;
       document.documentElement.lang = lang;
@@ -327,9 +354,14 @@
           b.classList.toggle('active', b.dataset.lang === lang);
       });
 
-      try { localStorage.setItem('wm.lang', lang); } catch (e) {}
-      // Let pages re-render their JS-generated strings in the new language
-      try { window.dispatchEvent(new CustomEvent('wm:lang', { detail: { lang: lang } })); } catch (e) {}
+      // silent = re-translating freshly injected DOM, not a user language
+      // change: don't persist (would clobber the saved choice before init
+      // reads it) and don't re-broadcast wm:lang.
+      if (!silent) {
+        try { localStorage.setItem('wm.lang', lang); } catch (e) {}
+        // Let pages re-render their JS-generated strings in the new language
+        try { window.dispatchEvent(new CustomEvent('wm:lang', { detail: { lang: lang } })); } catch (e) {}
+      }
     },
 
     init: function () {
