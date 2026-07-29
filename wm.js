@@ -296,13 +296,13 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
 
   /* ─── MOTIFS ──────────────────────────────────────────── */
   const motifs = {
-    rain:    { name: 'Rain',    color: '#7AAEC4', subtitle: 'falling water · weather as permission' },
-    water:   { name: 'Water',   color: '#6A8C7B', subtitle: 'held · stored · the patience of memory' },
-    window:  { name: 'Window',  color: '#C25535', subtitle: 'the frame · what we see but do not touch' },
-    silence: { name: 'Silence', color: '#C9A961', subtitle: 'a room so full it cannot speak' },
-    night:   { name: 'Night',   color: '#8A82B5', subtitle: 'the hour the city lowers its voice' },
-    city:    { name: 'City',    color: '#9B9282', subtitle: 'the weather of being seen' },
-    draft:   { name: 'Draft',   color: '#B89047', subtitle: 'the unfinished · a loyalty of return' }
+    rain:    { name: 'Rain',    nameVi: 'Mưa',        color: '#7AAEC4', subtitle: 'falling water · weather as permission',   subVi: 'nước rơi · thời tiết như một sự cho phép' },
+    water:   { name: 'Water',   nameVi: 'Nước',       color: '#6A8C7B', subtitle: 'held · stored · the patience of memory',  subVi: 'được giữ · được cất · sự kiên nhẫn của ký ức' },
+    window:  { name: 'Window',  nameVi: 'Cửa sổ',     color: '#C25535', subtitle: 'the frame · what we see but do not touch', subVi: 'khung nhìn · thứ ta thấy mà không chạm tới' },
+    silence: { name: 'Silence', nameVi: 'Im lặng',    color: '#C9A961', subtitle: 'a room so full it cannot speak',          subVi: 'một căn phòng đầy đến mức không thể cất lời' },
+    night:   { name: 'Night',   nameVi: 'Đêm',        color: '#8A82B5', subtitle: 'the hour the city lowers its voice',      subVi: 'giờ khắc thành phố hạ giọng' },
+    city:    { name: 'City',    nameVi: 'Thành phố',  color: '#9B9282', subtitle: 'the weather of being seen',               subVi: 'thời tiết của việc bị nhìn thấy' },
+    draft:   { name: 'Draft',   nameVi: 'Bản nháp',   color: '#B89047', subtitle: 'the unfinished · a loyalty of return',    subVi: 'điều dang dở · một lòng chung thuỷ với sự trở về' }
   };
 
   /* ─── THEME VARIANTS (per-story Reader skin) ──────────── */
@@ -319,6 +319,17 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   }
   function getStoriesByMotif(motif) {
     return stories.filter(s => s.motif === motif);
+  }
+  // Motif name / subtitle, resolved to the current language (falls back to EN).
+  function motifName(key) {
+    const m = motifs[key]; if (!m) return key;
+    const vi = !!(window.WM && WM.i18n && WM.i18n.lang === 'vi');
+    return (vi && m.nameVi) ? m.nameVi : (m.name || key);
+  }
+  function motifSub(key) {
+    const m = motifs[key]; if (!m) return '';
+    const vi = !!(window.WM && WM.i18n && WM.i18n.lang === 'vi');
+    return (vi && m.subVi) ? m.subVi : (m.subtitle || '');
   }
   function getRelatedStories(currentId, limit = 3) {
     const current = getStory(currentId);
@@ -802,7 +813,7 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
   return {
     stories, motifs, themes,
     PROGRESS, PROGRESS_ORDER, FORM_LABEL,
-    getStory, getStoriesByMotif, getRelatedStories,
+    getStory, getStoriesByMotif, getRelatedStories, motifName, motifSub,
     getParam, renderMarkdown, escapeHtml, wordCount, readingMinutes,
     identity, site, drafts,
     reader, marks, shelf, readlog,

@@ -29,6 +29,7 @@
     'elsewhere': 'Nơi khác',
     'atelier': 'Trang chủ',
     'motifs': 'Mô-típ',
+    'motif': 'Mô-típ',
     'home': 'Trang chủ',
     'shelf': 'Kệ sách',
     'notes': 'Ghi chú',

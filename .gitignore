@@ -1,0 +1,4 @@
+# Local tooling / test scaffolding (not part of the static site)
+node_modules/
+package.json
+package-lock.json
