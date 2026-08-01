@@ -36,6 +36,10 @@
     --lamp:radial-gradient(80vw 60vh at 50% -14%, rgba(150,160,175,0.05), transparent 60%);
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  /* ── typographic polish ── */
+  ::selection{background:var(--scarlet);color:var(--paper)}
+  h1,h2,h3{text-wrap:balance}
+  p,.lede,blockquote,li,figcaption{text-wrap:pretty}
   html{scroll-behavior:smooth}
   body{font-family:var(--body);font-size:19px;line-height:1.82;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
@@ -201,11 +205,11 @@
       <div class="hero-grid">
         <div>
           <div class="entry">The writer · Kody Lâm</div>
-          <h1 class="placeholder" data-identity="name">— Your name —</h1>
+          <h1 data-identity="name">Kody Lâm</h1>
           <p class="tagline placeholder" data-identity="tagline" data-fallback="a quiet writer of rain, rooms, and unsent words.">a quiet writer of rain, rooms, and unsent words.</p>
           <div class="meta"><span>Bilingual · EN / VI</span><span>Saigon / elsewhere</span><span>Working since 2022</span></div>
         </div>
-        <div class="portrait"><div class="initial" data-identity="initial">·</div><div class="cap">Folio · the writer</div></div>
+        <div class="portrait"><div class="initial" data-identity="initial">KL</div><div class="cap">Folio · the writer</div></div>
       </div>
     </section>
   </div>
@@ -233,7 +237,6 @@
         <div class="biblio"><div class="yr">2026</div><div class="ti">"The City After Rain"</div><div class="wh">Da Mau Magazine</div><a href="library.html">Read →</a></div>
         <div class="biblio"><div class="yr">2025</div><div class="ti">"Letters to the Reservoir"</div><div class="wh">Diacritics · Online</div><a href="library.html">Read →</a></div>
         <div class="biblio"><div class="yr">2024</div><div class="ti" lang="vi"><em>Một Nửa Của Im Lặng</em></div><div class="wh">Văn Việt</div><a href="library.html">Read →</a></div>
-        <div class="biblio-empty">Add a publication in <em>Settings → Bibliography</em> (coming soon)</div>
       </div>
     </section>
   </div>
@@ -276,15 +279,15 @@
 </div>
 
 <script src="wm-config.js?v=8"></script>
-<script src="wm.js?v=9"></script>
+<script src="wm.js?v=10"></script>
 <script src="wm-supabase.js?v=9"></script>
 <script src="wm-i18n.js?v=12"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
   /* READ IDENTITY */
   (function () {
-    var KEY='wm.identity', id={penName:'',callName:'',initial:'',tagline:'',email:'',bio:''};
-    try{ id={...id,...(JSON.parse(localStorage.getItem(KEY))||{})}; }catch(e){}
+    var id = (window.WM && WM.identity && WM.identity.get) ? WM.identity.get()
+             : (function(){ var d={penName:'',callName:'',initial:'',tagline:'',email:'',bio:''}; try{ return {...d,...(JSON.parse(localStorage.getItem('wm.identity'))||{})}; }catch(e){ return d; } })();
     var hasName=!!(id.penName||'').trim();
     var callName=id.callName||(id.penName||'').split(' ')[0]||'';
     var initial=(id.initial||(callName[0]||'·')).toUpperCase().slice(0,2);

@@ -25,6 +25,8 @@
   :root{ --disp:"Fraunces",Georgia,serif; --body:"Spectral",Georgia,serif; --mono:"JetBrains Mono",monospace;
     --cine:cubic-bezier(.16,1,.3,1); --turn:cubic-bezier(.42,0,.2,1); --fs:20px; --lh:1.8; }
   *{box-sizing:border-box;margin:0;padding:0}
+  /* ── typographic polish ── */
+  ::selection{background:var(--accent);color:var(--page)}
   html,body{height:100%}
   body{font-family:var(--body);background:var(--desk);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden;
     transition:background .5s ease,color .5s ease;
@@ -309,7 +311,7 @@
 <div class="sel-bar" id="selBar"><button data-sel="mark">✎ Keep</button><button data-sel="copy">⧉ Copy</button><button data-sel="share">↗ Share</button></div>
 
 <script src="wm-config.js?v=8"></script>
-<script src="wm.js?v=9"></script>
+<script src="wm.js?v=10"></script>
 <script src="wm-supabase.js?v=9"></script>
 <script src="wm-i18n.js?v=12"></script>
 <script>

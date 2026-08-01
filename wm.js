@@ -409,7 +409,14 @@ Halfway home, you stop and turn back. The light is still on. The kettle, you ima
 
   /* ─── IDENTITY (localStorage) ─────────────────────────── */
   const IDENTITY_KEY = 'wm.identity';
-  const IDENTITY_DEFAULT = { penName: '', callName: '', initial: '', tagline: '', email: '', bio: '' };
+  const IDENTITY_DEFAULT = {
+    penName: 'Kody Lâm',
+    callName: 'Kody',
+    initial: 'KL',
+    tagline: 'a quiet writer of rain, rooms, and unsent words.',
+    email: '',
+    bio: 'I write in English and Vietnamese about water, memory, rooms, and the quiet weather people carry through the city.'
+  };
 
   const identity = {
     get() {
