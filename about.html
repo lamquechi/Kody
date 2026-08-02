@@ -262,9 +262,9 @@
         <h3>For a <em>quiet</em> letter,<br>or a translation, or a beta read.</h3>
         <p class="lead">I read every message, though I reply slowly. Anything from "this stayed with me" to "would you let me translate this into French" — both have happened.</p>
         <form class="cform" id="contactForm" novalidate>
-          <input type="text" id="cfName" placeholder="your name (optional)">
-          <input type="email" id="cfEmail" placeholder="your email" required>
-          <textarea id="cfMsg" placeholder="a short note…"></textarea>
+          <input type="text" id="cfName" placeholder="your name (optional)" aria-label="Your name (optional)" autocomplete="name">
+          <input type="email" id="cfEmail" placeholder="your email" aria-label="Your email" autocomplete="email" required>
+          <textarea id="cfMsg" placeholder="a short note…" aria-label="A short note"></textarea>
           <button type="submit" id="cfBtn">Send →</button>
         </form>
         <div class="cform-msg" id="cfStatus" role="status" aria-live="polite" style="font-family:var(--body);font-style:italic;font-weight:400;font-size:15px;margin-top:12px;min-height:1.1em"></div>
