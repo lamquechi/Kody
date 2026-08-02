@@ -229,7 +229,7 @@
   .endsheet .es-lib{display:block;text-align:center;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
   .endsheet .es-lib:hover{color:var(--accent)}
 
-  @media (max-width:600px){ .chrome .mid{display:none} .tools{gap:11px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch} .tools::-webkit-scrollbar{display:none} .type-panel{right:12px} }
+  @media (max-width:600px){ .chrome{padding:14px 16px} .chrome .mid{display:none} .tools{gap:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch} .tools>*{flex-shrink:0} .tools::-webkit-scrollbar{display:none} .type-panel{right:12px} }
   @media (prefers-reduced-motion: reduce){ .flipping .flip{transition:none} .progress{transition:none} }
 
   a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--scarlet,var(--accent,#B8472E));outline-offset:2px;border-radius:2px}
