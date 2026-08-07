@@ -269,7 +269,41 @@
     "maybe it was a draft that left before its time. maybe the link came from a future version that hasn't been written yet. either way, the rest of the library is still here.":
       'Có lẽ đó là một bản nháp rời đi trước thời của nó. Có lẽ đường dẫn đến từ một phiên bản tương lai chưa được viết ra. Dù sao, phần còn lại của thư viện vẫn ở đây.',
     '← return home': '← Về trang chủ',
-    'browse motifs': 'Xem mô-típ'
+    'browse motifs': 'Xem mô-típ',
+
+    // ── About page ──
+    [`the writer · kody lâm`]: `Người viết · Kody Lâm`,
+    [`a quiet writer of rain, rooms, and unsent words.`]: `một người viết lặng lẽ về mưa, những căn phòng, và những lời chưa gửi.`,
+    [`bilingual · en / vi`]: `Song ngữ · EN / VI`,
+    [`saigon / elsewhere`]: `Sài Gòn / nơi khác`,
+    [`working since 2022`]: `Viết từ 2022`,
+    [`folio · the writer`]: `Folio · người viết`,
+    [`"i write in english and vietnamese about water, memory, rooms, and the quiet weather people carry through the city."`]: `"Tôi viết bằng tiếng Anh và tiếng Việt về nước, ký ức, những căn phòng, và thứ thời tiết lặng lẽ người ta mang theo qua thành phố."`,
+    [`— a self-portrait, in one line —`]: `— một chân dung tự họa, trong một dòng —`,
+    [`01 · in the room`]: `01 · Trong phòng`,
+    [`what's nearby while i work.`]: `Những gì ở gần <em>khi tôi làm việc</em>.`,
+    [`a book that returns`]: `Cuốn sách luôn trở lại`,
+    [`"i read it once a year. it teaches me that thinking in fragments is not the absence of structure — it's a different one."`]: `"Mỗi năm tôi đọc nó một lần. Nó dạy tôi rằng nghĩ bằng những mảnh vụn không phải là thiếu vắng cấu trúc — mà là một cấu trúc khác."`,
+    [`a song on repeat`]: `Bài hát nghe đi nghe lại`,
+    [`"eight minutes that make a room slow down. i write to it more often than i should admit."`]: `"Tám phút khiến cả căn phòng chậm lại. Tôi viết cùng nó thường xuyên hơn mức tôi dám thừa nhận."`,
+    [`an object on the desk`]: `Một vật trên bàn`,
+    [`a small ceramic cup, chipped`]: `Một chiếc tách gốm nhỏ, <em>sứt mẻ</em>`,
+    [`"bought in hội an, used badly, broken once, glued back. some afternoons it is the only thing keeping me here."`]: `"Mua ở Hội An, dùng vụng về, vỡ một lần, gắn lại. Có những buổi chiều nó là thứ duy nhất giữ tôi ở lại."`,
+    [`02 · elsewhere`]: `02 · Nơi khác`,
+    [`pieces that found other rooms.`]: `Những bài đã tìm được <em>căn phòng khác</em>.`,
+    [`03 · process — how a piece arrives`]: `03 · Quá trình — một bài đến như thế nào`,
+    [`most of my pieces begin as a temperature, not a sentence. a weather i cannot quite name — light leaving the room, an unsent message, the third hour after rain. i keep a small notebook and try to write down the temperature before i lose it.`]: `Hầu hết các bài của tôi bắt đầu như <strong>một nhiệt độ</strong>, không phải một câu chữ. Một kiểu thời tiết tôi không gọi được tên — ánh sáng rời khỏi phòng, một tin nhắn chưa gửi, giờ thứ ba sau cơn mưa. Tôi giữ một cuốn sổ nhỏ và cố ghi lại nhiệt độ ấy trước khi đánh mất nó.`,
+    [`sometimes a piece sits in that notebook for months. sometimes it leaves before i can return to it. i have stopped feeling guilty about either.`]: `Có bài nằm trong cuốn sổ ấy hàng tháng trời. Có bài rời đi trước khi tôi kịp quay lại. <em>Tôi đã thôi thấy có lỗi với bất kỳ điều nào.</em>`,
+    [`"not every unfinished thing is a failure. some are rooms we were not ready to enter."`]: `"Không phải điều dang dở nào cũng là một thất bại. Có những điều là căn phòng ta chưa sẵn sàng bước vào."`,
+    [`the drafts are slow. i write in english when i want distance, in vietnamese when i cannot avoid the heat of something. some afternoons the language chooses me before i sit down. i trust this more than i used to.`]: `Những bản nháp đến chậm. Tôi viết tiếng Anh khi muốn giữ khoảng cách, viết tiếng Việt khi không thể tránh khỏi sức nóng của một điều gì đó. Có những buổi chiều ngôn ngữ chọn tôi trước cả khi tôi ngồi xuống. Tôi tin điều đó hơn trước kia.`,
+    [`the website you are inside of now is part of the practice, not separate from it. a reading room i built so the work would have somewhere quiet to live. i update it the way one rearranges a small apartment — not often, but with care.`]: `Trang web bạn đang ở trong lúc này là một phần của việc viết, không tách rời khỏi nó. Một phòng đọc tôi dựng nên để tác phẩm có một nơi yên tĩnh mà sống. Tôi chỉnh sửa nó theo cách người ta sắp xếp lại một căn hộ nhỏ — <em>không thường xuyên, nhưng cẩn thận</em>.`,
+    [`if you ever read something here that stays with you, i would like to know. a small mark is enough.`]: `Nếu có khi nào bạn đọc được điều gì đó ở đây mà nó ở lại với bạn, tôi muốn được biết. <strong>Một dấu nhỏ là đủ.</strong>`,
+    [`for a quiet letter,or a translation, or a beta read.`]: `Cho một lá thư <em>lặng lẽ</em>,<br>hay một bản dịch, hay một lượt đọc thử.`,
+    [`i read every message, though i reply slowly. anything from "this stayed with me" to "would you let me translate this into french" — both have happened.`]: `Tôi đọc mọi tin nhắn, dù trả lời chậm. Từ "điều này ở lại với tôi" đến "cho tôi dịch bài này sang tiếng Pháp nhé" — cả hai đều đã từng xảy ra.`,
+    [`your name (optional)`]: `tên bạn (không bắt buộc)`,
+    [`your email`]: `email của bạn`,
+    [`a short note…`]: `một lời nhắn ngắn…`,
+    [`the quiet letter →`]: `lá thư lặng lẽ →`
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
@@ -287,7 +321,9 @@
     '.sec-k', '.letter-text p', '.sub-fine', '.index-empty', '.empty p',
     '.tag', '.rresume span', '.e-status', '.r-status', '.feat-status',
     '.spine .vert', 'footer .fine', 'footer .foot-line',
-    '.lede', '.scribble', '.sec-sub', '.entry', '.note', '.closing p'
+    '.lede', '.scribble', '.sec-sub', '.entry', '.note', '.closing p',
+    // about page
+    '.room-kind', '.attr', '.cap', '.tagline', '.lead', '.bio blockquote', '.process blockquote', '.process p', '.room-row p', '.hero .meta span'
   ].join(',');
 
   const WMref = window.WM || (window.WM = {});
