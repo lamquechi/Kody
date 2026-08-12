@@ -303,7 +303,9 @@
     [`your name (optional)`]: `tên bạn (không bắt buộc)`,
     [`your email`]: `email của bạn`,
     [`a short note…`]: `một lời nhắn ngắn…`,
-    [`the quiet letter →`]: `lá thư lặng lẽ →`
+    [`the quiet letter →`]: `lá thư lặng lẽ →`,
+    [`about the writer · mmxxvi`]: `Về người viết · MMXXVI`,
+    [`or ·`]: `Hoặc ·`
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
