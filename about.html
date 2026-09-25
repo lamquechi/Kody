@@ -75,9 +75,7 @@
   .hero-grid{display:grid;grid-template-columns:1fr 250px;gap:48px;align-items:end}
   .hero .entry{font-family:var(--mono);font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--scarlet);margin-bottom:22px}
   .hero h1{font-family:var(--disp);font-weight:300;font-size:clamp(48px,8vw,116px);line-height:0.92;letter-spacing:-0.03em;color:var(--ink)}
-  .hero h1.placeholder{color:var(--ink-faint);font-style:italic}
   .hero .tagline{margin-top:24px;max-width:520px;font-family:var(--body);font-style:italic;font-weight:400;font-size:21px;line-height:1.58;color:var(--ink-soft)}
-  .hero .tagline.placeholder{color:var(--ink-faint)}
   .hero .meta{margin-top:26px;display:flex;flex-wrap:wrap;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint)}
   .hero .meta span::before{content:"· ";color:var(--scarlet)}
   .portrait{position:relative;aspect-ratio:3/4;border:1px solid var(--rule);background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -88,7 +86,6 @@
   /* bio */
   .bio{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:60px 0;text-align:center;transition:background .5s,border-color .5s}
   .bio blockquote{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(24px,3.6vw,42px);line-height:1.32;max-width:880px;margin:0 auto;color:var(--ink)}
-  .bio blockquote.placeholder{color:var(--ink-faint)}
   .bio .attr{margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--scarlet)}
 
   .sec{padding:58px 0}
@@ -110,8 +107,6 @@
   .biblio .wh{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint)}
   .biblio a{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--scarlet);text-decoration:none;white-space:nowrap}
   .biblio a:hover{opacity:.7}
-  .biblio-empty{padding:22px 0;border-top:1px dashed var(--rule);font-family:var(--body);font-style:italic;font-weight:400;font-size:15.5px;color:var(--ink-soft)}
-  .biblio-empty em{color:var(--ink-soft)}
 
   .process{background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);transition:background .5s,border-color .5s}
   .process .reading{padding-top:58px;padding-bottom:58px}
@@ -207,11 +202,11 @@
       <div class="hero-grid">
         <div>
           <div class="entry">The writer · Kody Lâm</div>
-          <h1 data-identity="name">Kody Lâm</h1>
+          <h1>Kody Lâm</h1>
           <p class="tagline">a quiet writer of rain, rooms, and unsent words.</p>
           <div class="meta"><span>Bilingual · EN / VI</span><span>Saigon / elsewhere</span><span>Working since 2022</span></div>
         </div>
-        <div class="portrait"><div class="initial" data-identity="initial">KL</div><div class="cap">Folio · the writer</div></div>
+        <div class="portrait"><div class="initial">KL</div><div class="cap">Folio · the writer</div></div>
       </div>
     </section>
   </div>
@@ -281,23 +276,11 @@
 </div>
 
 <script src="wm-config.js?v=8"></script>
-<script src="wm.js?v=10"></script>
+<script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
 <script src="wm-i18n.js?v=15"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
-  /* READ IDENTITY */
-  (function () {
-    var id = (window.WM && WM.identity && WM.identity.get) ? WM.identity.get()
-             : (function(){ var d={penName:'',callName:'',initial:'',tagline:'',email:'',bio:''}; try{ return {...d,...(JSON.parse(localStorage.getItem('wm.identity'))||{})}; }catch(e){ return d; } })();
-    var hasName=!!(id.penName||'').trim();
-    var callName=id.callName||(id.penName||'').split(' ')[0]||'';
-    var initial=(id.initial||(callName[0]||'·')).toUpperCase().slice(0,2);
-    document.querySelectorAll('[data-identity="name"]').forEach(function(el){ el.textContent=hasName?id.penName:'— Your name —'; el.classList.toggle('placeholder',!hasName); });
-    document.querySelectorAll('[data-identity="initial"]').forEach(function(el){ el.textContent=initial; });
-    document.querySelectorAll('[data-identity="tagline"]').forEach(function(el){ if(id.tagline){el.textContent=id.tagline;el.classList.remove('placeholder');}else{el.textContent=el.dataset.fallback||'';el.classList.add('placeholder');} });
-    document.querySelectorAll('[data-identity="bio"]').forEach(function(el){ if(id.bio){el.textContent='"'+id.bio+'"';el.classList.remove('placeholder');}else{el.textContent='"'+(el.dataset.fallback||'')+'"';el.classList.add('placeholder');} });
-  })();
   /* reveals */
   (function(){
     var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, els=document.querySelectorAll('.reveal');
