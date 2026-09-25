@@ -578,13 +578,14 @@
   /* ── end-of-piece colophon + reader actions ── */
   var sameMotif = (typeof WM!=='undefined' && WM.getStoriesByMotif && story.motif) ? WM.getStoriesByMotif(story.motif).filter(function(s){return s.id!==story.id;}) : [];
   var MORE = sameMotif.length ? sameMotif.slice(0,2) : ((typeof WM!=='undefined' && WM.getRelatedStories) ? WM.getRelatedStories(story.id,2) : []);
-  var motifLabel = (typeof WM!=='undefined' && WM.motifs && WM.motifs[story.motif]) ? WM.motifs[story.motif].name : '';
+  // resolved when the tray is built (after i18n init), so VI reads "Thêm về Đêm", not "Night"
+  function motifLabel(){ return (window.WM&&WM.motifName) ? WM.motifName(story.motif) : ((window.WM&&WM.motifs&&WM.motifs[story.motif]) ? WM.motifs[story.motif].name : ''); }
 
   /* ── "read next" tray (separate from the book; these are other works) ── */
   var endsheet=document.getElementById('endsheet'), sheetBuilt=false, sheetDismissed=false;
   function buildEndSheet(){
     if(sheetBuilt || !endsheet || !MORE.length) return; sheetBuilt=true;
-    var k=document.getElementById('esK'); if(k) k.textContent=(continued?T('While you wait'):(sameMotif.length?(T('More in')+' '+motifLabel):T('Read next')));
+    var k=document.getElementById('esK'); if(k) k.textContent=(continued?T('While you wait'):(sameMotif.length?(T('More in')+' '+motifLabel()):T('Read next')));
     var row=document.getElementById('esRow'); if(!row) return;
     row.innerHTML=MORE.map(function(s){
       var meta=((FORMS[s.form]||s.form||'')+' · '+(s.readTime||'—')+' min');
