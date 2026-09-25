@@ -279,7 +279,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=15"></script>
+<script src="wm-i18n.js?v=16"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
   /* reveals */
@@ -307,29 +307,31 @@
 (function(){
   var f=document.getElementById('contactForm'); if(!f) return;
   var cfg=window.WM_CONFIG||{};
-  var st=document.getElementById('cfStatus'), btn=document.getElementById('cfBtn'), label=btn?btn.textContent:'Send →';
+  var st=document.getElementById('cfStatus'), btn=document.getElementById('cfBtn');
+  // looked up at call time, so messages and the reset label follow the reader's language
+  function T(s){ return (window.WM&&WM.i18n&&WM.i18n.t)?WM.i18n.t(s):s; }
   function show(ok,t){ if(st){ st.style.color=ok?'var(--green)':'var(--scarlet)'; st.textContent=t; } }
   f.addEventListener('submit', function(e){ e.preventDefault();
     var name=(document.getElementById('cfName').value||'').trim(),
         email=(document.getElementById('cfEmail').value||'').trim(),
         note=(document.getElementById('cfMsg').value||'').trim();
-    if(!email || email.indexOf('@')<1 || email.lastIndexOf('.')<email.indexOf('@')){ show(false,'Please add a valid email.'); return; }
+    if(!email || email.indexOf('@')<1 || email.lastIndexOf('.')<email.indexOf('@')){ show(false,T('Please add a valid email.')); return; }
     if(cfg.contactEmail){
       var sub=encodeURIComponent('A note from '+(name||'a reader'));
       var body=encodeURIComponent((note||'')+'\n\n— '+(name||'a reader')+' <'+email+'>');
       window.location.href='mailto:'+cfg.contactEmail+'?subject='+sub+'&body='+body;
-      show(true,'Opening your mail app…'); return;
+      show(true,T('Opening your mail app…')); return;
     }
-    btn.disabled=true; btn.textContent='Sending…';
-    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=label; if(ok) f.reset(); }
+    btn.disabled=true; btn.textContent=T('Sending…');
+    function done(ok,t){ show(ok,t); btn.disabled=false; btn.textContent=T('Send →'); if(ok) f.reset(); }
     function subscribeFallback(){
       if(typeof WM!=='undefined' && WM.newsletter && WM.newsletter.subscribe){
-        WM.newsletter.subscribe(email,'about').then(function(){ done(true,'Thank you — I’ve noted your email ✦'); })
-          .catch(function(err){ done(false,(err&&err.message)||'Could not send right now — try again in a moment.'); });
-      } else { done(false,'The list needs the live site — try again in a moment.'); }
+        WM.newsletter.subscribe(email,'about').then(function(){ done(true,T('Thank you — I’ve noted your email ✦')); })
+          .catch(function(err){ done(false,(err&&err.message)||T('Could not send right now — try again in a moment.')); });
+      } else { done(false,T('The list needs the live site — try again in a moment.')); }
     }
     if(typeof WM!=='undefined' && WM.messages && WM.messages.send){
-      WM.messages.send({name:name, email:email, body:note}).then(function(){ done(true,'Thank you — your note reached me ✦'); })
+      WM.messages.send({name:name, email:email, body:note}).then(function(){ done(true,T('Thank you — your note reached me ✦')); })
         .catch(subscribeFallback);   // inbox table not set up yet → keep them on the list
     } else { subscribeFallback(); }
   });

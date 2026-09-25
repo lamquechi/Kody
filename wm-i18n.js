@@ -139,14 +139,6 @@
     '♡ saved': '♡ Đã lưu',
     'search a title, motif, or first line…': 'Tìm tiêu đề, mô-típ, hoặc câu mở đầu…',
 
-    // ── About ──
-    'the writer · kody lâm': 'Người viết · Kody Lâm',
-    "forms, motifs, and what i owethe reader.": 'Thể loại, mô-típ, và điều tôi nợ<br>người đọc.',
-    "forms, motifs, and what i owe the reader.": 'Thể loại, mô-típ, và điều tôi nợ người đọc.',
-    "what's nearby while i work.": 'Những gì quanh tôi khi viết.',
-    'pieces that found other rooms.': 'Những bài đã tìm thấy căn phòng khác.',
-    'how a piece arrives.': 'Một bài ra đời như thế nào.',
-
     // ── Motifs ──
     'the motifarchive': 'Kho Mô-típ',
     'the motif archive': 'Kho Mô-típ',
@@ -160,7 +152,6 @@
     'draft': 'Bản nháp',
 
     // ── 404 ──
-    'this page has been torn from the book.': 'Trang này đã bị xé khỏi cuốn sách.',
     'page not found': 'Không tìm thấy trang',
 
     // ── Writer Hub (admin) ──
@@ -281,7 +272,7 @@
     [`"i write in english and vietnamese about water, memory, rooms, and the quiet weather people carry through the city."`]: `"Tôi viết bằng tiếng Anh và tiếng Việt về nước, ký ức, những căn phòng, và thứ thời tiết lặng lẽ mà người ta mang theo qua thành phố."`,
     [`— a self-portrait, in one line —`]: `— một chân dung tự họa, trong một dòng —`,
     [`01 · in the room`]: `01 · Trong phòng`,
-    [`what's nearby while i work.`]: `Những gì ở gần <em>khi tôi làm việc</em>.`,
+    [`what's nearby while i work.`]: `Những gì quanh tôi <em>khi viết</em>.`,
     [`a book that returns`]: `Cuốn sách luôn trở lại`,
     [`"i read it once a year. it teaches me that thinking in fragments is not the absence of structure — it's a different one."`]: `"Mỗi năm tôi đọc nó một lần. Nó dạy tôi rằng nghĩ bằng những mảnh vụn không phải là thiếu vắng cấu trúc — mà là một cấu trúc khác."`,
     [`a song on repeat`]: `Bài hát nghe đi nghe lại`,
@@ -290,7 +281,7 @@
     [`a small ceramic cup, chipped`]: `Một chiếc tách gốm nhỏ, <em>sứt mẻ</em>`,
     [`"bought in hội an, used badly, broken once, glued back. some afternoons it is the only thing keeping me here."`]: `"Mua ở Hội An, dùng vụng về, vỡ một lần, gắn lại. Có những buổi chiều nó là thứ duy nhất giữ tôi ở lại."`,
     [`02 · elsewhere`]: `02 · Nơi khác`,
-    [`pieces that found other rooms.`]: `Những bài đã tìm được <em>căn phòng khác</em>.`,
+    [`pieces that found other rooms.`]: `Những bài đã tìm thấy <em>căn phòng khác</em>.`,
     [`03 · process — how a piece arrives`]: `03 · Quá trình — một bài đến như thế nào`,
     [`most of my pieces begin as a temperature, not a sentence. a weather i cannot quite name — light leaving the room, an unsent message, the third hour after rain. i keep a small notebook and try to write down the temperature before i lose it.`]: `Hầu hết các bài của tôi bắt đầu như <strong>một nhiệt độ</strong>, không phải một câu văn. Một kiểu thời tiết tôi không gọi được tên — ánh sáng rời khỏi phòng, một tin nhắn chưa gửi, giờ thứ ba sau cơn mưa. Tôi giữ một cuốn sổ nhỏ và cố ghi lại nhiệt độ ấy trước khi đánh mất nó.`,
     [`sometimes a piece sits in that notebook for months. sometimes it leaves before i can return to it. i have stopped feeling guilty about either.`]: `Có bài nằm trong cuốn sổ ấy hàng tháng trời. Có bài rời đi trước khi tôi kịp quay lại. <em>Tôi đã thôi thấy có lỗi về cả hai điều đó.</em>`,
@@ -305,7 +296,28 @@
     [`a short note…`]: `một lời nhắn ngắn…`,
     [`the quiet letter →`]: `lá thư lặng lẽ →`,
     [`about the writer · mmxxvi`]: `Về người viết · MMXXVI`,
-    [`or ·`]: `Hoặc ·`
+    [`or ·`]: `Hoặc ·`,
+
+    // ── Spine (vertical page labels) ──
+    [`kody lâm · commonplace`]: `Kody Lâm · Sổ tay`,
+    [`kody lâm · the library`]: `Kody Lâm · Thư viện`,
+    [`kody lâm · motif archive`]: `Kody Lâm · Kho Mô-típ`,
+    [`kody lâm · about the writer`]: `Kody Lâm · Về người viết`,
+    [`kody lâm · your shelf`]: `Kody Lâm · Kệ của bạn`,
+
+    // ── About contact form — status lines (read via WM.i18n.t) ──
+    [`please add a valid email.`]: `Hãy nhập một email hợp lệ.`,
+    [`opening your mail app…`]: `Đang mở ứng dụng thư của bạn…`,
+    [`sending…`]: `Đang gửi…`,
+    [`thank you — your note reached me ✦`]: `Cảm ơn — lời nhắn của bạn đã đến với tôi ✦`,
+    [`thank you — i’ve noted your email ✦`]: `Cảm ơn — tôi đã ghi lại email của bạn ✦`,
+    [`could not send right now — try again in a moment.`]: `Chưa gửi được lúc này — hãy thử lại sau giây lát.`,
+    [`the list needs the live site — try again in a moment.`]: `Danh sách thư chỉ chạy trên trang chính thức — hãy thử lại sau giây lát.`,
+
+    // ── Accessible names (aria-label) ──
+    [`a short note`]: `Một lời nhắn ngắn`,
+    [`search the archive`]: `Tìm trong kho lưu trữ`,
+    [`toggle light or dark mode`]: `Chuyển chế độ sáng hoặc tối`
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:
@@ -385,6 +397,17 @@
         } else if (!toVi && el.dataset.i18nEn !== undefined) {
           el.innerHTML = el.dataset.i18nEn;
         }
+      });
+
+      // Accessible names. Screen readers speak aria-label, which the passes
+      // above never touch. Dictionary-gated like everything else; language
+      // buttons keep their own names ("English", "Tiếng Việt") by convention.
+      document.querySelectorAll('[aria-label]').forEach(el => {
+        if (el.hasAttribute('data-lang')) return;
+        if (el.dataset.i18nAria === undefined) el.dataset.i18nAria = el.getAttribute('aria-label');
+        const k = norm(el.dataset.i18nAria);
+        if (toVi && VI[k] !== undefined) el.setAttribute('aria-label', VI[k].replace(/<[^>]+>/g, ''));
+        else el.setAttribute('aria-label', el.dataset.i18nAria);
       });
 
       // Reflect active state on any lang toggles present
