@@ -220,8 +220,11 @@
   function nm(k){ return (window.WM&&WM.motifName)?WM.motifName(k):((motifs[k]||{}).name||k); }
   function sub(k){ return (window.WM&&WM.motifSub)?WM.motifSub(k):((motifs[k]||{}).subtitle||''); }
   function pieceWord(n){ return T(n!==1?'pieces':'piece'); }
+  function curLang(){ return (window.WM&&WM.i18n&&WM.i18n.lang)||'en'; }
+  var paintedLang=null, io=null;
 
   function paint(){
+    paintedLang=curLang();
     // map
     map.innerHTML = keys.map(function(k){
       var n=piecesOf(k).length;
@@ -247,15 +250,26 @@
   // navigation — delegated so a language re-render keeps working
   sec.addEventListener('click', function(e){ var c=e.target.closest&&e.target.closest('.piece[data-id]'); if(c){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } });
 
+  // observe only what hasn't been revealed yet; one observer at a time
   function reveal(){
-    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, els=document.querySelectorAll('.reveal');
+    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, els=document.querySelectorAll('.reveal:not(.in)');
     if(reduce||!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
-    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.1,rootMargin:'0px 0px -8% 0px'});
+    if(io) io.disconnect();
+    io=new IntersectionObserver(function(es,obs){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} }); },{threshold:.1,rootMargin:'0px 0px -8% 0px'});
     els.forEach(function(e){io.observe(e);});
   }
   paint(); reveal();
-  // re-render motif names/subtitles when the language changes
-  window.addEventListener('wm:lang', function(){ paint(); document.querySelectorAll('.reveal').forEach(function(e){e.classList.add('in');}); });
+  // Re-render motif names/subtitles only when the language really changes —
+  // wm-i18n also fires wm:lang once on every load. Sections the reader has
+  // already seen stay revealed; the rest keep their scroll-in animation.
+  window.addEventListener('wm:lang', function(){
+    if(curLang()===paintedLang) return;
+    var seen={};
+    sec.querySelectorAll('.reveal.in').forEach(function(e){ seen[e.id]=1; });
+    paint();
+    sec.querySelectorAll('.reveal').forEach(function(e){ if(seen[e.id]) e.classList.add('in'); });
+    reveal();
+  });
   // cursor ring
   (function(){
     if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
