@@ -317,7 +317,8 @@
     // ── Accessible names (aria-label) ──
     [`a short note`]: `Một lời nhắn ngắn`,
     [`search the archive`]: `Tìm trong kho lưu trữ`,
-    [`toggle light or dark mode`]: `Chuyển chế độ sáng hoặc tối`
+    [`toggle light or dark mode`]: `Chuyển chế độ sáng hoặc tối`,
+    [`sort the archive`]: `Sắp xếp kho lưu trữ`
   };
 
   // Selectors that may hold UI strings. Safety comes from the dictionary:

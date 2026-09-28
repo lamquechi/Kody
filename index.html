@@ -28,7 +28,7 @@
   /* ════ PALETTE — light (the day desk) ════ */
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
-    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#897A60;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#726650;
     --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A; --swash:#A33B2B;
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply;
@@ -86,8 +86,9 @@
   .hero .htext{position:relative;z-index:3}
   .hero .entry,.hero h1,.hero .lede,.hero .scribble{position:relative;z-index:3}
   /* portrait plate — the author's frontispiece.
-     ADD YOUR PHOTO: commit a file named portrait.jpg (a tall ~4:5 image) to the
-     repo. It appears automatically; until then this shows a tasteful placeholder. */
+     ADD YOUR PHOTO: commit a tall (~4:5) image as portrait.jpg, then uncomment the
+     <img class="pp-img"> line in the plate below. Until then the plate shows the
+     KL frontispiece — and the page never requests a photo that isn't there. */
   .portrait-plate{position:relative;z-index:2;aspect-ratio:4/5;max-height:76vh;border:1px solid var(--rule);
     background-color:var(--paper-2);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
     transform:rotate(-1.1deg);box-shadow:0 34px 64px -40px rgba(0,0,0,.5);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
@@ -289,6 +290,7 @@
     <span class="navend"><span class="langsel"><button data-lang="en" aria-label="English">EN</button><span class="sep">·</span><button data-lang="vi" aria-label="Tiếng Việt">VI</button></span><button class="moon" id="themeToggle" title="Light / Dark" aria-label="Toggle light or dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button></span>
   </div>
 
+  <main>
   <div class="inner">
     <!-- HERO -->
     <section class="hero">
@@ -303,7 +305,8 @@
         <p class="scribble">— for the readers who linger past the second paragraph.</p>
       </div>
       <aside class="portrait-plate" id="portrait" aria-label="Kody Lâm — the author">
-        <img class="pp-img" src="portrait.jpg" alt="Kody Lâm" onerror="this.remove()">
+        <!-- Photo: commit portrait.jpg (tall, ~4:5), then uncomment the next line.
+        <img class="pp-img" src="portrait.jpg" alt="Kody Lâm" onerror="this.remove()"> -->
         <div class="ph" aria-hidden="true">
           <div class="ph-mono">KL</div>
           <div class="ph-rule"></div>
@@ -359,7 +362,10 @@
         </div>
       </div>
     </section>
+  </div>
+  </main>
 
+  <div class="inner">
     <footer class="reveal">
       <div>
         <div class="big">Kody Lâm</div>
@@ -374,7 +380,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=16"></script>
+<script src="wm-i18n.js?v=17"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
   /* ── signature overture: hold a quote, then lift to reveal the hero ── */

@@ -21,7 +21,7 @@
 <style>
   :root{
     --paper:#F7F2E8; --paper-2:#EFE7D6; --paper-3:#E7DDC8;
-    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#897A60;
+    --ink:#1A1510; --ink-soft:#5E5345; --ink-faint:#726650;
     --scarlet:#B8472E; --green:#3A6B5C; --blue:#43677A; --swash:#A33B2B;
     --rule:#DCD2BD; --rule-soft:#E8E0CF;
     --grain-op:0.5; --grain-blend:multiply; --lamp:transparent;
@@ -244,7 +244,7 @@
           <button class="lng" data-lng="vi" aria-label="Show Vietnamese pieces">VI</button>
         </div>
         <button class="chip" id="savedChip" data-saved aria-pressed="false" title="Show only saved">♡ Saved</button>
-        <select class="sort" id="sort">
+        <select class="sort" id="sort" aria-label="Sort the archive">
           <option value="latest">Sort · Latest</option>
           <option value="length">Sort · By length</option>
           <option value="motif">Sort · By motif</option>
@@ -297,7 +297,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=16"></script>
+<script src="wm-i18n.js?v=17"></script>
 <script src="wm-theme.js?v=3"></script>
 <script>
 (function(){
