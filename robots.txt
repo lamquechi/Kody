@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 
 # Private / app pages carry their own <meta name="robots" content="noindex">
-# (the Studio, the editor, login, and your personal shelf).
+# (the Studio, the editor, login, your personal shelf, the 404 page,
+# and the design manifesto).
 
 Sitemap: https://lamquechi.github.io/Kody/sitemap.xml
