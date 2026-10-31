@@ -55,6 +55,30 @@
     'read this piece →': 'Đọc bài này →',
     'read this piece': 'Đọc bài này',
     'read →': 'Đọc →',
+    // home hero: the next step + the first-line card
+    'start reading': 'Bắt đầu đọc',
+    'next for you': 'Bài kế tiếp cho bạn',
+    'continue reading': 'Đọc tiếp',
+    'read again': 'Đọc lại',
+    'browse the library': 'Xem cả thư viện',
+    'first line': 'Câu mở đầu',
+    'keep reading': 'Đọc tiếp',
+    'another': 'Câu khác',
+    'show another first line': 'Xem một câu mở đầu khác',
+    'min': 'phút',
+    'enter ↵': 'Vào ↵',
+    // reader: the Aa settings panel (explicit keys, so plain words like "Normal" stay untouched elsewhere)
+    'reading · settings panel': 'Cài đặt đọc',
+    'settings · theme': 'Giao diện',
+    'settings · text size': 'Cỡ chữ',
+    'settings · typeface': 'Kiểu chữ',
+    'settings · page width': 'Độ rộng trang',
+    'typeface · serif': 'Có chân',
+    'typeface · book': 'Sách',
+    'typeface · sans': 'Không chân',
+    'width · narrow': 'Hẹp',
+    'width · normal': 'Vừa',
+    'width · wide': 'Rộng',
     'send →': 'Gửi →',
     'get in touch': 'Liên hệ',
     'receive future letters →': 'Nhận những lá thư sau →',
@@ -374,7 +398,8 @@
       });
 
       document.querySelectorAll(SELECTORS).forEach(el => {
-        if (el.hasAttribute('data-i18n')) return; // owned by the explicit pass above
+        // owned by the explicit pass above, or by page script that words it itself (data-i18n-skip)
+        if (el.hasAttribute('data-i18n') || el.hasAttribute('data-i18n-skip')) return;
         // Placeholder-bearing fields translate their placeholder, not text
         if (el.hasAttribute('placeholder')) {
           if (el.dataset.i18nPh === undefined) el.dataset.i18nPh = el.getAttribute('placeholder');
@@ -404,7 +429,7 @@
       // above never touch. Dictionary-gated like everything else; language
       // buttons keep their own names ("English", "Tiếng Việt") by convention.
       document.querySelectorAll('[aria-label]').forEach(el => {
-        if (el.hasAttribute('data-lang')) return;
+        if (el.hasAttribute('data-lang') || el.hasAttribute('data-i18n-skip')) return;
         if (el.dataset.i18nAria === undefined) el.dataset.i18nAria = el.getAttribute('aria-label');
         const k = norm(el.dataset.i18nAria);
         if (toVi && VI[k] !== undefined) el.setAttribute('aria-label', VI[k].replace(/<[^>]+>/g, ''));
@@ -450,21 +475,55 @@
 })();
 
 /* ═══════════════════════════════════════════════════════════
-   GENTLE PAGE TRANSITIONS  (elegant cinematic fade)
-   Fades the page in on load, and fades out before navigating
-   to another internal page — a soft crossfade, never theatrical.
+   PAGE TRANSITIONS + THEME LAMP  (shared motion)
+   - Where the browser has cross-document View Transitions (Chrome/Edge
+     126+, Safari 18.2+), every page opts in with @view-transition in its
+     own <head>: links navigate at once and the browser crossfades the two
+     pages itself — no click delay, no blank frame. Nothing to do here.
+   - Elsewhere: a short fade-out before leaving, and a fade-in on arrival,
+     but only if nothing has been painted yet. This file runs at the end of
+     <body>; fading in an already-painted page would blink it out first.
+   - WMLamp(fn, origin): run a light/dark change as a circle of light that
+     spreads from the control that was pressed.
    ═══════════════════════════════════════════════════════════ */
 (function () {
-  // Fade in on arrival
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const native = ('CSSViewTransitionRule' in window) || ('onpagereveal' in window);
+  let painted = true;
+  try { painted = performance.getEntriesByType('paint').length > 0; } catch (e) {}
+
   try {
+    let css =
+      // during a lamp change: one flat snapshot, no CSS transitions racing the reveal
+      'html.wm-lamp *,html.wm-lamp *::before,html.wm-lamp *::after{transition:none!important;view-transition-name:none!important}' +
+      'html.wm-lamp::view-transition-old(root),html.wm-lamp::view-transition-new(root){animation:none;mix-blend-mode:normal}';
+    if (!native && !reduce) {
+      css += 'body.wm-leaving{opacity:0!important;transition:opacity .14s ease}';
+      if (!painted) css += '@keyframes wmFadeIn{from{opacity:0}}body{animation:wmFadeIn .3s ease both}';
+    }
     const st = document.createElement('style');
-    st.textContent =
-      '@keyframes wmFadeIn{from{opacity:0}to{opacity:1}}' +
-      'body{animation:wmFadeIn .34s ease both}' +
-      'body.wm-leaving{opacity:0 !important;transition:opacity .16s ease}' +
-      '@media(prefers-reduced-motion:reduce){body{animation:none}body.wm-leaving{transition:none}}';
+    st.textContent = css;
     (document.head || document.documentElement).appendChild(st);
   } catch (e) {}
+
+  window.WMLamp = function (fn, origin) {
+    if (reduce || !document.startViewTransition) { fn(); return; }
+    const root = document.documentElement;
+    let x = innerWidth / 2, y = 0;
+    if (origin && origin.getBoundingClientRect) {
+      const r = origin.getBoundingClientRect();
+      if (r.width) { x = r.left + r.width / 2; y = r.top + r.height / 2; }
+    }
+    const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    root.classList.add('wm-lamp');
+    let t;
+    try { t = document.startViewTransition(fn); } catch (e) { root.classList.remove('wm-lamp'); fn(); return; }
+    t.ready.then(function () {
+      root.animate({ clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 640, easing: 'cubic-bezier(.65,0,.35,1)', pseudoElement: '::view-transition-new(root)' });
+    }).catch(function () {});
+    t.finished.then(function () { root.classList.remove('wm-lamp'); }, function () { root.classList.remove('wm-lamp'); });
+  };
 
   function internalLink(a) {
     if (!a) return false;
@@ -474,14 +533,14 @@
     return /\.html(\?|#|$)/.test(href);
   }
 
-  document.addEventListener('click', function (e) {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+  if (!native && !reduce) document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     const a = e.target.closest ? e.target.closest('a') : null;
     if (!internalLink(a)) return;
     e.preventDefault();
     const url = a.href;
     document.body.classList.add('wm-leaving');
-    setTimeout(function () { window.location.href = url; }, 150);
+    setTimeout(function () { window.location.href = url; }, 120);
   }, true);
 
   // Speed: start fetching an internal page the moment its link is hovered/touched,

@@ -54,7 +54,12 @@
     try { localStorage.setItem(KEY, mode); localStorage.setItem(LEGACY, mode); } catch (e) {}
     apply(mode);
   }
-  function toggle() { set(current() === 'dark' ? 'light' : 'dark'); }
+  // origin: the pressed control — the new mode spreads from it like a lamp (wm-i18n.js)
+  function toggle(origin) {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    if (window.WMLamp) window.WMLamp(function () { set(next); }, origin);
+    else set(next);
+  }
 
   window.WMTheme = { resolve: resolve, apply: apply, set: set, toggle: toggle, current: current };
 
@@ -65,7 +70,7 @@
       (function (el) {
         if (el.getAttribute('data-wm-bound')) return;
         el.setAttribute('data-wm-bound', '1');
-        el.addEventListener('click', function (e) { e.preventDefault(); toggle(); });
+        el.addEventListener('click', function (e) { e.preventDefault(); toggle(el); });
       })(btns[i]);
     }
   }
