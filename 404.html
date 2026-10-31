@@ -12,14 +12,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
-  /* page transitions: the browser crossfades between pages (Chrome/Edge/Safari);
-     the nav and the spine hold still while the page changes beneath them */
+  /* page transitions: the browser crossfades between pages (Chrome/Edge/Safari). Both halves share
+     one duration and curve, so the blend never dips; the fixed spine holds still across the change. */
   @view-transition{navigation:auto}
-  ::view-transition-old(root){animation:wmVtOut .2s cubic-bezier(.4,0,1,1) both}
-  ::view-transition-new(root){animation:wmVtIn .45s cubic-bezier(.16,1,.3,1) both}
-  @keyframes wmVtOut{to{opacity:0}}
-  @keyframes wmVtIn{from{opacity:0;transform:translateY(10px)}}
-  .spine{view-transition-name:wm-spine}.top{view-transition-name:wm-nav}
+  ::view-transition-group(root){animation-duration:.36s}
+  ::view-transition-old(root),::view-transition-new(root){animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+  .spine{view-transition-name:wm-spine}
   @media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
   /* ════ PALETTE — light ════ */
   :root {
@@ -79,13 +77,13 @@
 
   @media(prefers-reduced-motion:no-preference){
     .folio-num{animation:rdFade 1.6s var(--cine) both}
-    .ornament{animation:rdUp 1.3s var(--cine) .2s both}
-    .meta{animation:rdUp 1.3s var(--cine) .35s both}
-    h1{animation:rdUp 1.5s var(--cine) .5s both}
-    p.note{animation:rdUp 1.5s var(--cine) .7s both}
-    .actions{animation:rdUp 1.4s var(--cine) .9s both}
+    .ornament{animation:rdUp 1s var(--cine) .1s both}
+    .meta{animation:rdUp 1s var(--cine) .2s both}
+    h1{animation:rdUp 1.1s var(--cine) .3s both}
+    p.note{animation:rdUp 1.1s var(--cine) .42s both}
+    .actions{animation:rdUp 1s var(--cine) .54s both}
     @keyframes rdFade{from{opacity:0}to{opacity:.06}}
-    @keyframes rdUp{from{opacity:0;transform:translateY(20px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+    @keyframes rdUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
   }
   @media(max-width:600px){.stage{padding:32px 20px}}
 

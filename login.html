@@ -10,14 +10,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital@1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* page transitions: the browser crossfades between pages (Chrome/Edge/Safari);
-     the nav and the spine hold still while the page changes beneath them */
+  /* page transitions: the browser crossfades between pages (Chrome/Edge/Safari). Both halves share
+     one duration and curve, so the blend never dips; the fixed spine holds still across the change. */
   @view-transition{navigation:auto}
-  ::view-transition-old(root){animation:wmVtOut .2s cubic-bezier(.4,0,1,1) both}
-  ::view-transition-new(root){animation:wmVtIn .45s cubic-bezier(.16,1,.3,1) both}
-  @keyframes wmVtOut{to{opacity:0}}
-  @keyframes wmVtIn{from{opacity:0;transform:translateY(10px)}}
-  .spine{view-transition-name:wm-spine}.top{view-transition-name:wm-nav}
+  ::view-transition-group(root){animation-duration:.36s}
+  ::view-transition-old(root),::view-transition-new(root){animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+  .spine{view-transition-name:wm-spine}
   @media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
   /* ════ PALETTE — light (the day desk) ════ */
   :root{
