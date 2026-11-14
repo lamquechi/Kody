@@ -172,6 +172,7 @@
   .entry-row .ln{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:0.04em;transition:color .3s,translate .45s var(--ease)}
   .entry-row h3{font-family:var(--disp);font-weight:500;font-size:clamp(25px,2.9vw,38px);line-height:1.06;letter-spacing:-0.01em;transition:color .3s}
   .entry-row:hover h3{color:var(--scarlet)}
+  .entry-row h3 a{color:inherit;text-decoration:none}
   .entry-row p{margin-top:8px;font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;line-height:1.58;color:var(--ink-soft);max-width:560px}
   .entry-row .meta{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);text-align:right;line-height:1.8}
   .entry-row .meta span{display:block}
@@ -682,17 +683,15 @@
           var delay = animate ? Math.min(i*70,340) : 0;
           return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'" style="transition-delay:'+delay+'ms">'
             + '<div class="ln">'+esc(num)+'</div>'
-            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
+            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+'<a href="reader.html?id='+encodeURIComponent(s.id)+'">'+esc(s.title)+'</a></h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
             + '<div class="meta"><span>'+esc(T(FORMS[s.form]||s.form||''))+'</span><span>'+esc(s.readTime||'')+' '+esc(T('min'))+'</span><span class="lang">'+esc((s.lang||'').toUpperCase())+'</span></div>'
             + '</article>';
         }).join('');
         }
+        // the title is the link (keyboard, new tab, crawlers); a click anywhere else on the row opens it too
         listEl.querySelectorAll('[data-story-id]').forEach(function(row){
-          row.setAttribute('tabindex','0'); row.setAttribute('role','link');
           var id = row.getAttribute('data-story-id');
-          function go(){ window.location.href = 'reader.html?id=' + id; }
-          row.addEventListener('click', go);
-          row.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+          row.addEventListener('click', function(e){ if(e.target.closest('a')) return; window.location.href = 'reader.html?id=' + encodeURIComponent(id); });
         });
         if(animate) revealIn(listEl);
       }

@@ -98,6 +98,8 @@
   .map .nm{font-family:var(--body);font-style:italic;font-weight:500;font-size:16px;color:var(--ink)}
   .map .ct{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft)}
 
+  /* the sections are drawn by script: hold a screen's height so the closing note below never jumps */
+  #sections{min-height:100vh}
   .motif{padding:60px 0;border-top:1px solid var(--rule);position:relative}
   .motif-head{display:flex;align-items:flex-end;gap:20px;margin-bottom:26px}
   .motif-orb{width:42px;height:42px;border-radius:50%;background:var(--mc);box-shadow:0 0 24px -4px var(--mc);flex:0 0 auto}
@@ -255,7 +257,7 @@
       var list=piecesOf(k);
       var cards = list.slice(0, MOTIF_CAP).map(function(s){
         var min=(s.readTime||'')+' min';
-        return '<a class="piece" data-id="'+s.id+'"><span class="tg">'+(FORMS[s.form]||s.form)+' · '+min+'</span>'
+        return '<a class="piece" href="reader.html?id='+encodeURIComponent(s.id)+'" data-id="'+s.id+'"><span class="tg">'+(FORMS[s.form]||s.form)+' · '+min+'</span>'
           + '<h3'+(s.lang==='vi'?' lang="vi"':'')+'>'+s.title+'</h3>'
           + '<p'+(s.lang==='vi'?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'
           + '<div class="mt"><span>'+(s.lang||'').toUpperCase()+'</span><span>·</span><span>'+(s.reads!=null?s.reads+' reads':'NEW')+'</span></div></a>';
@@ -268,7 +270,6 @@
   }
 
   // navigation — delegated so a language re-render keeps working
-  sec.addEventListener('click', function(e){ var c=e.target.closest&&e.target.closest('.piece[data-id]'); if(c){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } });
 
   // observe only what hasn't been revealed yet; one observer at a time
   function reveal(){

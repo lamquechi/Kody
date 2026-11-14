@@ -137,6 +137,7 @@
   .row .ln{font-family:var(--disp);font-style:italic;font-size:24px;color:var(--ink-faint);transition:color .3s,translate .45s cubic-bezier(.16,1,.3,1)}
   .row:hover .ln{color:var(--scarlet)}
   .row.vi:hover .ln{color:var(--blue)}
+  .row h3 a,.card a.go{color:inherit;text-decoration:none}
   .row h3{font-family:var(--disp);font-weight:500;font-size:clamp(22px,2.6vw,32px);line-height:1.06;letter-spacing:-0.01em;transition:color .3s}
   .row:hover h3{color:var(--scarlet)}
   .row.vi:hover h3{color:var(--blue)}
@@ -281,7 +282,7 @@
             <h3>The City After Rain</h3>
             <p>"After the rain, the city no longer looked like a city. It looked like something remembering itself."</p>
           </div>
-          <span class="go">Read this piece →</span>
+          <a class="go" href="reader.html?id=the-city-after-rain">Read this piece →</a>
         </article>
         <article class="card vi" data-id="mot-nua-cua-im-lang">
           <div>
@@ -290,7 +291,7 @@
             <h3 lang="vi">Một Nửa Của Im Lặng</h3>
             <p lang="vi">"Có những im lặng không phải vì hết điều để nói, mà vì lòng người đang tìm một cách nói ít đau hơn."</p>
           </div>
-          <span class="go">Đọc bài này →</span>
+          <a class="go" href="reader.html?id=mot-nua-cua-im-lang">Đọc bài này →</a>
         </article>
       </div>
 
@@ -339,7 +340,7 @@
     var cont = pieceContinued(s);
     return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'" data-cat="'+s.form+'" data-lng="'+s.lang+'" data-saved="'+(isSaved?'1':'0')+'" data-search="'+((s.title+' '+(s.excerpt||'')+' '+s.motif+' '+s.form).toLowerCase().replace(/"/g,''))+'" data-min="'+(s.readTime||0)+'" data-motif="'+s.motif+'">'
       + '<div class="ln">'+(s.folio||'')+'</div>'
-      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'+(cont?'<div class="r-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
+      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+'<a href="reader.html?id='+encodeURIComponent(s.id)+'">'+s.title+'</a></h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'+(cont?'<div class="r-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
       + '<div class="meta"><span>'+T(FORMS[s.form]||s.form)+'</span><span>'+(s.readTime||'')+' '+T('min')+' · '+fmtReads(s.reads)+'</span><span><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span>'+(isSaved?' · <span style="color:var(--scarlet)">'+T('♥ saved')+'</span>':'')+'</span></div>'
       + '</article>';
   }
@@ -370,11 +371,9 @@
   // reset to the first page whenever the filter/search/sort changes
   function refilter(){ state.shown=state.pageSize; applyFilters(); }
   function bindRows(){
+    // the title is the link (keyboard, new tab, crawlers); a click anywhere else on the row opens it too
     listEl.querySelectorAll('.row').forEach(function(r){
-      r.setAttribute('tabindex','0'); r.setAttribute('role','link');
-      function go(){ window.location.href='reader.html?id='+r.getAttribute('data-id'); }
-      r.addEventListener('click', go);
-      r.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+      r.addEventListener('click', function(e){ if(e.target.closest('a')) return; window.location.href='reader.html?id='+encodeURIComponent(r.getAttribute('data-id')); });
     });
   }
 
@@ -386,7 +385,7 @@
   (function(){ var sm=document.getElementById('showMore'); if(sm) sm.addEventListener('click',function(){ state.shown+=state.pageSize; applyFilters(); }); })();
 
   // featured cards
-  document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.setAttribute('tabindex','0'); c.setAttribute('role','link'); function go(){ window.location.href='reader.html?id='+c.getAttribute('data-id'); } c.addEventListener('click', go); c.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } }); });
+  document.querySelectorAll('.feat .card[data-id]').forEach(function(c){ c.addEventListener('click', function(e){ if(e.target.closest('a')) return; window.location.href='reader.html?id='+encodeURIComponent(c.getAttribute('data-id')); }); });
 
   function updateStats(){
     var n=stories.length, vi=stories.filter(function(s){return s.lang==='vi';}).length, en=n-vi;

@@ -909,7 +909,7 @@
   // typefaces that land after the arrival re-flow the pages once more
   if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', rebuild);
   /* arrival — wait (briefly) for the typefaces, set the pages with them, then let the book rise once */
-  fontsReady(700).then(function(){
+  fontsReady(450).then(function(){
     build(true);
     document.body.classList.remove('preparing');
     if(!reduce){ document.body.classList.add('arriving'); setTimeout(function(){ document.body.classList.remove('arriving'); }, 1500); }
