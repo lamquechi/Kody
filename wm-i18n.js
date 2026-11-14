@@ -245,6 +245,10 @@
       'phần tiếp theo đang trên đường tới — đọc bài khác trong lúc chờ nhé',
     'turn with the edges, arrows, or a swipe': 'lật bằng mép trang, phím mũi tên, hoặc vuốt nhẹ',
     '☰ contents': '☰ Mục lục',
+    // reader: read aloud
+    '♪ listen': '♪ Nghe',
+    '❚❚ pause': '❚❚ Tạm dừng',
+    '▶ resume': '▶ Nghe tiếp',
     'contents': 'Mục lục',
 
     // ── Library controls ──

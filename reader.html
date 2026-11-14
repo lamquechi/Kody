@@ -99,6 +99,12 @@
   .lead-head h1 em{font-style:italic;color:var(--accent)}
   .lead-head .lh-by{margin-top:8px;font-family:var(--disp);font-style:italic;font-size:15px;line-height:1.4;color:var(--muted)}
   .lead-head .lh-st{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-left:8px}
+  /* listen: the paragraph being read aloud is quietly marked. The tint is a layer beneath the
+     text (not the paragraph's own background, which Chrome paints a second time on ::first-line) */
+  .copy{isolation:isolate}
+  .copy [data-b]{position:relative}
+  .copy [data-b]::after{content:"";position:absolute;inset:-.22em -.5em;z-index:-1;border-radius:3px;background:color-mix(in srgb,var(--accent) 11%,transparent);opacity:0;transition:opacity .5s ease;pointer-events:none}
+  .copy .speaking::after{opacity:1}
   .copy .sect{font-family:var(--disp);font-weight:500;font-style:italic;font-size:clamp(17px,2vw,21px);line-height:1.18;color:var(--text);margin:clamp(16px,2.4vw,26px) 0 6px}
   .opening{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;text-align:center}
   .opening .folio{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
@@ -277,6 +283,7 @@
     <span class="seg" id="theme"><button data-t="day" class="on">Day</button><button data-t="sepia">Sepia</button><button data-t="night">Night</button></span>
     <button id="typeBtn" title="Text size, typeface & width">Aa</button>
     <!-- labels are painted by paintTools() (icon + word; icon only on phones) -->
+    <button id="listenBtn" title="Read aloud" data-i18n-skip hidden><span class="ic" aria-hidden="true">♪</span> <span class="lbl">Listen</span></button>
     <button id="markBtn" title="Leave a mark" data-i18n-skip><span class="ic" aria-hidden="true">✎</span> <span class="lbl">Mark</span></button>
     <button id="saveBtn" title="Save to shelf" data-i18n-skip><span class="ic" aria-hidden="true">♡</span> <span class="lbl">Save</span></button>
     <button id="shareBtn" title="Share this piece" data-i18n-skip><span class="ic" aria-hidden="true">↗</span> <span class="lbl">Share</span></button>
@@ -479,7 +486,7 @@
   function chapHead(ch){ return '<div class="chap"><span class="cnum">'+chapWord()+' '+ch.num+'</span>'+(ch.title?'<span class="ctitle">'+ch.title+'</span>':'')+'</div>'; }
 
   /* ── paginate (measure inside the real right page; fill like a book) ── */
-  var bodyPages=[], bodyChapters=[];
+  var bodyPages=[], bodyChapters=[], BLOCKPAGE=[];   // BLOCKPAGE[k]: the body page where block k begins (listen follows it)
   function paginate(){
     var keep = pR.innerHTML;
     pR.innerHTML = '<div class="head"><span>'+story.title+'</span><span>'+(story.folio||'')+'</span></div><div class="copy" id="__gauge"></div><div class="num">— 0 —</div>';
@@ -495,7 +502,7 @@
     var SAFE = availH - 4;
     // one-page books open on the text itself: the title rides on page 1, which drops its running head
     var LEAD = two ? '' : LEADHEAD(), FIRST = SAFE + (LEAD ? headH : 0);
-    var pages=[], cur=LEAD, marks=[];
+    var pages=[], cur=LEAD, marks=[], bk=-1; BLOCKPAGE=[];
     function fits(h){ mc.innerHTML=h; return mc.scrollHeight<=(pages.length?SAFE:FIRST); }
     function frag(w,a,b,cls){ return '<p'+(cls||'')+'>'+w.slice(a,b+1).join(' ')+'</p>'; }
     function blank(){ return !cur || cur===LEAD; }
@@ -507,21 +514,23 @@
       var opening = true;                         // a chapter that opens on a paragraph opens on a drop cap
       ch.blocks.forEach(function(bl){
         var lead = opening && bl.type==='p'; opening = false;
+        var at = ' data-b="'+(++bk)+'"';           // every piece of block bk carries its number
         if(bl.type==='section'){
-          var sh='<div class="sect">'+bl.title+'</div>';
+          var sh='<div class="sect"'+at+'>'+bl.title+'</div>';
           if(!fits(cur+sh+'<p>x</p>') && !blank()) push();   // keep the heading with what follows
-          cur += sh;
+          BLOCKPAGE[bk]=pages.length; cur += sh;
         } else if(bl.type==='quote'){
-          var q='<div class="pull">'+bl.html+'</div>';
+          var q='<div class="pull"'+at+'>'+bl.html+'</div>';
           if(!fits(cur+q) && !blank()) push();
-          cur += q;
+          BLOCKPAGE[bk]=pages.length; cur += q;
         } else {                                  // paragraph → fill / split by words
-          var w=tokenize(bl.html), start=0, cls=lead?' class="lead"':'';
+          var w=tokenize(bl.html), start=0, cls=(lead?' class="lead"':'')+at;
           while(start<w.length){
-            if(!fits(cur+frag(w,start,start,cls))){ if(!blank()){ push(); continue; } cur+=frag(w,start,start,cls); push(); cls=''; start++; continue; }
+            if(!fits(cur+frag(w,start,start,cls))){ if(!blank()){ push(); continue; } if(BLOCKPAGE[bk]==null) BLOCKPAGE[bk]=pages.length; cur+=frag(w,start,start,cls); push(); cls=at; start++; continue; }
             var lo=start,hi=w.length-1,ans=start;
             while(lo<=hi){ var mid=(lo+hi)>>1; if(fits(cur+frag(w,start,mid,cls))){ ans=mid; lo=mid+1; } else hi=mid-1; }
-            cur+=frag(w,start,ans,cls); cls=''; start=ans+1;
+            if(BLOCKPAGE[bk]==null) BLOCKPAGE[bk]=pages.length;
+            cur+=frag(w,start,ans,cls); cls=at; start=ans+1;
             if(start<w.length) push();
           }
         }
@@ -573,6 +582,7 @@
     try{ localStorage.setItem(POSKEY, frac.toFixed(4)); localStorage.setItem('wm.reader.last', story.id); }catch(e){}   // the home page offers "continue reading"
     if(i===spreads.length-1){ try{ if(WM.readlog) WM.readlog.mark(story.id); }catch(e){} }
     toggleEndSheet(i===spreads.length-1);
+    if(listen) listen.mark();
   }
   function turn(dir){
     if(busy)return; var j=i+dir; if(j<0||j>=spreads.length)return;
@@ -777,6 +787,7 @@
   }
   function paintTools(){
     tool(document.getElementById('markBtn'),'✎ Mark'); tool(document.getElementById('shareBtn'),'↗ Share'); tool(document.getElementById('tocBtn'),'☰ Contents');
+    if(listen) listen.paint();
     reflectSave();
   }
   function reflectSave(){
@@ -813,6 +824,77 @@
     var n=e.target.closest('[data-next]'); if(n){ e.stopPropagation(); location.href='reader.html?id='+encodeURIComponent(n.dataset.next); }
   });
   if(typeof WM!=='undefined' && WM.online!==undefined) reflectSave(); else window.addEventListener('wm:ready', reflectSave, {once:true});
+
+  /* ── listen: the piece read aloud in its own language, a paragraph at a time. The page
+        follows the voice and the paragraph being read is marked. Pausing cancels and remembers
+        the sentence (speechSynthesis.pause is unreliable across browsers); utterances are a
+        sentence or two, since some voices cut off long ones. ── */
+  var listen = (function(){
+    var synth = window.speechSynthesis, btn = document.getElementById('listenBtn');
+    if(!synth || !btn || typeof SpeechSynthesisUtterance==='undefined') return null;
+    var lang = story.lang==='vi' ? 'vi' : 'en', voice = null, state = 'idle', blk = 0, part = 0, gen = 0;
+    var keyRe; try{ keyRe = new RegExp('[^\\p{L}\\p{N}]+','gu'); }catch(e){ keyRe = /[^A-Za-z0-9À-ỹ]+/g; }
+    function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return (d.textContent||'').replace(/\s+/g,' ').trim(); }
+    function key(t){ return t.toLowerCase().replace(keyRe,''); }
+    function sentences(t){
+      var ss = t.match(/[^.!?…]+(?:[.!?…]+["”’»)\]]*|$)/g) || [t], out = [], cur = '';
+      ss.forEach(function(x){ x = x.trim(); if(!x) return; if(cur && (cur+' '+x).length > 180){ out.push(cur); cur = x; } else cur = cur ? cur+' '+x : x; });
+      if(cur) out.push(cur); return out;
+    }
+    // what to say, block by block, numbered as paginate() numbers them (data-b)
+    var flat = []; CHAPTERS.forEach(function(ch){ ch.blocks.forEach(function(b){ flat.push(b); }); });
+    var SAY = flat.map(function(b, k){
+      var text = plain(b.type==='section' ? b.title : b.html), skip = false;
+      if(b.type==='quote'){                       // a pull quote that repeats its neighbour is typography: say it once
+        var q = key(text).slice(0, 40);
+        [flat[k-1], flat[k+1]].forEach(function(n){ if(n && n.type==='p' && q && key(plain(n.html)).indexOf(q) >= 0) skip = true; });
+      }
+      return { skip: skip || !text, parts: sentences(text) };
+    });
+    function pickVoice(){
+      var best = null, score = -1;
+      (synth.getVoices() || []).forEach(function(v){
+        var l = String(v.lang||'').toLowerCase().replace('_','-'); if(l.indexOf(lang) !== 0) return;
+        var sc = 1 + (/natural|neural/i.test(v.name)?4:0) + (/google|siri|enhanced|premium/i.test(v.name)?2:0) + (v.localService?1:0);
+        if(sc > score){ score = sc; best = v; }
+      });
+      voice = best; btn.hidden = !voice;
+    }
+    function paint(){ tool(btn, state==='playing' ? '❚❚ Pause' : state==='paused' ? '▶ Resume' : '♪ Listen'); btn.classList.toggle('on', state!=='idle'); }
+    function mark(){
+      book.querySelectorAll('.speaking').forEach(function(e){ e.classList.remove('speaking'); });
+      if(state!=='idle') book.querySelectorAll('[data-b="'+blk+'"]').forEach(function(e){ e.classList.add('speaking'); });
+    }
+    function follow(k){                           // bring the page where block k begins into view
+      var pi = BLOCKPAGE[k]; if(pi==null){ mark(); return; } pi++;
+      var cur = spreads[i]; if(cur[0]===pi || cur[1]===pi){ mark(); return; }
+      for(var s=0;s<spreads.length;s++) if(spreads[s][0]===pi || spreads[s][1]===pi){ if(s===i+1 && !busy) turn(1); else { i=s; render(); } break; }
+      mark();
+    }
+    function next(){
+      if(state!=='playing') return;
+      while(blk < SAY.length && (SAY[blk].skip || part >= SAY[blk].parts.length)){ blk++; part = 0; }
+      if(blk >= SAY.length){ stop(); return; }
+      if(part===0) follow(blk);
+      var u = new SpeechSynthesisUtterance(SAY[blk].parts[part]), my = ++gen;
+      u.voice = voice; u.lang = voice.lang; u.rate = 0.96;
+      u.onend = function(){ if(my!==gen) return; part++; next(); };
+      u.onerror = function(e){ if(my!==gen) return; if(e && (e.error==='interrupted' || e.error==='canceled')) return; part++; next(); };
+      synth.speak(u);
+    }
+    function begin(){                             // from the first paragraph in view
+      var el = pL.querySelector('[data-b]') || pR.querySelector('[data-b]');
+      blk = el ? +el.getAttribute('data-b') : 0; part = 0; state = 'playing'; paint(); next();
+    }
+    function pause(){ state = 'paused'; gen++; synth.cancel(); paint(); }
+    function resume(){ state = 'playing'; paint(); next(); }
+    function stop(){ state = 'idle'; gen++; synth.cancel(); paint(); mark(); }
+    btn.addEventListener('click', function(){ if(state==='idle') begin(); else if(state==='playing') pause(); else resume(); });
+    addEventListener('pagehide', function(){ gen++; synth.cancel(); });
+    pickVoice(); if(synth.addEventListener) synth.addEventListener('voiceschanged', pickVoice); else synth.onvoiceschanged = pickVoice;
+    paint();
+    return { mark: mark, paint: paint };
+  })();
 
   function rebuild(){ if(busy){ setTimeout(rebuild,250); return; } build(true); }
   var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(rebuild,180); },{passive:true});
