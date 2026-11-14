@@ -355,7 +355,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=18"></script>
+<script src="wm-i18n.js?v=19"></script>
 <script>
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -739,7 +739,7 @@
       var act=b.dataset.sel, txt=lastText, quote='“'+txt+'” — '+story.title+', Kody Lâm';
       if(act==='mark'){ try{ WM.marks.add({storyId:story.id, storyTitle:story.title, text:txt}); }catch(e){} toastReader('Kept to your marks ✦'); }
       else if(act==='copy'){ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(quote).then(function(){toastReader('Copied ✦');},function(){window.prompt('Copy:',quote);}); else window.prompt('Copy:',quote); }
-      else if(act==='share'){ if(navigator.share) navigator.share({title:story.title+' — Kody Lâm', text:'“'+txt+'”', url:location.href}).catch(function(){}); else if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(quote+' '+location.href).then(function(){toastReader('Copied to share ✦');},function(){}); else window.prompt('Copy:',quote); }
+      else if(act==='share'){ if(navigator.share) navigator.share({title:story.title+' — Kody Lâm', text:'“'+txt+'”', url:shareURL()}).catch(function(){}); else if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(quote+' '+shareURL()).then(function(){toastReader('Copied to share ✦');},function(){}); else window.prompt('Copy:',quote); }
       var s=window.getSelection&&window.getSelection(); if(s&&s.removeAllRanges) s.removeAllRanges();
       hideSel();
     });
@@ -797,8 +797,12 @@
   }
   function toggleSave(){ try{ if(WM.shelf&&WM.shelf.toggle){ WM.shelf.toggle(story.id); reflectSave(); } }catch(e){} }
   document.getElementById('saveBtn').addEventListener('click', toggleSave);
+  // pieces with a share page (written by tools/share-cards.js): a link to it previews as the piece's
+  // own card (its first line) on Facebook, Zalo, Messenger, X… where reader.html shows a generic one
+  var SHARE_PAGES = /*share-pages*/["the-city-after-rain","letters-to-the-reservoir","in-a-room-of-small-lights","mirror-city-notes","the-language-of-unfinished-things","saigon-after-eleven","mot-nua-cua-im-lang","a-door-at-three-am"]/*/share-pages*/;
+  function shareURL(){ return SHARE_PAGES.indexOf(story.id)>=0 ? new URL('s/'+encodeURIComponent(story.id)+'.html', location.href).href : location.href; }
   function doShare(){
-    var url=location.href, title=story.title+' — Kody Lâm', text='"'+(story.excerpt||story.title)+'"';
+    var url=shareURL(), title=story.title+' — Kody Lâm', text='"'+(story.excerpt||story.title)+'"';
     if(navigator.share){ navigator.share({title:title,text:text,url:url}).catch(function(){}); }
     else if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ toastReader('Link copied ✦'); }, function(){ window.prompt('Copy this link:',url); }); }
     else { window.prompt('Copy this link:',url); }
