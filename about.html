@@ -87,10 +87,18 @@
   .hero .tagline{margin-top:24px;max-width:520px;font-family:var(--body);font-style:italic;font-weight:400;font-size:21px;line-height:1.58;color:var(--ink-soft)}
   .hero .meta{margin-top:26px;display:flex;flex-wrap:wrap;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint)}
   .hero .meta span::before{content:"· ";color:var(--scarlet)}
-  .portrait{position:relative;aspect-ratio:3/4;border:1px solid var(--rule);background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .portrait::before{content:"";position:absolute;inset:12px;border:1px solid var(--rule-soft)}
-  .portrait .initial{font-family:var(--disp);font-style:italic;font-weight:300;font-size:84px;color:var(--ink-faint)}
-  .portrait .cap{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft)}
+  /* the bookplate: an ex libris pasted inside the cover, signed with the brand mark */
+  .portrait{position:relative;aspect-ratio:3/4;border:1px solid var(--rule);background:var(--paper-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:28px 22px;overflow:hidden;rotate:1.2deg;box-shadow:0 30px 56px -38px rgba(0,0,0,.45);transition:rotate .7s cubic-bezier(.16,1,.3,1)}
+  .portrait:hover{rotate:0deg}
+  .portrait::before{content:"";position:absolute;inset:10px;border:1px solid var(--rule-soft);pointer-events:none}
+  .portrait::after{content:"";position:absolute;inset:15px;border:1px dashed color-mix(in srgb,var(--rule) 70%,transparent);pointer-events:none}
+  .bp-k{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--scarlet)}
+  .bp-mark{position:relative;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-weight:700;font-size:54px;line-height:1;color:var(--ink);padding-bottom:.69em}
+  .bp-mark .sw{position:absolute;left:8%;bottom:.44em;width:68%;height:.21em;overflow:visible}
+  .bp-mark .sw path{fill:none;stroke:var(--swash);stroke-width:1.3;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .bp-rule{width:34px;height:1px;background:var(--rule)}
+  .bp-line{font-family:var(--body);font-style:italic;font-size:14.5px;line-height:1.45;color:var(--ink-soft);max-width:16ch}
+  .bp-stamp{position:absolute;right:22px;bottom:22px;width:26px;height:26px;border:1.5px solid var(--scarlet);border-radius:50%;color:var(--scarlet);font-size:12px;display:flex;align-items:center;justify-content:center;rotate:-8deg;opacity:.85}
 
   /* bio */
   .bio{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:60px 0;text-align:center;transition:background .5s,border-color .5s}
@@ -155,7 +163,7 @@
   }
   @media(max-width:900px){
     .spine{display:none}.wrap{margin-left:0}.brand-m{display:inline-block}.inner,.top,.reading{padding-left:20px;padding-right:20px}
-    .hero-grid{grid-template-columns:1fr;gap:32px}.portrait{max-width:230px}
+    .hero-grid{grid-template-columns:1fr;gap:32px}.portrait{max-width:300px;aspect-ratio:7/5;padding:18px;gap:9px}.bp-mark{font-size:42px}
     .room-row{grid-template-columns:1fr;gap:10px}
     .biblio{grid-template-columns:56px 1fr;gap:8px 14px}.biblio .wh,.biblio a{grid-column:2}
     footer{padding-left:0;padding-right:0}
@@ -216,7 +224,7 @@
           <p class="tagline">a quiet writer of rain, rooms, and unsent words.</p>
           <div class="meta"><span>Bilingual · EN / VI</span><span>Saigon / elsewhere</span><span>Working since 2022</span></div>
         </div>
-        <div class="portrait"><div class="initial">KL</div><div class="cap">Folio · the writer</div></div>
+        <div class="portrait" aria-hidden="true"><span class="bp-k">Ex libris</span><span class="bp-mark">Kody<svg class="sw" viewBox="36 135 215 28" preserveAspectRatio="none"><path d="M250,152 C158,170 64,162 40,146 C28,138 44,132 60,138"></path></svg></span><span class="bp-rule"></span><span class="bp-line" data-i18n="Rain · rooms · unsent words">rain · rooms · unsent words</span><span class="bp-stamp">✦</span></div>
       </div>
     </section>
   </div>
@@ -241,9 +249,9 @@
       <div class="sec-k reveal">02 · Elsewhere</div>
       <h2 class="sec-h reveal">Pieces that found <em>other rooms</em>.</h2>
       <div class="reveal">
-        <div class="biblio"><div class="yr">2026</div><div class="ti">"The City After Rain"</div><div class="wh">Da Mau Magazine</div><a href="library.html">Read →</a></div>
-        <div class="biblio"><div class="yr">2025</div><div class="ti">"Letters to the Reservoir"</div><div class="wh">Diacritics · Online</div><a href="library.html">Read →</a></div>
-        <div class="biblio"><div class="yr">2024</div><div class="ti" lang="vi"><em>Một Nửa Của Im Lặng</em></div><div class="wh">Văn Việt</div><a href="library.html">Read →</a></div>
+        <div class="biblio"><div class="yr">2026</div><div class="ti">"The City After Rain"</div><div class="wh">Da Mau Magazine</div><a href="reader.html?id=the-city-after-rain">Read →</a></div>
+        <div class="biblio"><div class="yr">2025</div><div class="ti">"Letters to the Reservoir"</div><div class="wh">Diacritics · Online</div><a href="reader.html?id=letters-to-the-reservoir">Read →</a></div>
+        <div class="biblio"><div class="yr">2024</div><div class="ti" lang="vi"><em>Một Nửa Của Im Lặng</em></div><div class="wh">Văn Việt</div><a href="reader.html?id=mot-nua-cua-im-lang">Read →</a></div>
       </div>
     </section>
   </div>

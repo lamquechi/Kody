@@ -146,9 +146,10 @@
   .ribbon::before{left:0;background:linear-gradient(90deg,var(--paper-2),transparent)}
   .ribbon::after{right:0;background:linear-gradient(270deg,var(--paper-2),transparent)}
   .ribbon .run{display:inline-block;animation:slide 96s linear infinite;font-family:var(--disp);font-style:italic;font-weight:300;font-size:22px;letter-spacing:0.01em;color:var(--ink-soft)}
-  .ribbon .run span{margin:0 26px;opacity:.38;transition:opacity .9s var(--ease),color .9s}
-  .ribbon .run span[lang="vi"]{color:var(--blue)}
-  .ribbon .run span.lit{opacity:1;color:var(--ink)}
+  .ribbon .run a{margin:0 26px;opacity:.38;color:inherit;text-decoration:none;transition:opacity .9s var(--ease),color .9s}
+  .ribbon .run a[lang="vi"]{color:var(--blue)}
+  .ribbon .run a.lit{opacity:1;color:var(--ink)}
+  .ribbon .run a:hover{opacity:1;color:var(--scarlet);transition-duration:.25s}
   .ribbon .run span[lang="vi"].lit{color:var(--blue)}
   .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal;font-size:13px;opacity:.5;vertical-align:middle}
   @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -183,6 +184,11 @@
   .entry-row.vi::after{color:var(--blue)}
   .entry-row .e-status{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--scarlet);border:1px solid color-mix(in srgb,var(--scarlet) 32%,var(--rule));border-radius:20px;padding:4px 11px}
   .entry-row.vi .e-status{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 32%,var(--rule))}
+  /* left open part-way: how far, at a glance */
+  .e-prog{display:flex;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--scarlet)}
+  .e-prog i{position:relative;display:block;width:96px;height:2px;background:var(--rule);overflow:hidden}
+  .e-prog i::after{content:"";position:absolute;inset:0;background:currentColor;transform-origin:left;transform:scaleX(var(--p,0))}
+  .entry-row.vi .e-prog{color:var(--blue)}
 
   .see-all{display:inline-flex;align-items:center;gap:12px;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--scarlet);text-decoration:none;transition:gap .3s}
   .see-all:hover{gap:20px}
@@ -399,11 +405,11 @@
     </section>
   </div>
 
-  <!-- MOTIF RIBBON -->
+  <!-- MOTIF RIBBON · every line opens the piece it comes from (hover pauses the run) -->
   <div class="ribbon" aria-label="Lines from the work">
     <div class="run">
-      <span>the city looked like something remembering itself</span><b>✦</b><span>a different honesty than daylight asks for</span><b>✦</b><span>memories settle, like water held behind concrete</span><b>✦</b><span>going home — less like return than surrender</span><b>✦</b><span>self-consciousness becomes a climate</span><b>✦</b><span>after eleven, the city only lowered its voice</span><b>✦</b><span lang="vi">im lặng — không vì hết điều để nói</span><b>✦</b>
-      <span>the city looked like something remembering itself</span><b>✦</b><span>a different honesty than daylight asks for</span><b>✦</b><span>memories settle, like water held behind concrete</span><b>✦</b><span>going home — less like return than surrender</span><b>✦</b><span>self-consciousness becomes a climate</span><b>✦</b><span>after eleven, the city only lowered its voice</span><b>✦</b><span lang="vi">im lặng — không vì hết điều để nói</span><b>✦</b>
+      <a href="reader.html?id=the-city-after-rain" tabindex="-1">the city looked like something remembering itself</a><b>✦</b><a href="reader.html?id=in-a-room-of-small-lights" tabindex="-1">a different honesty than daylight asks for</a><b>✦</b><a href="reader.html?id=letters-to-the-reservoir" tabindex="-1">memories settle, like water held behind concrete</a><b>✦</b><a href="reader.html?id=the-city-after-rain" tabindex="-1">going home — less like return than surrender</a><b>✦</b><a href="reader.html?id=mirror-city-notes" tabindex="-1">self-consciousness becomes a climate</a><b>✦</b><a href="reader.html?id=saigon-after-eleven" tabindex="-1">after eleven, the city only lowered its voice</a><b>✦</b><a href="reader.html?id=mot-nua-cua-im-lang" tabindex="-1" lang="vi">im lặng — không vì hết điều để nói</a><b>✦</b>
+      <a href="reader.html?id=the-city-after-rain" tabindex="-1" aria-hidden="true">the city looked like something remembering itself</a><b>✦</b><a href="reader.html?id=in-a-room-of-small-lights" tabindex="-1" aria-hidden="true">a different honesty than daylight asks for</a><b>✦</b><a href="reader.html?id=letters-to-the-reservoir" tabindex="-1" aria-hidden="true">memories settle, like water held behind concrete</a><b>✦</b><a href="reader.html?id=the-city-after-rain" tabindex="-1" aria-hidden="true">going home — less like return than surrender</a><b>✦</b><a href="reader.html?id=mirror-city-notes" tabindex="-1" aria-hidden="true">self-consciousness becomes a climate</a><b>✦</b><a href="reader.html?id=saigon-after-eleven" tabindex="-1" aria-hidden="true">after eleven, the city only lowered its voice</a><b>✦</b><a href="reader.html?id=mot-nua-cua-im-lang" tabindex="-1" lang="vi" aria-hidden="true">im lặng — không vì hết điều để nói</a><b>✦</b>
     </div>
   </div>
 
@@ -651,6 +657,8 @@
     function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function isCont(s){ if(s&&s.continued) return true; try{ return !!((WM.pieceMeta.get(s.id)||{}).continued); }catch(e){ return false; } }
     function pad3(n){ n=String(n); while(n.length<3){ n='0'+n; } return n; }
+    function openAt(id){ var p=0; try{ p=parseFloat(localStorage.getItem('wm.reader.pos.'+id))||0; }catch(e){} return (p>0.02 && p<0.98) ? p : 0; }
+    function progHTML(p){ return p ? '<div class="e-prog" title="'+Math.round(p*100)+'%"><i style="--p:'+p.toFixed(3)+'"></i><span>'+Math.round(p*100)+'%</span></div>' : ''; }
     function revealIn(scope){
       var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches, els = scope.querySelectorAll('.reveal');
       if(reduce || !('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
@@ -674,7 +682,7 @@
           var delay = animate ? Math.min(i*70,340) : 0;
           return '<article class="entry-row reveal'+(animate?'':' in')+(vi?' vi':'')+'" data-story-id="'+esc(s.id)+'" style="transition-delay:'+delay+'ms">'
             + '<div class="ln">'+esc(num)+'</div>'
-            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">'+T('⋯ To be continued')+'</div>':'')+'</div>'
+            + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+esc(s.title)+'</h3><p'+(vi?' lang="vi"':'')+'>"'+esc(s.excerpt||'')+'"</p>'+(isCont(s)?'<div class="e-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
             + '<div class="meta"><span>'+esc(T(FORMS[s.form]||s.form||''))+'</span><span>'+esc(s.readTime||'')+' '+esc(T('min'))+'</span><span class="lang">'+esc((s.lang||'').toUpperCase())+'</span></div>'
             + '</article>';
         }).join('');
@@ -707,7 +715,7 @@
 (function(){
   var run=document.querySelector('.ribbon .run'); if(!run) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var spans=run.querySelectorAll('span'), lit=null, timer=0, onScreen=false;
+  var spans=run.querySelectorAll('a'), lit=null, timer=0, onScreen=false;
   function tick(){
     timer=0;
     if(!onScreen || document.hidden) return;

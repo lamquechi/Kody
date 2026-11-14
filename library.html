@@ -143,6 +143,11 @@
   .row p{margin-top:8px;font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;line-height:1.58;color:var(--ink-soft);max-width:560px}
   .row .meta{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);text-align:right;line-height:1.8}
   .row .meta>span{display:block}
+  /* left open part-way: how far, at a glance */
+  .r-prog{display:flex;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--scarlet)}
+  .r-prog i{position:relative;display:block;width:96px;height:2px;background:var(--rule);overflow:hidden}
+  .r-prog i::after{content:"";position:absolute;inset:0;background:currentColor;transform-origin:left;transform:scaleX(var(--p,0))}
+  .row.vi .r-prog{color:var(--blue)}
   .row .meta .lng-tag{color:var(--scarlet)}
   .row.vi .meta .lng-tag{color:var(--blue)}
   .row::after{content:"✦";position:absolute;left:-3px;top:28px;color:var(--scarlet);font-size:12px;opacity:0;transform:translateX(-8px);transition:opacity .35s,transform .35s}
@@ -324,6 +329,8 @@
 
   function T(s){ return (window.WM&&WM.i18n&&WM.i18n.t)?WM.i18n.t(s):s; }
   function fmtReads(n){ return n ? (n>=1000?(n/1000).toFixed(1)+'K':n)+' '+T('reads') : T('new'); }
+  function openAt(id){ var p=0; try{ p=parseFloat(localStorage.getItem('wm.reader.pos.'+id))||0; }catch(e){} return (p>0.02 && p<0.98) ? p : 0; }
+  function progHTML(p){ return p ? '<div class="r-prog" title="'+Math.round(p*100)+'%"><i style="--p:'+p.toFixed(3)+'"></i><span>'+Math.round(p*100)+'%</span></div>' : ''; }
   function pieceContinued(s){ if(s && s.continued) return true; try{ return !!(WM.pieceMeta.get(s.id)||{}).continued; }catch(e){ return false; } }
   function rowHTML(s){
     var vi = s.lang==='vi';
@@ -332,7 +339,7 @@
     var cont = pieceContinued(s);
     return '<article class="row'+(vi?' vi':'')+'" data-id="'+s.id+'" data-cat="'+s.form+'" data-lng="'+s.lang+'" data-saved="'+(isSaved?'1':'0')+'" data-search="'+((s.title+' '+(s.excerpt||'')+' '+s.motif+' '+s.form).toLowerCase().replace(/"/g,''))+'" data-min="'+(s.readTime||0)+'" data-motif="'+s.motif+'">'
       + '<div class="ln">'+(s.folio||'')+'</div>'
-      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'+(cont?'<div class="r-status">'+T('⋯ To be continued')+'</div>':'')+'</div>'
+      + '<div><h3'+(vi?' lang="vi"':'')+'>'+(isRead?'<span title="Read" style="color:var(--green);font-style:normal">✓ </span>':'')+s.title+'</h3><p'+(vi?' lang="vi"':'')+'>"'+(s.excerpt||'')+'"</p>'+(cont?'<div class="r-status">'+T('⋯ To be continued')+'</div>':'')+progHTML(openAt(s.id))+'</div>'
       + '<div class="meta"><span>'+T(FORMS[s.form]||s.form)+'</span><span>'+(s.readTime||'')+' '+T('min')+' · '+fmtReads(s.reads)+'</span><span><span class="lng-tag">'+(s.lang||'').toUpperCase()+'</span>'+(isSaved?' · <span style="color:var(--scarlet)">'+T('♥ saved')+'</span>':'')+'</span></div>'
       + '</article>';
   }

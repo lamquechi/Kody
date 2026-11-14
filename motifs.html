@@ -119,6 +119,16 @@
   .piece .mt{display:flex;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint)}
   .motif-more{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mc);text-decoration:none;transition:gap .3s}
   .motif-more:hover{gap:16px}
+  /* desktop: the weather's name on the left, its pieces on the right, so a one-piece motif
+     no longer leaves most of its row empty (and the page is a third shorter) */
+  @media(min-width:901px){
+    .motif{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);column-gap:clamp(28px,4vw,60px);align-items:start;padding:52px 0}
+    .motif-head{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:18px;row-gap:16px;margin-bottom:0}
+    .motif-head h2{font-size:clamp(38px,5vw,72px)}
+    .motif-head .ct{grid-column:2;text-align:left}
+    .motif>.pieces{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .motif>.motif-more{grid-column:2;justify-self:start}
+  }
 
   .closing{border-top:1px solid var(--rule);text-align:center;padding:70px 56px}
   .closing .o{font-family:var(--disp);color:var(--scarlet);letter-spacing:0.4em;font-size:15px;margin-bottom:16px}
