@@ -55,11 +55,7 @@
     'read this piece →': 'Đọc bài này →',
     'read this piece': 'Đọc bài này',
     'read →': 'Đọc →',
-    // home hero: the next step + the first-line card
-    'start reading': 'Bắt đầu đọc',
-    'next for you': 'Bài kế tiếp cho bạn',
-    'continue reading': 'Đọc tiếp',
-    'read again': 'Đọc lại',
+    // home hero: the first-line card
     'browse the library': 'Xem cả thư viện',
     'first line': 'Câu mở đầu',
     'keep reading': 'Đọc tiếp',

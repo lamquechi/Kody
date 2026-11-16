@@ -94,16 +94,8 @@
   .hero .htext{position:relative;z-index:3}
   .hero .entry,.hero h1,.hero .lede,.hero .scribble{position:relative;z-index:3}
 
-  /* the next step: one button that knows where this reader is (start, next, continue) */
-  .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin-top:34px}
-  .btn-read{position:relative;display:inline-grid;grid-template-columns:auto auto;align-items:center;column-gap:26px;row-gap:2px;padding:14px 22px 15px;background:var(--ink);color:var(--paper);text-decoration:none;border-radius:3px;overflow:hidden;box-shadow:0 18px 34px -24px rgba(0,0,0,.55);transition:background .3s,translate .4s var(--ease),box-shadow .4s var(--ease)}
-  .btn-read:hover{background:var(--scarlet);translate:0 -2px;box-shadow:0 24px 40px -24px rgba(0,0,0,.6)}
-  .btn-read .br-k{grid-column:1;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
-  .btn-read .br-t{grid-column:1;font-family:var(--disp);font-style:italic;font-size:19px;line-height:1.25}
-  .btn-read .br-go{grid-column:2;grid-row:1 / span 2;font-size:20px;transition:translate .4s var(--ease)}
-  .btn-read:hover .br-go{translate:5px 0}
-  .btn-read .br-bar{position:absolute;left:0;bottom:0;width:100%;height:3px;background:var(--scarlet);transform-origin:left;transform:scaleX(var(--p,0))}
-  .btn-read:hover .br-bar{background:var(--paper);opacity:.45}
+  /* the way on to the whole archive */
+  .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin-top:30px}
   .btn-lib{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule);padding-bottom:3px;transition:color .2s,border-color .2s}
   .btn-lib:hover{color:var(--scarlet);border-color:var(--scarlet)}
 
@@ -238,8 +230,7 @@
     .entry-row .meta span{display:inline}.entry-row .meta span+span::before{content:" · "}
     .hero{min-height:auto;padding:24px 0 44px;grid-template-columns:1fr;gap:0}
     .hero .scribble{display:none}
-    .hero-cta{margin-top:28px;gap:14px 22px}
-    .btn-read{flex:1 1 100%;grid-template-columns:1fr auto}
+    .hero-cta{margin-top:24px}
     .firstline{margin-top:36px;rotate:-.6deg}
     .fl-head{letter-spacing:.12em}
     footer{flex-direction:column;align-items:flex-start;gap:18px}
@@ -391,7 +382,6 @@
         </h1>
         <p class="lede">Short fiction and tản văn about water, memory, rooms — and the quiet hours people carry through the city.</p>
         <div class="hero-cta">
-          <a class="btn-read" id="heroBegin" href="reader.html?id=the-city-after-rain"><span class="br-k">Start reading</span><span class="br-t">The City After Rain · 5 min</span><span class="br-go" aria-hidden="true">→</span></a>
           <a class="btn-lib" href="library.html">Browse the library</a>
         </div>
         <p class="scribble">— for the readers who linger past the second paragraph.</p>
@@ -469,7 +459,7 @@
 <script src="wm-config.js?v=8"></script>
 <script src="wm.js?v=11"></script>
 <script src="wm-supabase.js?v=9"></script>
-<script src="wm-i18n.js?v=19"></script>
+<script src="wm-i18n.js?v=20"></script>
 <script src="wm-theme.js?v=4"></script>
 <script>
   /* ── signature overture: hold the quote, then lift to reveal the hero.
@@ -498,10 +488,10 @@
     ov.addEventListener('click', lift);
   })();
 
-  /* ── the hook: a first line to read, and the one next step that fits this reader ── */
+  /* ── the hook: a first line to read, dealt from the pieces this reader hasn't finished ── */
   (function(){
-    var cta = document.getElementById('heroBegin'), card = document.getElementById('firstLine');
-    if (!cta || !card || typeof WM === 'undefined' || !WM.stories) return;
+    var card = document.getElementById('firstLine');
+    if (!card || typeof WM === 'undefined' || !WM.stories) return;
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var FORMS = {fiction:'Fiction','tan-van':'Tản văn',short:'Short',interactive:'Interactive',poem:'Poem',essay:'Essay'};
     function T(s){ return (WM.i18n && WM.i18n.t) ? WM.i18n.t(s) : s; }
@@ -513,7 +503,6 @@
       for (var i=0;i<ps.length;i++){ var p = ps[i].trim(); if (p && !/^(#{1,6}\s|>)/.test(p)) return p.replace(/\s+/g,' '); }
       return s.excerpt || '';
     }
-    function pos(id){ try{ return parseFloat(localStorage.getItem('wm.reader.pos.'+id)) || 0; }catch(e){ return 0; } }
     function done(id){ try{ return !!(WM.readlog && WM.readlog.has(id)); }catch(e){ return false; } }
     function href(s){ return 'reader.html?id=' + encodeURIComponent(s.id); }
     function mins(s){ return (s.readTime || '—') + ' ' + T('min'); }
@@ -537,22 +526,6 @@
 
     var list = [], cur = 0;
     var ovPlayed = !!document.getElementById('overture');   // it just showed Folio I's line: deal a different one
-    // the one next step: continue what's open › the first piece not yet read › Folio I again
-    function step(){
-      var last = null; try{ last = localStorage.getItem('wm.reader.last'); }catch(e){}
-      var open = null; for (var i=0;i<list.length;i++) if (list[i].id === last) open = list[i];
-      var p = open ? pos(open.id) : 0;
-      if (open && p > 0.02 && p < 0.98) return { s:open, k:'Continue reading', t:open.title + ' · ' + Math.round(p*100) + '%', p:p };
-      var anyRead = list.some(function(s){ return done(s.id); });
-      for (var j=0;j<list.length;j++) if (!done(list[j].id)) return { s:list[j], k: anyRead ? 'Next for you' : 'Start reading', t:list[j].title + ' · ' + mins(list[j]) };
-      return list[0] ? { s:list[0], k:'Read again', t:list[0].title + ' · ' + mins(list[0]) } : null;
-    }
-    function paintStep(){
-      var st = step(); if (!st) return;
-      cta.href = href(st.s);
-      cta.innerHTML = '<span class="br-k">' + esc(T(st.k)) + '</span><span class="br-t">' + esc(st.t) + '</span><span class="br-go" aria-hidden="true">→</span>'
-        + (st.p ? '<span class="br-bar" style="--p:' + st.p.toFixed(3) + '"></span>' : '');
-    }
     function paintLabels(){
       var s = list[cur]; if (!s) return;
       document.getElementById('flLabel').textContent = T('First line') + ' · Folio ' + (s.folio || (cur + 1));
@@ -580,7 +553,6 @@
         at = 0; for (var j=0;j<list.length;j++) if (!done(list[j].id)){ at = j; break; }
         if (ovPlayed && list[at].id === 'the-city-after-rain' && list.length > 1) at = (at + 1) % list.length;
       }
-      paintStep();
       if (keep && at === cur && list[at].id === keep) paintLabels(); else paintCard(at);
     }
     document.getElementById('flNext').addEventListener('click', function(){
@@ -593,9 +565,7 @@
     });
     load();
     window.addEventListener('wm:ready', load);
-    window.addEventListener('wm:lang', function(){ paintStep(); paintLabels(); });
-    // back from a story (bfcache): the next step has changed, so say so
-    window.addEventListener('pageshow', function(e){ if (e.persisted) paintStep(); });
+    window.addEventListener('wm:lang', paintLabels);
   })();
 
   /* ── motion: scroll-reveal and the cursor ring ── */
