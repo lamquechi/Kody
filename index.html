@@ -132,20 +132,23 @@
   .hero .lede{margin:30px 0 0;max-width:480px;font-family:var(--body);font-style:italic;font-weight:400;font-size:21px;line-height:1.6;color:var(--ink-soft)}
   .hero .scribble{margin:30px 0 0;max-width:340px;font-family:var(--body);font-style:italic;font-weight:400;font-size:15.5px;line-height:1.5;color:var(--green);padding-left:16px;border-left:1px solid var(--green)}
 
-  /* ════ MOTIF RIBBON ════ */
-  .ribbon{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2);padding:20px 0;white-space:nowrap;position:relative;transition:background .5s,border-color .5s}
-  .ribbon::before,.ribbon::after{content:"";position:absolute;top:0;bottom:0;width:14vw;z-index:2;pointer-events:none}
-  .ribbon::before{left:0;background:linear-gradient(90deg,var(--paper-2),transparent)}
-  .ribbon::after{right:0;background:linear-gradient(270deg,var(--paper-2),transparent)}
-  .ribbon .run{display:inline-block;animation:slide 96s linear infinite;font-family:var(--disp);font-style:italic;font-weight:300;font-size:22px;letter-spacing:0.01em;color:var(--ink-soft)}
-  .ribbon .run a{margin:0 26px;opacity:.38;color:inherit;text-decoration:none;transition:opacity .9s var(--ease),color .9s}
-  .ribbon .run a[lang="vi"]{color:var(--blue)}
-  .ribbon .run a.lit{opacity:1;color:var(--ink)}
-  .ribbon .run a:hover{opacity:1;color:var(--scarlet);transition-duration:.25s}
-  .ribbon .run span[lang="vi"].lit{color:var(--blue)}
-  .ribbon .run b{color:var(--scarlet);font-weight:400;font-style:normal;font-size:13px;opacity:.5;vertical-align:middle}
-  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @media(prefers-reduced-motion:reduce){.ribbon .run{animation:none}}
+  /* ════ ONE LINE · a single line from the work at a time, turning over every few seconds ════ */
+  .lineband{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:22px 56px 18px;text-align:center;transition:border-color .5s}
+  .lb{display:flex;align-items:baseline;align-content:center;justify-content:center;gap:6px 16px;flex-wrap:wrap;color:inherit;text-decoration:none;transition:opacity .45s ease,translate .6s var(--ease)}
+  .lb.out{opacity:0;translate:0 -6px}
+  .lb.pre{opacity:0;translate:0 7px;transition:none}
+  /* a long line may take two balanced lines on a phone; the band keeps the height of its tallest line */
+  .lb-q{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(18px,1.4vw + 12.5px,24px);line-height:1.35;color:var(--ink);text-wrap:balance;transition:color .25s}
+  .lb-q::before{content:"\201C";color:var(--scarlet);margin-right:.05em}
+  .lb-q::after{content:"\201D";color:var(--scarlet);margin-left:.03em}
+  .lb-q[lang="vi"]{color:var(--blue)}
+  .lb:hover .lb-q{color:var(--scarlet)}
+  .lb-src{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap}
+  .lb-src b{color:var(--scarlet);font-weight:500}
+  .lb-dots{display:flex;justify-content:center;gap:7px;margin-top:12px}
+  .lb-dots i{width:5px;height:5px;border-radius:50%;background:var(--rule);transition:background .4s,scale .4s var(--ease)}
+  .lb-dots i.on{background:var(--scarlet);scale:1.25}
+  @media(prefers-reduced-motion:reduce){.lb{transition:none}}
 
   /* ════ INDEX + LIVING MARGIN ════ */
   .body-grid{display:grid;grid-template-columns:1fr 286px;gap:0}
@@ -230,6 +233,7 @@
     .entry-row .meta span{display:inline}.entry-row .meta span+span::before{content:" · "}
     .hero{min-height:auto;padding:24px 0 44px;grid-template-columns:1fr;gap:0}
     .hero .scribble{display:none}
+    .lineband{padding:18px 20px 14px}
     .hero-cta{margin-top:24px}
     .firstline{margin-top:36px;rotate:-.6deg}
     .fl-head{letter-spacing:.12em}
@@ -242,7 +246,6 @@
   .top a{position:relative}
   .top a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--scarlet);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
   .top a:hover::after{transform:scaleX(1)}
-  .ribbon:hover .run{animation-play-state:paused}
   .spine .mk{transition:transform .4s ease}
   .spine:hover .mk{transform:translateY(-3px) rotate(-4deg)}
 
@@ -396,12 +399,10 @@
     </section>
   </div>
 
-  <!-- MOTIF RIBBON · every line opens the piece it comes from (hover pauses the run) -->
-  <div class="ribbon" aria-label="Lines from the work">
-    <div class="run">
-      <a href="reader.html?id=the-city-after-rain" tabindex="-1">the city looked like something remembering itself</a><b>✦</b><a href="reader.html?id=in-a-room-of-small-lights" tabindex="-1">a different honesty than daylight asks for</a><b>✦</b><a href="reader.html?id=letters-to-the-reservoir" tabindex="-1">memories settle, like water held behind concrete</a><b>✦</b><a href="reader.html?id=the-city-after-rain" tabindex="-1">going home — less like return than surrender</a><b>✦</b><a href="reader.html?id=mirror-city-notes" tabindex="-1">self-consciousness becomes a climate</a><b>✦</b><a href="reader.html?id=saigon-after-eleven" tabindex="-1">after eleven, the city only lowered its voice</a><b>✦</b><a href="reader.html?id=mot-nua-cua-im-lang" tabindex="-1" lang="vi">im lặng — không vì hết điều để nói</a><b>✦</b>
-      <a href="reader.html?id=the-city-after-rain" tabindex="-1" aria-hidden="true">the city looked like something remembering itself</a><b>✦</b><a href="reader.html?id=in-a-room-of-small-lights" tabindex="-1" aria-hidden="true">a different honesty than daylight asks for</a><b>✦</b><a href="reader.html?id=letters-to-the-reservoir" tabindex="-1" aria-hidden="true">memories settle, like water held behind concrete</a><b>✦</b><a href="reader.html?id=the-city-after-rain" tabindex="-1" aria-hidden="true">going home — less like return than surrender</a><b>✦</b><a href="reader.html?id=mirror-city-notes" tabindex="-1" aria-hidden="true">self-consciousness becomes a climate</a><b>✦</b><a href="reader.html?id=saigon-after-eleven" tabindex="-1" aria-hidden="true">after eleven, the city only lowered its voice</a><b>✦</b><a href="reader.html?id=mot-nua-cua-im-lang" tabindex="-1" lang="vi" aria-hidden="true">im lặng — không vì hết điều để nói</a><b>✦</b>
-    </div>
+  <!-- ONE LINE · a line from the work at a time; it opens the piece it comes from (pointing at it holds it) -->
+  <div class="lineband" id="lineband">
+    <a class="lb" id="lb" href="reader.html?id=the-city-after-rain" data-i18n-skip><span class="lb-q" id="lbQ" lang="en">the city looked like something remembering itself</span><span class="lb-src" id="lbS"><b>I</b> · The City After Rain</span></a>
+    <div class="lb-dots" id="lbDots" aria-hidden="true"></div>
   </div>
 
   <!-- INDEX + MARGIN -->
@@ -611,13 +612,6 @@
       document.addEventListener('mouseout',  function(e){ if (e.target.closest && e.target.closest(hot)) ring.classList.remove('big'); });
     }
 
-    // the motif ribbon only animates while on screen
-    var run = document.querySelector('.ribbon .run');
-    if (run && 'IntersectionObserver' in window) {
-      new IntersectionObserver(function(en){
-        en.forEach(function(e){ run.style.animationPlayState = e.isIntersecting ? 'running' : 'paused'; });
-      }, {threshold: 0}).observe(run.parentNode);
-    }
   })();
 
   /* ── navigation: entry rows + "Start here" → reader ── */
@@ -679,23 +673,55 @@
 
 
 <script>
-/* ── motif ribbon · the line crossing centre lifts into focus.
-      Checked a few times a second, and only while the ribbon is on screen. ── */
+/* ── one line · a line from the work at a time, turning over every ~5s. Pointing at it, focusing it
+      or touching it holds it; off screen or in a background tab it waits. The band keeps the height
+      of its longest line, so a turn never moves the page below. ── */
 (function(){
-  var run=document.querySelector('.ribbon .run'); if(!run) return;
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var spans=run.querySelectorAll('a'), lit=null, timer=0, onScreen=false;
-  function tick(){
-    timer=0;
-    if(!onScreen || document.hidden) return;
-    var cx=innerWidth/2, best=null, bd=1e9;
-    for(var i=0;i<spans.length;i++){ var r=spans[i].getBoundingClientRect(); if(r.right<0||r.left>innerWidth) continue; var d=Math.abs((r.left+r.right)/2-cx); if(d<bd){bd=d;best=spans[i];} }
-    if(best!==lit){ if(lit) lit.classList.remove('lit'); if(best) best.classList.add('lit'); lit=best; }
-    timer=setTimeout(tick,200);
+  var lb=document.getElementById('lb'), band=document.getElementById('lineband'); if(!lb||!band) return;
+  var q=document.getElementById('lbQ'), src=document.getElementById('lbS'), dots=document.getElementById('lbDots');
+  var LINES=[
+    ['the city looked like something remembering itself','I','The City After Rain','the-city-after-rain'],
+    ['a different honesty than daylight asks for','III','In a Room of Small Lights','in-a-room-of-small-lights'],
+    ['memories settle, like water held behind concrete','II','Letters to the Reservoir','letters-to-the-reservoir'],
+    ['going home — less like return than surrender','I','The City After Rain','the-city-after-rain'],
+    ['self-consciousness becomes a climate','IV','Mirror City Notes','mirror-city-notes'],
+    ['after eleven, the city only lowered its voice','VI','Saigon After Eleven','saigon-after-eleven'],
+    ['im lặng — không vì hết điều để nói','VII','Một Nửa Của Im Lặng','mot-nua-cua-im-lang','vi']
+  ];
+  var cur=0, held=false, onScreen=true, timer=0;
+  LINES.forEach(function(){ dots.appendChild(document.createElement('i')); });
+  function paint(i){
+    var l=LINES[i]; cur=i;
+    lb.href='reader.html?id='+l[3]; q.textContent=l[0]; q.lang=l[4]||'en';
+    src.textContent=''; var b=document.createElement('b'); b.textContent=l[1]; src.appendChild(b); src.appendChild(document.createTextNode(' · '+l[2]));
+    lb.setAttribute('aria-label','“'+l[0]+'” — '+l[2]);
+    for(var k=0;k<dots.children.length;k++) dots.children[k].classList.toggle('on', k===i);
   }
-  if(!('IntersectionObserver' in window)){ onScreen=true; tick(); return; }
-  new IntersectionObserver(function(en){ onScreen=en[0].isIntersecting; if(onScreen && !timer) tick(); }).observe(run.parentNode);
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden && onScreen && !timer) tick(); });
+  function reserve(){
+    var keep=cur, max=0; lb.style.minHeight='';
+    for(var i=0;i<LINES.length;i++){ paint(i); max=Math.max(max, lb.getBoundingClientRect().height); }
+    paint(keep); lb.style.minHeight=Math.ceil(max)+'px';
+  }
+  function schedule(){ clearTimeout(timer); timer=setTimeout(turn,5200); }
+  function turn(){
+    if(held||!onScreen||document.hidden) return schedule();
+    lb.classList.add('out');
+    setTimeout(function(){
+      paint((cur+1)%LINES.length);
+      lb.classList.remove('out'); lb.classList.add('pre'); void lb.offsetWidth; lb.classList.remove('pre');
+      schedule();
+    },450);
+  }
+  paint(0); reserve();
+  var rT=0; addEventListener('resize', function(){ clearTimeout(rT); rT=setTimeout(reserve,150); }, {passive:true});
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(reserve);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;   // stays on its first line
+  ['mouseenter','focusin'].forEach(function(e){ band.addEventListener(e, function(){ held=true; }); });
+  ['mouseleave','focusout'].forEach(function(e){ band.addEventListener(e, function(){ held=false; }); });
+  band.addEventListener('touchstart', function(){ held=true; }, {passive:true});
+  band.addEventListener('touchend', function(){ setTimeout(function(){ held=false; },2500); }, {passive:true});
+  if('IntersectionObserver' in window) new IntersectionObserver(function(en){ onScreen=en[0].isIntersecting; }).observe(band);
+  schedule();
 })();
 </script>
 <script>
